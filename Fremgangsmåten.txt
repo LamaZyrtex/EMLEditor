@@ -1,0 +1,18 @@
+1
+Sørg for å ha Node.js innstallert (lastes ned og innstalleres) og at npm er innstallert i Node.
+
+2
+Kjør npm init i en ny folder på maskinen. Package.json vil opprettes.
+
+3
+Typescript: npm i typescript --save-dev - tsconfig.json opprettes
+
+4
+Webpack: Installer webpack. Opprett webpack.config.json. Sørg for å installere ts-loader for å kunne kjøre typescript gjennom
+webpack
+
+5
+webpack-dev-server: En enkel webserver. Gitt at man skal serve en enkel html-fil, som man trenger som testmiljø, så må
+man ha dette
+
+Kommandoer: npm run build, npm run serve
