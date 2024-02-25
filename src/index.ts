@@ -6,6 +6,7 @@ import * as dom from './lib/dom.js';
 import * as utils from './lib/utils.js';
 import defaultCommands from './lib/defaultCommands.js';
 import defaultOptions from './lib/defaultOptions.js';
+import './themes/square.less';
 
 
 (window as any).sceditor = {
