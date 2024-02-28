@@ -16,16 +16,16 @@
  * @author Alex Betis
  */
 
-(function (sceditor) {
+(function (emlEditor) {
 	'use strict';
 
-	var utils = sceditor.utils;
+	var utils = emlEditor.utils;
 
 	function isFunction(fn) {
 		return typeof fn === 'function';
 	}
 
-	sceditor.plugins['alternative-lists'] = function () {
+	emlEditor.plugins['alternative-lists'] = function () {
 		var base = this;
 
 		/**
@@ -45,11 +45,11 @@
 			}
 
 			// Override only txtExec implementation
-			sceditor.command.get('orderedlist').txtExec = orderedHandler;
-			sceditor.command.get('bulletlist').txtExec = bulletHandler;
+			emlEditor.command.get('orderedlist').txtExec = orderedHandler;
+			emlEditor.command.get('bulletlist').txtExec = bulletHandler;
 
 			// Override current implementation
-			sceditor.formats.bbcode.set('list', {
+			emlEditor.formats.bbcode.set('list', {
 				breakStart: true,
 				isInline: false,
 				skipLastLineBreak: true,
@@ -63,23 +63,23 @@
 
 					if (listType === '1') {
 						// This listType belongs to orderedList (OL)
-						toHtml = sceditor.formats.bbcode.get('ol').html;
+						toHtml = emlEditor.formats.bbcode.get('ol').html;
 					} else {
 						// unknown listType, use default bullet list behavior
-						toHtml = sceditor.formats.bbcode.get('ul').html;
+						toHtml = emlEditor.formats.bbcode.get('ul').html;
 					}
 
 					if (isFunction(toHtml)) {
 						return toHtml.call(this, token, attrs, content);
 					} else {
 						token.attrs['0'] = content;
-						return sceditor.formats.bbcode.formatBBCodeString(
+						return emlEditor.formats.bbcode.formatBBCodeString(
 							toHtml, token.attrs);
 					}
 				}
 			});
 
-			sceditor.formats.bbcode.set('ul', {
+			emlEditor.formats.bbcode.set('ul', {
 				tags: {
 					ul: null
 				},
@@ -90,7 +90,7 @@
 				html: '<ul>{0}</ul>'
 			});
 
-			sceditor.formats.bbcode.set('ol', {
+			emlEditor.formats.bbcode.set('ol', {
 				tags: {
 					ol: null
 				},
@@ -101,7 +101,7 @@
 				html: '<ol>{0}</ol>'
 			});
 
-			sceditor.formats.bbcode.set('li', {
+			emlEditor.formats.bbcode.set('li', {
 				tags: {
 					li: null
 				},
@@ -111,7 +111,7 @@
 				html: '<li>{0}</li>'
 			});
 
-			sceditor.formats.bbcode.set('*', {
+			emlEditor.formats.bbcode.set('*', {
 				isInline: false,
 				excludeClosing: true,
 				closedBy: ['/ul', '/ol', '/list', '*', 'li'],
@@ -154,4 +154,4 @@
 		};
 
 	};
-})(sceditor);
+})(emlEditor);

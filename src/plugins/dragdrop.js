@@ -9,7 +9,7 @@
  *
  * @author Sam Clarke
  */
-(function (sceditor) {
+(function (emlEditor) {
 	'use strict';
 
 	/**
@@ -66,7 +66,7 @@
 		}
 	}
 
-	sceditor.plugins.dragdrop = function () {
+	emlEditor.plugins.dragdrop = function () {
 		if (!isSupported) {
 			return;
 		}
@@ -181,8 +181,8 @@
 
 			container = editor.getContentAreaContainer().parentNode;
 
-			cover = container.appendChild(sceditor.dom.parseHTML(
-				'<div class="sceditor-dnd-cover" style="display: none">' +
+			cover = container.appendChild(emlEditor.dom.parseHTML(
+				'<div class="emlEditor-dnd-cover" style="display: none">' +
 					'<p>' + editor._('Drop files here') + '</p>' +
 				'</div>'
 			).firstChild);
@@ -219,4 +219,4 @@
 			}
 		};
 	};
-})(sceditor);
+})(emlEditor);

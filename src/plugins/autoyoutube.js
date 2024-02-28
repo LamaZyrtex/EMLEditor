@@ -9,10 +9,10 @@
  *
  * @author Sam Clarke
  */
-(function (document, sceditor) {
+(function (document, emlEditor) {
 	'use strict';
 
-	var dom = sceditor.dom;
+	var dom = emlEditor.dom;
 
 	/*
 		(^|\s)					Start of line or space
@@ -83,7 +83,7 @@
 		}
 	};
 
-	sceditor.plugins.autoyoutube = function () {
+	emlEditor.plugins.autoyoutube = function () {
 		this.signalPasteRaw = function (data) {
 			// TODO: Make this tag configurable.
 			// Skip code tags
@@ -95,7 +95,7 @@
 				var node = document.createElement('div');
 
 				node.innerHTML = data.html ||
-					sceditor.escapeEntities(data.text);
+					emlEditor.escapeEntities(data.text);
 
 				convertYoutubeLinks(node, true);
 
@@ -103,4 +103,4 @@
 			}
 		};
 	};
-})(document, sceditor);
+})(document, emlEditor);

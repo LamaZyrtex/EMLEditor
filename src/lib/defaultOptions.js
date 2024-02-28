@@ -5,7 +5,6 @@ import { attr } from './dom.js';
  * @type {Object}
  */
 export default {
-	/** @lends jQuery.sceditor.defaultOptions */
 	/**
 	 * Toolbar buttons order and groups. Should be comma separated and
 	 * have a bar | to separate groups

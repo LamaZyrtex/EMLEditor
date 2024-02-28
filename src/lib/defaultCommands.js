@@ -48,7 +48,6 @@ function fixFirefoxListBug(editor) {
  * Map of all the commands for SCEditor
  * @type {Object}
  * @name commands
- * @memberOf jQuery.sceditor
  */
 var defaultCmds = {
 	// START_COMMAND: Bold

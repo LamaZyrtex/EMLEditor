@@ -1,7 +1,7 @@
-(function (sceditor) {
+(function (emlEditor) {
 	'use strict';
 
-	sceditor.plugins.undo = function () {
+	emlEditor.plugins.undo = function () {
 		var base = this;
 		var sourceEditor;
 		var editor;
@@ -369,4 +369,4 @@
 			return node;
 		}
 	};
-}(sceditor));
+}(emlEditor));

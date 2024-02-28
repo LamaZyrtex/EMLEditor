@@ -9,7 +9,15 @@ import defaultOptions from './lib/defaultOptions.js';
 import './themes/square.less';
 
 
-(window as any).sceditor = {
+type GlobalScope = {
+	emlEditor: any;
+};
+
+
+var editorGlobalScope = (window as any) as GlobalScope;
+
+
+editorGlobalScope.emlEditor = {
 	command: SCEditor.command,
 	commands: defaultCommands,
 	defaultOptions: defaultOptions,

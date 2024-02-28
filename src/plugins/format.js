@@ -10,10 +10,10 @@
  * @fileoverview SCEditor Paragraph Formatting Plugin
  * @author Sam Clarke
  */
-(function (sceditor) {
+(function (emlEditor) {
 	'use strict';
 
-	sceditor.plugins.format = function () {
+	emlEditor.plugins.format = function () {
 		var base = this;
 
 		/**
@@ -70,7 +70,7 @@
 				};
 			}
 
-			if (opts.toolbar === sceditor.defaultOptions.toolbar) {
+			if (opts.toolbar === emlEditor.defaultOptions.toolbar) {
 				opts.toolbar = opts.toolbar.replace(',color,',
 					',color,format,');
 			}
@@ -79,7 +79,7 @@
 		/**
 		 * Inserts the specified tag into the editor
 		 *
-		 * @param  {sceditor} editor
+		 * @param  {emlEditor} editor
 		 * @param  {string} tag
 		 * @private
 		 */
@@ -102,7 +102,7 @@
 			var	editor   = this,
 				content = document.createElement('div');
 
-			sceditor.utils.each(tags, function (tag, val) {
+			emlEditor.utils.each(tags, function (tag, val) {
 				var link = document.createElement('a');
 				link.className = 'sceditor-option';
 				link.textContent = val.name || val;
@@ -124,4 +124,4 @@
 			editor.createDropDown(caller, 'format', content);
 		};
 	};
-})(sceditor);
+})(emlEditor);

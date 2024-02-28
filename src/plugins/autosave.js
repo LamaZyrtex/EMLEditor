@@ -9,7 +9,7 @@
  *
  * @author Sam Clarke
  */
-(function (sceditor) {
+(function (emlEditor) {
 	'use strict';
 
 	var defaultKey = 'sce-autodraft-' + location.pathname + location.search;
@@ -18,7 +18,7 @@
 		localStorage.removeItem(key || defaultKey);
 	}
 
-	sceditor.plugins.autosave = function () {
+	emlEditor.plugins.autosave = function () {
 		var base = this;
 		var editor;
 		var isLoading = false;
@@ -106,5 +106,5 @@
 		};
 	};
 
-	sceditor.plugins.autosave.clear = clear;
-}(sceditor));
+	emlEditor.plugins.autosave.clear = clear;
+}(emlEditor));

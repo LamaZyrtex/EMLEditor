@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <title>EMLEditor</title>
     <script src="./index.js"></script>
+    <script src="./languages/nb.js"></script>
     <link rel="stylesheet" href="./main.css">
 </head>
 
@@ -19,11 +20,13 @@
 
     <script>
         var textarea = document.getElementById('editor');
-        sceditor.create(textarea, {
+        emlEditor.create(textarea, {
             format: 'xhtml',
             width: '80%',
             icons: 'monocons',
-            style: 'https://cdn.jsdelivr.net/npm/sceditor@latest/minified/themes/content/default.min.css'
+            locale: 'nb',
+            style: 'https://cdn.jsdelivr.net/npm/sceditor@latest/minified/themes/content/default.min.css',
+            emoticonsEnabled: false
         });
     </script>
 </body>

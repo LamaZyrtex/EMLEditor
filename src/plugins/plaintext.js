@@ -9,11 +9,11 @@
  *
  * @author Sam Clarke
  */
-(function (sceditor) {
+(function (emlEditor) {
 	'use strict';
 
-	var utils = sceditor.utils;
-	var dom = sceditor.dom;
+	var utils = emlEditor.utils;
+	var dom = emlEditor.dom;
 
 	/**
 	 * Options:
@@ -24,7 +24,7 @@
 	 * pastetext.enabled - If the plain text button should be enabled at start
 	 *                     up. Only applies if addButton is enabled.
 	 */
-	sceditor.plugins.plaintext = function () {
+	emlEditor.plugins.plaintext = function () {
 		var plainTextEnabled = true;
 
 		this.init = function () {
@@ -75,4 +75,4 @@
 			}
 		};
 	};
-}(sceditor));
+}(emlEditor));

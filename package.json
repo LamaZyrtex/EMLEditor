@@ -10,6 +10,7 @@
   "author": "Espen Michael Larød",
   "license": "ISC",
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "css-loader": "^6.10.0",
