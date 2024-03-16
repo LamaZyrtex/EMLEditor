@@ -1,7 +1,7 @@
 import { attr } from './dom.js';
 
 /**
- * Default options for SCEditor
+ * Default options for EmlEditor
  * @type {Object}
  */
 const defaultOptions = {
@@ -358,7 +358,7 @@ const defaultOptions = {
 	 * BBCode parser options, only applies if using the editor in BBCode
 	 * mode.
 	 *
-	 * See SCEditor.BBCodeParser.defaults for list of valid options
+	 * See EmlEditor.BBCodeParser.defaults for list of valid options
 	 *
 	 * @type {Object}
 	 */

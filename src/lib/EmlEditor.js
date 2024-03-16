@@ -47,7 +47,7 @@ function wrapInlines(body, doc) {
 }
 
 /**
- * SCEditor - A lightweight WYSIWYG editor
+ * EmlEditor - A lightweight WYSIWYG editor
  *
  * @param {HTMLTextAreaElement} original The textarea to be converted
  * @param {Object} userOptions

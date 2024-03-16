@@ -1,13 +1,13 @@
 /**
- * SCEditor BBCode Plugin
+ * EmlEditor BBCode Plugin
  * http://www.sceditor.com/
  *
  * Copyright (C) 2011-2017, Sam Clarke (samclarke.com)
  *
- * SCEditor is licensed under the MIT license:
+ * EmlEditor is licensed under the MIT license:
  *	http://www.opensource.org/licenses/mit-license.php
  *
- * @fileoverview SCEditor BBCode Format
+ * @fileoverview EmlEditor BBCode Format
  * @author Sam Clarke
  */
 (function (sceditor) {
@@ -978,7 +978,7 @@
 
 
 	/**
-	 * SCEditor BBCode parser class
+	 * EmlEditor BBCode parser class
 	 *
 	 * @param {Object} options
 	 * @class BBCodeParser
@@ -2175,7 +2175,7 @@
 	}
 
 	/**
-	 * SCEditor BBCode format
+	 * EmlEditor BBCode format
 	 * @since 2.0.0
 	 */
 	function bbcodeFormat() {
@@ -2388,7 +2388,7 @@
 		 * @param {HTMLElement}	element
 		 * @param {boolean}	hasCodeParent
 		 * @return {string} BBCode
-		 * @memberOf SCEditor.plugins.bbcode.prototype
+		 * @memberOf EmlEditor.plugins.bbcode.prototype
 		 */
 		function elementToBbcode(element, hasCodeParent) {
 			var toBBCode = function (node, hasCodeParent, vChildren) {

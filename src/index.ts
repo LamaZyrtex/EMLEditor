@@ -1,4 +1,4 @@
-import SCEditor from './lib/SCEditor.js';
+import EmlEditor from './lib/EmlEditor.js';
 import PluginManager from './lib/PluginManager.js';
 import * as escape from './lib/escape.js';
 import * as browser from './lib/browser.js';
@@ -34,10 +34,10 @@ interface IEditor {
 }
 
 window.emlEditor = {
-	command: SCEditor.command,
-	locale: SCEditor.locale,
-	icons: SCEditor.icons,
-	formats: SCEditor.formats,
+	command: EmlEditor.command,
+	locale: EmlEditor.locale,
+	icons: EmlEditor.icons,
+	formats: EmlEditor.formats,
 
 	commands: defaultCommands,
 	defaultOptions: defaultOptions,
@@ -93,7 +93,7 @@ window.emlEditor = {
 
 		if (options.runWithoutWysiwygSupport || browser.isWysiwygSupported) {
 			/*eslint no-new: off*/
-			(new SCEditor(textarea, options));
+			(new EmlEditor(textarea, options));
 		}
 	},
 

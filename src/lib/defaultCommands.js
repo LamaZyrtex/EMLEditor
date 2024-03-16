@@ -45,7 +45,7 @@ function fixFirefoxListBug(editor) {
 
 
 /**
- * Map of all the commands for SCEditor
+ * Map of all the commands for EmlEditor
  * @type {Object}
  * @name commands
  */

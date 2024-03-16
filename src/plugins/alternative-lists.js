@@ -1,13 +1,13 @@
 /**
- * SCEditor Inline-Code Plugin for BBCode format
+ * EmlEditor Inline-Code Plugin for BBCode format
  * http://www.sceditor.com/
  *
  * Copyright (C) 2011-2013, Sam Clarke (samclarke.com)
  *
- * SCEditor is licensed under the MIT license:
+ * EmlEditor is licensed under the MIT license:
  *	http://www.opensource.org/licenses/mit-license.php
  *
- * @fileoverview SCEditor alternative lists plugin
+ * @fileoverview EmlEditor alternative lists plugin
  * This plugin implements phpBB style of the lists:
  * [list]
  * [*]item

@@ -320,7 +320,7 @@
 					endPositions[0]);
 			} catch (e) {
 				if (console && console.warn) {
-					console.warn('[SCEditor] Undo plugin lost caret', e);
+					console.warn('[EmlEditor] Undo plugin lost caret', e);
 				}
 			}
 		}
