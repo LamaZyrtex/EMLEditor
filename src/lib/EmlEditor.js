@@ -51,10 +51,10 @@ function wrapInlines(body, doc) {
  *
  * @param {HTMLTextAreaElement} original The textarea to be converted
  * @param {Object} userOptions
- * @class SCEditor
- * @name SCEditor
+ * @class EmlEditor
+ * @name EmlEditor
  */
-export default function SCEditor(original, userOptions) {
+export default function EmlEditor(original, userOptions) {
 	/**
 	 * Alias of this
 	 *
@@ -354,7 +354,7 @@ export default function SCEditor(original, userOptions) {
 	/**
 	 * All the commands supported by the editor
 	 * @name commands
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.commands = utils
 		.extend(true, {}, (userOptions.commands || defaultCommands));
@@ -362,7 +362,7 @@ export default function SCEditor(original, userOptions) {
 	/**
 	 * Options for this editor instance
 	 * @name opts
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	var options = base.opts = utils.extend(
 		true, {}, defaultOptions, userOptions
@@ -457,7 +457,7 @@ export default function SCEditor(original, userOptions) {
 		isRequired = original.required;
 		original.required = false;
 
-		var FormatCtor = SCEditor.formats[options.format];
+		var FormatCtor = EmlEditor.formats[options.format];
 		format = FormatCtor ? new FormatCtor() : {};
 		/*
 		 * Plugins should be initialized before the formatters since
@@ -517,11 +517,11 @@ export default function SCEditor(original, userOptions) {
 	initLocale = function () {
 		var lang;
 
-		locale = SCEditor.locale[options.locale];
+		locale = EmlEditor.locale[options.locale];
 
 		if (!locale) {
 			lang   = options.locale.split('-');
-			locale = SCEditor.locale[lang[0]];
+			locale = EmlEditor.locale[lang[0]];
 		}
 
 		// Locale DateTime format overrides any specified in the options
@@ -729,8 +729,8 @@ export default function SCEditor(original, userOptions) {
 			unselectable: 'on'
 		});
 
-		if (options.icons in SCEditor.icons) {
-			icons = new SCEditor.icons[options.icons]();
+		if (options.icons in EmlEditor.icons) {
+			icons = new EmlEditor.icons[options.icons]();
 		}
 
 		utils.each(groups, function (_, menuItems) {
@@ -1043,7 +1043,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name readOnly
 	 * @return {boolean}
 	 */
@@ -1053,7 +1053,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean} readOnly
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name readOnly^2
 	 * @return {this}
 	 */
@@ -1075,7 +1075,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name rtl
 	 * @return {boolean}
 	 */
@@ -1085,7 +1085,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean} rtl
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name rtl^2
 	 * @return {this}
 	 */
@@ -1127,7 +1127,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name width
 	 * @return {number}
 	 */
@@ -1137,7 +1137,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {number} width Width in pixels
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name width^2
 	 * @return {this}
 	 */
@@ -1151,7 +1151,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean}	[saveWidth=true] If to store the width
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name width^3
 	 * @return {this}
 	 */
@@ -1171,7 +1171,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name dimensions
 	 * @return {object}
 	 */
@@ -1184,7 +1184,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {number}	height	Height in px
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name dimensions^2
 	 * @return {this}
 	 */
@@ -1202,7 +1202,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean}	[save=true]	If to store the new sizes
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name dimensions^3
 	 * @return {this}
 	 */
@@ -1239,7 +1239,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name height
 	 * @return {number}
 	 */
@@ -1249,7 +1249,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {number} height Height in px
 	 * @since 1.3.5
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name height^2
 	 * @return {this}
 	 */
@@ -1265,7 +1265,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean} [saveHeight=true] If to store the height
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name height^3
 	 * @return {this}
 	 */
@@ -1284,7 +1284,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name maximize
 	 * @return {boolean}
 	 */
@@ -1294,7 +1294,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean} maximize If to maximise the editor
 	 * @since 1.4.1
 	 * @function
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @name maximize^2
 	 * @return {this}
 	 */
@@ -1342,7 +1342,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {boolean} [ignoreMaxHeight=false]
 	 * @function
 	 * @name expandToContent
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @see #resizeToContent
 	 */
 	base.expandToContent = function (ignoreMaxHeight) {
@@ -1386,7 +1386,7 @@ export default function SCEditor(original, userOptions) {
 	 *
 	 * @function
 	 * @name destroy
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.destroy = function () {
 		// Don't destroy if the editor has already been destroyed
@@ -1433,7 +1433,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param  {HTMLElement} content  The HTML content of the dropdown
 	 * @function
 	 * @name createDropDown
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.createDropDown = function (menuItem, name, content) {
 		// first click for create second click for close
@@ -1676,7 +1676,7 @@ export default function SCEditor(original, userOptions) {
 	 *                             after closing the drop down
 	 * @function
 	 * @name closeDropDown
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.closeDropDown = function (focus) {
 		if (dropdown) {
@@ -1705,7 +1705,7 @@ export default function SCEditor(original, userOptions) {
 	 *                                               support text.
 	 * @function
 	 * @name wysiwygEditorInsertHtml
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.wysiwygEditorInsertHtml = function (
 		html, endHtml, overrideCodeBlocking
@@ -1764,7 +1764,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {string} [endText=null]
 	 * @function
 	 * @name wysiwygEditorInsertText
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.wysiwygEditorInsertText = function (text, endText) {
 		base.wysiwygEditorInsertHtml(
@@ -1785,7 +1785,7 @@ export default function SCEditor(original, userOptions) {
 	 * @since 1.3.5
 	 * @function
 	 * @name insertText
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.insertText = function (text, endText) {
 		if (base.inSourceMode()) {
@@ -1819,7 +1819,7 @@ export default function SCEditor(original, userOptions) {
 	 * @since 1.4.0
 	 * @function
 	 * @name sourceEditorInsertText
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.sourceEditorInsertText = function (text, endText) {
 		var scrollTop, currentValue,
@@ -1855,7 +1855,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {RangeHelper}
 	 * @function
 	 * @name getRangeHelper
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.getRangeHelper = function () {
 		return rangeHelper;
@@ -1869,7 +1869,7 @@ export default function SCEditor(original, userOptions) {
 	 * @function
 	 * @since 1.4.5
 	 * @name sourceEditorCaret
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.sourceEditorCaret = function (position) {
 		sourceEditor.focus();
@@ -1900,7 +1900,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {string}
 	 * @function
 	 * @name val
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	/**
 	 * Sets the value of the editor.
@@ -1915,7 +1915,7 @@ export default function SCEditor(original, userOptions) {
 	 * @since 1.3.5
 	 * @function
 	 * @name val^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.val = function (val, filter) {
 		if (!utils.isString(val)) {
@@ -1956,7 +1956,7 @@ export default function SCEditor(original, userOptions) {
 	 * @since 1.3.5
 	 * @function
 	 * @name insert
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	/**
 	 * Inserts HTML/BBCode into the editor
@@ -1981,7 +1981,7 @@ export default function SCEditor(original, userOptions) {
 	 * @since 1.4.3
 	 * @function
 	 * @name insert^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	// eslint-disable-next-line max-params
 	base.insert = function (
@@ -2031,7 +2031,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {string}
 	 * @function
 	 * @name getWysiwygEditorValue
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.getWysiwygEditorValue = function (filter) {
 		var	html;
@@ -2065,7 +2065,7 @@ export default function SCEditor(original, userOptions) {
 	 * @function
 	 * @since 1.4.3
 	 * @name getBody
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.getBody = function () {
 		return wysiwygBody;
@@ -2078,7 +2078,7 @@ export default function SCEditor(original, userOptions) {
 	 * @function
 	 * @since 1.4.3
 	 * @name getContentAreaContainer
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.getContentAreaContainer = function () {
 		return wysiwygEditor;
@@ -2097,7 +2097,7 @@ export default function SCEditor(original, userOptions) {
 	 * @function
 	 * @since 1.4.0
 	 * @name getSourceEditorValue
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.getSourceEditorValue = function (filter) {
 		var val = sourceEditor.value;
@@ -2116,7 +2116,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {string} value
 	 * @function
 	 * @name setWysiwygEditorValue
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.setWysiwygEditorValue = function (value) {
 		if (!value) {
@@ -2137,7 +2137,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {string} value
 	 * @function
 	 * @name setSourceEditorValue
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.setSourceEditorValue = function (value) {
 		sourceEditor.value = value;
@@ -2152,7 +2152,7 @@ export default function SCEditor(original, userOptions) {
 	 * @function
 	 * @name updateOriginal
 	 * @since 1.4.0
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.updateOriginal = function () {
 		original.value = base.val();
@@ -2176,7 +2176,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {boolean}
 	 * @function
 	 * @name inSourceMode
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.inSourceMode = function () {
 		return dom.hasClass(editorContainer, 'sourceMode');
@@ -2188,7 +2188,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return boolean
 	 * @function
 	 * @name sourceMode
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	/**
 	 * Sets if the editor is in sourceMode
@@ -2197,7 +2197,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name sourceMode^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.sourceMode = function (enable) {
 		var inSourceMode = base.inSourceMode();
@@ -2219,7 +2219,7 @@ export default function SCEditor(original, userOptions) {
 	 * @function
 	 * @name toggleSourceMode
 	 * @since 1.4.0
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.toggleSourceMode = function () {
 		var isInSourceMode = base.inSourceMode();
@@ -2301,7 +2301,7 @@ export default function SCEditor(original, userOptions) {
 	 * @param {String|Boolean} [param]
 	 * @function
 	 * @name execCommand
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.execCommand = function (command, param) {
 		var	executed    = false,
@@ -2420,7 +2420,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {?Node}
 	 * @function
 	 * @name currentNode
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base.currentNode = function () {
 		return currentNode;
@@ -2435,7 +2435,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {?Node}
 	 * @function
 	 * @name currentBlockNode
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.4
 	 */
 	base.currentBlockNode = function () {
@@ -2609,7 +2609,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {string}
 	 * @function
 	 * @name _
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	base._ = function () {
 		var	undef,
@@ -2681,7 +2681,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name bind
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.bind = function (events, handler, excludeWysiwyg, excludeSource) {
@@ -2728,7 +2728,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name unbind
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 * @see bind
 	 */
@@ -2759,7 +2759,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name blur
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.3.6
 	 */
 	/**
@@ -2773,7 +2773,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name blur^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.blur = function (handler, excludeWysiwyg, excludeSource) {
@@ -2794,7 +2794,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name focus
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 */
 	/**
 	 * Adds an event handler to the focus event
@@ -2807,7 +2807,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name focus^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.focus = function (handler, excludeWysiwyg, excludeSource) {
@@ -2864,7 +2864,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name keyDown
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.keyDown = function (handler, excludeWysiwyg, excludeSource) {
@@ -2882,7 +2882,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name keyPress
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.keyPress = function (handler, excludeWysiwyg, excludeSource) {
@@ -2901,7 +2901,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name keyUp
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.keyUp = function (handler, excludeWysiwyg, excludeSource) {
@@ -2918,7 +2918,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name nodeChanged
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.nodeChanged = function (handler) {
@@ -2934,7 +2934,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name selectionChanged
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.1
 	 */
 	base.selectionChanged = function (handler) {
@@ -2959,7 +2959,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name valueChanged
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.5
 	 */
 	base.valueChanged = function (handler, excludeWysiwyg, excludeSource) {
@@ -3027,7 +3027,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {boolean}
 	 * @function
 	 * @name emoticons
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.2
 	 */
 	/**
@@ -3037,7 +3037,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name emoticons^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.2
 	 */
 	base.emoticons = function (enable) {
@@ -3082,7 +3082,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {string}
 	 * @function
 	 * @name css
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.3
 	 */
 	/**
@@ -3092,7 +3092,7 @@ export default function SCEditor(original, userOptions) {
 	 * @return {this}
 	 * @function
 	 * @name css^2
-	 * @memberOf SCEditor.prototype
+	 * @memberOf EmlEditor.prototype
 	 * @since 1.4.3
 	 */
 	base.css = function (css) {
@@ -3518,15 +3518,15 @@ export default function SCEditor(original, userOptions) {
 
 
 /**
- * Map containing the loaded SCEditor locales
+ * Map containing the loaded EmlEditor locales
  * @type {Object}
  * @name locale
  * @memberOf sceditor
  */
-SCEditor.locale = {};
+EmlEditor.locale = {};
 
-SCEditor.formats = {};
-SCEditor.icons = {};
+EmlEditor.formats = {};
+EmlEditor.icons = {};
 
 
 /**
@@ -3534,7 +3534,7 @@ SCEditor.icons = {};
  * @class command
  * @name sceditor.command
  */
-SCEditor.command =
+EmlEditor.command =
 /** @lends sceditor.command */
 {
 	/**
@@ -3558,7 +3558,7 @@ SCEditor.command =
 	 * {@link sceditor.execCommand}</p>
 	 *
 	 * @example
-	 * SCEditor.command.set("hello",
+	 * EmlEditor.command.set("hello",
 	 * {
 	 *     exec: function () {
 	 *         alert("Hello World!");
@@ -3579,7 +3579,7 @@ SCEditor.command =
 		cmd = utils.extend(defaultCommands[name] || {}, cmd);
 
 		cmd.remove = function () {
-			SCEditor.command.remove(name);
+			EmlEditor.command.remove(name);
 		};
 
 		defaultCommands[name] = cmd;
