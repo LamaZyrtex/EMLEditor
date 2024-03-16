@@ -4,7 +4,7 @@ import { attr } from './dom.js';
  * Default options for SCEditor
  * @type {Object}
  */
-export default {
+const defaultOptions = {
 	/**
 	 * Toolbar buttons order and groups. Should be comma separated and
 	 * have a bar | to separate groups
@@ -396,3 +396,5 @@ export default {
 	 */
 	allowedAttributes: []
 };
+
+export default defaultOptions;

@@ -8,23 +8,41 @@ import defaultCommands from './lib/defaultCommands.js';
 import defaultOptions from './lib/defaultOptions.js';
 import './themes/square.less';
 
+declare global {
+	interface Window {
+		emlEditor: IEditor;
+	}
+}
 
-type GlobalScope = {
-	emlEditor: any;
-};
+interface IEditor {
+	command: Object;
+	locale: Object;
+	icons: Object;
+	formats: Object;
+	commands: Object;
+	defaultOptions: Object;
+	ios: boolean;
+	isWysiwygSupported: boolean;
+	regexEscape(str: string): string;
+	escapeEntities(str: string, noQuotes: boolean | null): string;
+	escapeUriScheme(url: string): string;
+	dom: Object;
+	utils: Object;
+	plugins: Object;
+	create(textarea: HTMLTextAreaElement, options: Object): void;
+	instance(textarea: HTMLTextAreaElement): IEditor;
+}
 
-
-var editorGlobalScope = (window as any) as GlobalScope;
-
-
-editorGlobalScope.emlEditor = {
+window.emlEditor = {
 	command: SCEditor.command,
+	locale: SCEditor.locale,
+	icons: SCEditor.icons,
+	formats: SCEditor.formats,
+
 	commands: defaultCommands,
 	defaultOptions: defaultOptions,
-
 	ios: browser.ios,
 	isWysiwygSupported: browser.isWysiwygSupported,
-
 	regexEscape: escape.regex,
 	escapeEntities: escape.entities,
 	escapeUriScheme: escape.uriScheme,
@@ -55,15 +73,15 @@ editorGlobalScope.emlEditor = {
 		getStyle: dom.getStyle,
 		hasStyle: dom.hasStyle
 	},
-	locale: SCEditor.locale,
-	icons: SCEditor.icons,
+
 	utils: {
 		each: utils.each,
 		isEmptyObject: utils.isEmptyObject,
 		extend: utils.extend
 	},
+
 	plugins: PluginManager.plugins,
-	formats: SCEditor.formats,
+
 	create: function (textarea: any, options: any) {
 		options = options || {};
 
@@ -78,6 +96,7 @@ editorGlobalScope.emlEditor = {
 			(new SCEditor(textarea, options));
 		}
 	},
+
 	instance: function (textarea: any) {
 		return textarea._sceditor;
 	}
