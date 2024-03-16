@@ -29,10 +29,10 @@ function wrapInlines(body, doc) {
 		if (dom.isInline(node, true)) {
 			// Ignore text nodes unless they contain non-whitespace chars as
 			// whitespace will be collapsed.
-			// Ignore sceditor-ignore elements unless wrapping siblings
+			// Ignore emleditor-ignore elements unless wrapping siblings
 			// Should still wrap both if wrapping siblings.
 			if (wrapper || node.nodeType === dom.TEXT_NODE ?
-				/\S/.test(node.nodeValue) : !dom.is(node, '.sceditor-ignore')) {
+				/\S/.test(node.nodeValue) : !dom.is(node, '.emleditor-ignore')) {
 				if (!wrapper) {
 					wrapper = dom.createElement('p', {}, doc);
 					dom.insertBefore(wrapper, node);
@@ -448,7 +448,7 @@ export default function EmlEditor(textarea, userOptions) {
 		}
 
 		editorContainer = dom.createElement('div', {
-			className: 'sceditor-container'
+			className: 'emleditor-container'
 		});
 
 		dom.insertBefore(editorContainer, textarea);
@@ -725,7 +725,7 @@ export default function EmlEditor(textarea, userOptions) {
 			groups   = options.toolbar.split('|');
 
 		toolbar = dom.createElement('div', {
-			className: 'sceditor-toolbar',
+			className: 'emleditor-toolbar',
 			unselectable: 'on'
 		});
 
@@ -735,7 +735,7 @@ export default function EmlEditor(textarea, userOptions) {
 
 		utils.each(groups, function (_, menuItems) {
 			group = dom.createElement('div', {
-				className: 'sceditor-group'
+				className: 'emleditor-group'
 			});
 
 			utils.each(menuItems.split(','), function (_, commandName) {
@@ -826,12 +826,12 @@ export default function EmlEditor(textarea, userOptions) {
 		var	minHeight, maxHeight, minWidth, maxWidth,
 			mouseMoveFunc, mouseUpFunc,
 			grip        = dom.createElement('div', {
-				className: 'sceditor-grip'
+				className: 'emleditor-grip'
 			}),
 			// Cover is used to cover the editor iframe so document
 			// still gets mouse move events
 			cover       = dom.createElement('div', {
-				className: 'sceditor-resize-cover'
+				className: 'emleditor-resize-cover'
 			}),
 			moveEvents  = 'touchmove mousemove',
 			endEvents   = 'touchcancel touchend mouseup',
@@ -1299,7 +1299,7 @@ export default function EmlEditor(textarea, userOptions) {
 	 * @return {this}
 	 */
 	base.maximize = function (maximize) {
-		var maximizeSize = 'sceditor-maximize';
+		var maximizeSize = 'emleditor-maximize';
 
 		if (utils.isUndefined(maximize)) {
 			return dom.hasClass(editorContainer, maximizeSize);
@@ -1429,7 +1429,7 @@ export default function EmlEditor(textarea, userOptions) {
 	 *
 	 * @param  {HTMLElement} menuItem The button to align the dropdown with
 	 * @param  {string} name          Used for styling the dropdown, will be
-	 *                                a class sceditor-name
+	 *                                a class emleditor-name
 	 * @param  {HTMLElement} content  The HTML content of the dropdown
 	 * @function
 	 * @name createDropDown
@@ -1438,7 +1438,7 @@ export default function EmlEditor(textarea, userOptions) {
 	base.createDropDown = function (menuItem, name, content) {
 		// first click for create second click for close
 		var	dropDownCss,
-			dropDownClass = 'sceditor-' + name;
+			dropDownClass = 'emleditor-' + name;
 
 		base.closeDropDown();
 
@@ -1454,7 +1454,7 @@ export default function EmlEditor(textarea, userOptions) {
 		}, options.dropDownCss);
 
 		dropdown = dom.createElement('div', {
-			className: 'sceditor-dropdown ' + dropDownClass
+			className: 'emleditor-dropdown ' + dropDownClass
 		});
 
 		dom.css(dropdown, dropDownCss);
@@ -1736,7 +1736,7 @@ export default function EmlEditor(textarea, userOptions) {
 		wrapInlines(wysiwygBody, wysiwygDocument);
 
 		// Scroll the editor after the end of the selection
-		marker   = dom.find(wysiwygBody, '#sceditor-end-marker')[0];
+		marker   = dom.find(wysiwygBody, '#emleditor-end-marker')[0];
 		dom.show(marker);
 		scrollTop = wysiwygBody.scrollTop;
 		scrollTo  = (dom.getOffset(marker).top +
@@ -2565,9 +2565,9 @@ export default function EmlEditor(textarea, userOptions) {
 				!/inline/.test(dom.css(node, 'display'))) {
 
 				// Add line break after if has styling
-				if (!dom.is(node, '.sceditor-nlf') && dom.hasStyling(node)) {
+				if (!dom.is(node, '.emleditor-nlf') && dom.hasStyling(node)) {
 					var paragraph = dom.createElement('p', {}, wysiwygDocument);
-					paragraph.className = 'sceditor-nlf';
+					paragraph.className = 'emleditor-nlf';
 					paragraph.innerHTML = '<br />';
 					dom.appendChild(wysiwygBody, paragraph);
 					return false;
@@ -3060,10 +3060,10 @@ export default function EmlEditor(textarea, userOptions) {
 			}
 		} else {
 			var emoticons =
-				dom.find(wysiwygBody, 'img[data-sceditor-emoticon]');
+				dom.find(wysiwygBody, 'img[data-emleditor-emoticon]');
 
 			utils.each(emoticons, function (_, img) {
-				var text = dom.data(img, 'sceditor-emoticon');
+				var text = dom.data(img, 'emleditor-emoticon');
 				var textNode = wysiwygDocument.createTextNode(text);
 				img.parentNode.replaceChild(textNode, img);
 			});
@@ -3264,7 +3264,7 @@ export default function EmlEditor(textarea, userOptions) {
 	 * Adds a shortcut handler to the editor
 	 * @param  {string}          shortcut
 	 * @param  {String|Function} cmd
-	 * @return {sceditor}
+	 * @return {emleditor}
 	 */
 	base.addShortcut = function (shortcut, cmd) {
 		shortcut = shortcut.toLowerCase();
@@ -3285,7 +3285,7 @@ export default function EmlEditor(textarea, userOptions) {
 	/**
 	 * Removes a shortcut handler
 	 * @param  {string} shortcut
-	 * @return {sceditor}
+	 * @return {emleditor}
 	 */
 	base.removeShortcut = function (shortcut) {
 		delete shortcutHandlers[shortcut.toLowerCase()];
@@ -3410,10 +3410,10 @@ export default function EmlEditor(textarea, userOptions) {
 		// ended when triggerValueChanged() is called so reset it
 		isComposing = false;
 
-		// Don't need to save the range if sceditor-start-marker
+		// Don't need to save the range if emleditor-start-marker
 		// is present as the range is already saved
 		saveRange = saveRange !== false &&
-			!wysiwygDocument.getElementById('sceditor-start-marker');
+			!wysiwygDocument.getElementById('emleditor-start-marker');
 
 		// Clear any current timeout as it's now been triggered
 		if (valueChangedKeyUpTimer) {
@@ -3521,7 +3521,7 @@ export default function EmlEditor(textarea, userOptions) {
  * Map containing the loaded EmlEditor locales
  * @type {Object}
  * @name locale
- * @memberOf sceditor
+ * @memberOf emleditor
  */
 EmlEditor.locale = {};
 
@@ -3532,10 +3532,10 @@ EmlEditor.icons = {};
 /**
  * Static command helper class
  * @class command
- * @name sceditor.command
+ * @name emleditor.command
  */
 EmlEditor.command =
-/** @lends sceditor.command */
+/** @lends emleditor.command */
 {
 	/**
 	 * Gets a command
@@ -3555,7 +3555,7 @@ EmlEditor.command =
 	 * <p>Once a command is add it can be included in the toolbar by
 	 * adding it's name to the toolbar option in the constructor. It
 	 * can also be executed manually by calling
-	 * {@link sceditor.execCommand}</p>
+	 * {@link emleditor.execCommand}</p>
 	 *
 	 * @example
 	 * EmlEditor.command.set("hello",

@@ -105,7 +105,7 @@
 		function createHolder(toReplace) {
 			var placeholder = document.createElement('img');
 			placeholder.src = loadingGif;
-			placeholder.className = 'sceditor-ignore';
+			placeholder.className = 'emleditor-ignore';
 			placeholder.id = 'sce-dragdrop-' + placeholderId++;
 
 			function replace(html) {

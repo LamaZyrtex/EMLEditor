@@ -905,7 +905,7 @@ export function removeWhiteSpace(root) {
 			previous  = getSibling(node, true);
 			trimStart = false;
 
-			while (hasClass(previous, 'sceditor-ignore')) {
+			while (hasClass(previous, 'emleditor-ignore')) {
 				previous = getSibling(previous, true);
 			}
 
@@ -918,7 +918,7 @@ export function removeWhiteSpace(root) {
 					previousSibling = previousSibling.lastChild;
 
 					// eslint-disable-next-line max-depth
-					while (hasClass(previousSibling, 'sceditor-ignore')) {
+					while (hasClass(previousSibling, 'emleditor-ignore')) {
 						previousSibling = getSibling(previousSibling, true);
 					}
 				}

@@ -30,7 +30,7 @@ const defaultOptions = {
 	 *
 	 * @type {string}
 	 */
-	style: 'jquery.sceditor.default.css',
+	style: 'jquery.emleditor.default.css',
 
 	/**
 	 * Comma separated list of fonts for the font selector

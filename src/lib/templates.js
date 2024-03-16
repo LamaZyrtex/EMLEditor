@@ -19,17 +19,17 @@ var _templates = {
 			'<body contenteditable="true" {spellcheck}><p></p></body>' +
 		'</html>',
 
-	toolbarButton: '<a class="sceditor-button sceditor-button-{name}" ' +
-		'data-sceditor-command="{name}" unselectable="on">' +
+	toolbarButton: '<a class="emleditor-button emleditor-button-{name}" ' +
+		'data-emleditor-command="{name}" unselectable="on">' +
 		'<div unselectable="on">{dispName}</div></a>',
 
-	emoticon: '<img src="{url}" data-sceditor-emoticon="{key}" ' +
+	emoticon: '<img src="{url}" data-emleditor-emoticon="{key}" ' +
 		'alt="{key}" title="{tooltip}" />',
 
-	fontOpt: '<a class="sceditor-font-option" href="#" ' +
+	fontOpt: '<a class="emleditor-font-option" href="#" ' +
 		'data-font="{font}"><font face="{font}">{font}</font></a>',
 
-	sizeOpt: '<a class="sceditor-fontsize-option" data-size="{size}" ' +
+	sizeOpt: '<a class="emleditor-fontsize-option" data-size="{size}" ' +
 		'href="#"><font size="{size}">{size}</font></a>',
 
 	pastetext:

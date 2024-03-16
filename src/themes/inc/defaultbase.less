@@ -10,7 +10,7 @@
 
 @import "elements.less";
 
-.sceditor-container {
+.emleditor-container {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -36,16 +36,16 @@
   }
 }
 
-.sceditor-container,
-.sceditor-container div,
-div.sceditor-dropdown,
-div.sceditor-dropdown div {
+.emleditor-container,
+.emleditor-container div,
+div.emleditor-dropdown,
+div.emleditor-dropdown div {
   padding: 0;
   margin: 0;
   z-index: 3;
 }
-.sceditor-container iframe,
-.sceditor-container textarea {
+.emleditor-container iframe,
+.emleditor-container textarea {
   display: block;
   -ms-flex: 1 1 0%;
   flex: 1 1 0%;
@@ -67,11 +67,11 @@ div.sceditor-dropdown div {
   min-height: 1px;
 }
 
-.sceditor-container textarea {
+.emleditor-container textarea {
   margin: 7px 5px;
 }
 
-div.sceditor-dnd-cover {
+div.emleditor-dnd-cover {
   position: absolute;
   top: 0;
   left: 0;
@@ -84,13 +84,13 @@ div.sceditor-dnd-cover {
   text-align: center;
   color: #aaa;
 }
-div.sceditor-dnd-cover p {
+div.emleditor-dnd-cover p {
   position: relative;
   top: 45%;
   pointer-events: none;
 }
 
-div.sceditor-resize-cover {
+div.emleditor-resize-cover {
   position: absolute;
   top: 0;
   left: 0;
@@ -101,7 +101,7 @@ div.sceditor-resize-cover {
   opacity: 0.3;
 }
 
-div.sceditor-grip {
+div.emleditor-grip {
   overflow: hidden;
   width: 10px;
   height: 10px;
@@ -113,11 +113,11 @@ div.sceditor-grip {
   line-height: 0;
 }
 
-div.sceditor-grip.has-icon {
+div.emleditor-grip.has-icon {
   background-image: none;
 }
 
-.sceditor-maximize {
+.emleditor-maximize {
   position: fixed;
   top: 0;
   left: 0;
@@ -128,8 +128,8 @@ div.sceditor-grip.has-icon {
 }
 
 // Used to hide scrollbars when maximized
-html.sceditor-maximize,
-body.sceditor-maximize {
+html.emleditor-maximize,
+body.emleditor-maximize {
   height: 100%;
   width: 100%;
   padding: 0;
@@ -137,18 +137,18 @@ body.sceditor-maximize {
   overflow: hidden;
 }
 
-.sceditor-maximize div.sceditor-grip {
+.emleditor-maximize div.emleditor-grip {
   display: none;
 }
 
-.sceditor-maximize div.sceditor-toolbar {
+.emleditor-maximize div.emleditor-toolbar {
   .rounded(0);
 }
 
 /**
 	 * Dropdown styleing
 	 */
-div.sceditor-dropdown {
+div.emleditor-dropdown {
   position: absolute;
   border: 1px solid #ccc;
   background: #fff;
@@ -169,24 +169,24 @@ div.sceditor-dropdown {
   .box-shadow(1px 2px 4px rgba(0,0,0,0.2));
 }
 
-div.sceditor-dropdown a,
-div.sceditor-dropdown a:link {
+div.emleditor-dropdown a,
+div.emleditor-dropdown a:link {
   color: #333;
 }
 
-div.sceditor-dropdown form {
+div.emleditor-dropdown form {
   margin: 0;
 }
 
-div.sceditor-dropdown label {
+div.emleditor-dropdown label {
   display: block;
   font-weight: bold;
   color: #3c3c3c;
   padding: 4px 0;
 }
 
-div.sceditor-dropdown input,
-div.sceditor-dropdown textarea {
+div.emleditor-dropdown input,
+div.emleditor-dropdown textarea {
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   outline: 0;
   padding: 4px;
@@ -197,18 +197,18 @@ div.sceditor-dropdown textarea {
   .rounded(1px);
 }
 
-div.sceditor-dropdown textarea {
+div.emleditor-dropdown textarea {
   padding: 6px;
 }
 
-div.sceditor-dropdown input:focus,
-div.sceditor-dropdown textarea:focus {
+div.emleditor-dropdown input:focus,
+div.emleditor-dropdown textarea:focus {
   border-color: #aaa;
   border-top-color: #666;
   .box-shadow(inset 0 1px 5px rgba(0,0,0,0.1));
 }
 
-div.sceditor-dropdown .button {
+div.emleditor-dropdown .button {
   font-weight: bold;
   color: #444;
   padding: 6px 12px;
@@ -219,39 +219,39 @@ div.sceditor-dropdown .button {
   margin: 0.3em 0 0;
 }
 
-div.sceditor-dropdown .button:hover {
+div.emleditor-dropdown .button:hover {
   background: #f3f3f3;
   .box-shadow(0 1px 1px rgba(0,0,0,0.15));
 }
 
-div.sceditor-font-picker,
-div.sceditor-fontsize-picker,
-div.sceditor-format {
+div.emleditor-font-picker,
+div.emleditor-fontsize-picker,
+div.emleditor-format {
   padding: 6px 0;
 }
 
-div.sceditor-color-picker {
+div.emleditor-color-picker {
   padding: 4px;
 }
 
-div.sceditor-emoticons,
-div.sceditor-more-emoticons {
+div.emleditor-emoticons,
+div.emleditor-more-emoticons {
   padding: 0;
 }
 
-.sceditor-pastetext textarea {
+.emleditor-pastetext textarea {
   border: 1px solid #bbb;
   width: 20em;
 }
 
-.sceditor-emoticons img,
-.sceditor-more-emoticons img {
+.emleditor-emoticons img,
+.emleditor-more-emoticons img {
   padding: 0;
   cursor: pointer;
   margin: 2px;
 }
 
-.sceditor-more {
+.emleditor-more {
   border-top: 1px solid #bbb;
   display: block;
   text-align: center;
@@ -260,13 +260,13 @@ div.sceditor-more-emoticons {
   padding: 6px 0;
 }
 
-.sceditor-dropdown a:hover {
+.emleditor-dropdown a:hover {
   background: #eee;
 }
 
-.sceditor-fontsize-option,
-.sceditor-font-option,
-.sceditor-format a {
+.emleditor-fontsize-option,
+.emleditor-font-option,
+.emleditor-format a {
   display: block;
   padding: 7px 10px;
   cursor: pointer;
@@ -274,15 +274,15 @@ div.sceditor-more-emoticons {
   color: #222;
 }
 
-.sceditor-fontsize-option {
+.emleditor-fontsize-option {
   padding: 7px 13px;
 }
 
-.sceditor-color-column {
+.emleditor-color-column {
   float: left;
 }
 
-.sceditor-color-option {
+.emleditor-color-option {
   display: block;
   border: 2px solid #fff;
   height: 18px;
@@ -290,14 +290,14 @@ div.sceditor-more-emoticons {
   overflow: hidden;
 }
 
-.sceditor-color-option:hover {
+.emleditor-color-option:hover {
   border: 1px solid #aaa;
 }
 
 /**
 	 * Toolbar styleing
 	 */
-div.sceditor-toolbar {
+div.emleditor-toolbar {
   flex-shrink: 0;
   overflow: hidden;
   padding: 3px 5px 2px;
@@ -311,7 +311,7 @@ div.sceditor-toolbar {
   .rounded(3px 3px 0 0);
 }
 
-div.sceditor-group {
+div.emleditor-group {
   display: inline-block;
   background: #ddd;
   margin: 1px 5px 1px 0;
@@ -321,7 +321,7 @@ div.sceditor-group {
   .rounded(3px);
 }
 
-.sceditor-button {
+.emleditor-button {
   float: left;
   cursor: pointer;
   padding: 3px 5px;
@@ -330,30 +330,30 @@ div.sceditor-group {
   .rounded(3px);
 }
 
-.sceditor-button:hover,
-.sceditor-button:active,
-.sceditor-button.active {
+.emleditor-button:hover,
+.emleditor-button:active,
+.emleditor-button.active {
   background: #fff;
   .box-shadow(~"inset 1px 1px 0 rgba(0,0,0,0.3), inset -1px 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2)");
 }
 
-.sceditor-button:active {
+.emleditor-button:active {
   background: #fff;
   .box-shadow(~"inset 1px 1px 0 rgba(0,0,0,0.3), inset -1px 0 rgba(0,0,0,0.3), inset 0 -1px 0 rgba(0,0,0,0.2), inset 0 0 8px rgba(0,0,0,0.3)");
 }
 
-.sceditor-button.disabled:hover {
+.emleditor-button.disabled:hover {
   background: inherit;
   cursor: default;
   .box-shadow(none);
 }
 
-.sceditor-button,
-.sceditor-button div {
+.emleditor-button,
+.emleditor-button div {
   display: block;
 }
 
-.sceditor-button svg {
+.emleditor-button svg {
   display: inline-block;
   height: 16px;
   width: 16px;
@@ -365,11 +365,11 @@ div.sceditor-group {
   line-height: 1;
 }
 
-.sceditor-button.disabled svg {
+.emleditor-button.disabled svg {
   fill: #888;
 }
 
-.sceditor-button div {
+.emleditor-button div {
   display: inline-block;
   margin: 2px 0;
   padding: 0;
@@ -379,22 +379,22 @@ div.sceditor-group {
   color: transparent;
 }
 
-.sceditor-button.has-icon div {
+.emleditor-button.has-icon div {
   display: none;
 }
 
-.sceditor-button.disabled div {
+.emleditor-button.disabled div {
   opacity: 0.3;
 }
 
-.text .sceditor-button,
-.text .sceditor-button div,
-.sceditor-button.text,
-.sceditor-button.text div,
-.text-icon .sceditor-button,
-.text-icon .sceditor-button div,
-.sceditor-button.text-icon,
-.sceditor-button.text-icon div {
+.text .emleditor-button,
+.text .emleditor-button div,
+.emleditor-button.text,
+.emleditor-button.text div,
+.text-icon .emleditor-button,
+.text-icon .emleditor-button div,
+.emleditor-button.text-icon,
+.emleditor-button.text-icon div {
   display: inline-block;
   width: auto;
   line-height: 16px;
@@ -403,34 +403,34 @@ div.sceditor-group {
   text-indent: 0;
 }
 
-.text-icon .sceditor-button.has-icon div,
-.sceditor-button.has-icon div,
-.text .sceditor-button div,
-.sceditor-button.text div {
+.text-icon .emleditor-button.has-icon div,
+.emleditor-button.has-icon div,
+.text .emleditor-button div,
+.emleditor-button.text div {
   padding: 0 2px;
   background: none;
 }
 
-.text .sceditor-button svg,
-.sceditor-button.text svg {
+.text .emleditor-button svg,
+.emleditor-button.text svg {
   display: none;
 }
 
-.text-icon .sceditor-button div,
-.sceditor-button.text-icon div {
+.text-icon .emleditor-button div,
+.emleditor-button.text-icon div {
   padding: 0 2px 0 20px;
 }
 
 .rtl {
-  div.sceditor-toolbar {
+  div.emleditor-toolbar {
     text-align: right;
   }
 
-  .sceditor-button {
+  .emleditor-button {
     float: right;
   }
 
-  div.sceditor-grip {
+  div.emleditor-grip {
     right: auto;
     left: 0;
   }

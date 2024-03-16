@@ -9,11 +9,11 @@
  *
  * @author Sam Clarke
  */
-(function (sceditor) {
+(function (emleditor) {
 	'use strict';
 
-	var dom = sceditor.dom;
-	var utils = sceditor.utils;
+	var dom = emleditor.dom;
+	var utils = emleditor.utils;
 
 	var css = dom.css;
 	var attr = dom.attr;
@@ -24,7 +24,7 @@
 	var each = utils.each;
 	var isEmptyObject = utils.isEmptyObject;
 
-	var getEditorCommand = sceditor.command.get;
+	var getEditorCommand = emleditor.command.get;
 
 	var defaultCommandsOverrides = {
 		bold: {
@@ -208,10 +208,10 @@
 	 * XHTMLSerializer part of the XHTML plugin.
 	 *
 	 * @class XHTMLSerializer
-	 * @name jQuery.sceditor.XHTMLSerializer
+	 * @name jQuery.emleditor.XHTMLSerializer
 	 * @since v1.4.1
 	 */
-	sceditor.XHTMLSerializer = function () {
+	emleditor.XHTMLSerializer = function () {
 		var base = this;
 
 		var opts = {
@@ -276,7 +276,7 @@
 		 *                                itself
 		 * @return {string}               The serialized node
 		 * @name serialize
-		 * @memberOf jQuery.sceditor.XHTMLSerializer.prototype
+		 * @memberOf jQuery.emleditor.XHTMLSerializer.prototype
 		 * @since v1.4.1
 		 */
 		base.serialize = function (node, onlyChildren) {
@@ -370,7 +370,7 @@
 				selfClosing = !node.firstChild && !dom.canHaveChildren(node) &&
 					!isIframe;
 
-			if (is(node, '.sceditor-ignore')) {
+			if (is(node, '.emleditor-ignore')) {
 				return;
 			}
 
@@ -496,7 +496,7 @@
 	/**
 	 * EmlEditor XHTML plugin
 	 * @class xhtml
-	 * @name jQuery.sceditor.plugins.xhtml
+	 * @name jQuery.emleditor.plugins.xhtml
 	 * @since v1.4.1
 	 */
 	function xhtmlFormat() {
@@ -548,7 +548,7 @@
 		 * @param  {Document} context
 		 * @param  {HTMLElement} [parent]
 		 * @return {string}
-		 * @memberOf jQuery.sceditor.plugins.xhtml.prototype
+		 * @memberOf jQuery.emleditor.plugins.xhtml.prototype
 		 */
 		function toSource(isFragment, html, context) {
 			var xhtml,
@@ -566,7 +566,7 @@
 				wrapInlines(container);
 			}
 
-			xhtml = (new sceditor.XHTMLSerializer()).serialize(container, true);
+			xhtml = (new emleditor.XHTMLSerializer()).serialize(container, true);
 
 			context.body.removeChild(container);
 
@@ -644,7 +644,7 @@
 				return true;
 			}
 
-			if (is(node, '.sceditor-ignore')) {
+			if (is(node, '.emleditor-ignore')) {
 				return true;
 			}
 
@@ -717,13 +717,13 @@
 				if (nodeType === 1) {
 					// skip empty nlf elements (new lines automatically
 					// added after block level elements like quotes)
-					if (is(node, '.sceditor-nlf')) {
+					if (is(node, '.emleditor-nlf')) {
 						if (!firstChild || (node.childNodes.length === 1 &&
 							/br/i.test(firstChild.nodeName))) {
 							// Mark as empty,it will be removed by the next code
 							empty = true;
 						} else {
-							node.classList.remove('sceditor-nlf');
+							node.classList.remove('emleditor-nlf');
 
 							if (!node.className) {
 								removeAttr(node, 'class');
@@ -814,7 +814,7 @@
 			while (node) {
 				next = node.nextSibling;
 
-				if (dom.isInline(node) && !is(node, '.sceditor-ignore')) {
+				if (dom.isInline(node) && !is(node, '.emleditor-ignore')) {
 					if (!wrapper) {
 						wrapper = root.ownerDocument.createElement('p');
 						node.parentNode.insertBefore(wrapper, node);
@@ -900,7 +900,7 @@
 	 * Tag conveters, a converter is applied to all
 	 * tags that match the criteria.
 	 * @type {Array}
-	 * @name jQuery.sceditor.plugins.xhtml.converters
+	 * @name jQuery.emleditor.plugins.xhtml.converters
 	 * @since v1.4.1
 	 */
 	xhtmlFormat.converters = [
@@ -1221,7 +1221,7 @@
 	 * Leave empty or null to allow all attributes. (the disallow
 	 * list will be used to filter them instead)
 	 * @type {Object}
-	 * @name jQuery.sceditor.plugins.xhtml.allowedAttribs
+	 * @name jQuery.emleditor.plugins.xhtml.allowedAttribs
 	 * @since v1.4.1
 	 */
 	xhtmlFormat.allowedAttribs = {};
@@ -1231,7 +1231,7 @@
 	 *
 	 * Only used if allowed attributes is null or empty.
 	 * @type {Object}
-	 * @name jQuery.sceditor.plugins.xhtml.disallowedAttribs
+	 * @name jQuery.emleditor.plugins.xhtml.disallowedAttribs
 	 * @since v1.4.1
 	 */
 	xhtmlFormat.disallowedAttribs = {};
@@ -1241,7 +1241,7 @@
 	 *
 	 * If null or empty all tags will be allowed.
 	 * @type {Array}
-	 * @name jQuery.sceditor.plugins.xhtml.allowedTags
+	 * @name jQuery.emleditor.plugins.xhtml.allowedTags
 	 * @since v1.4.1
 	 */
 	xhtmlFormat.allowedTags = [];
@@ -1251,7 +1251,7 @@
 	 *
 	 * Only used if allowed tags is null or empty.
 	 * @type {Array}
-	 * @name jQuery.sceditor.plugins.xhtml.disallowedTags
+	 * @name jQuery.emleditor.plugins.xhtml.disallowedTags
 	 * @since v1.4.1
 	 */
 	xhtmlFormat.disallowedTags = [];
@@ -1260,10 +1260,10 @@
 	 * Array containing tags which should not be removed when empty.
 	 *
 	 * @type {Array}
-	 * @name jQuery.sceditor.plugins.xhtml.allowedEmptyTags
+	 * @name jQuery.emleditor.plugins.xhtml.allowedEmptyTags
 	 * @since v2.0.0
 	 */
 	xhtmlFormat.allowedEmptyTags = [];
 
-	sceditor.formats.xhtml = xhtmlFormat;
-}(sceditor));
+	emleditor.formats.xhtml = xhtmlFormat;
+}(emleditor));

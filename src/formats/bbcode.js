@@ -10,14 +10,14 @@
  * @fileoverview EmlEditor BBCode Format
  * @author Sam Clarke
  */
-(function (sceditor) {
+(function (emleditor) {
 	/*eslint max-depth: off*/
 	'use strict';
 
-	var escapeEntities  = sceditor.escapeEntities;
-	var escapeUriScheme = sceditor.escapeUriScheme;
-	var dom             = sceditor.dom;
-	var utils           = sceditor.utils;
+	var escapeEntities  = emleditor.escapeEntities;
+	var escapeUriScheme = emleditor.escapeUriScheme;
+	var dom             = emleditor.dom;
+	var utils           = emleditor.utils;
 
 	var css    = dom.css;
 	var attr   = dom.attr;
@@ -25,9 +25,9 @@
 	var extend = utils.extend;
 	var each   = utils.each;
 
-	var EMOTICON_DATA_ATTR = 'data-sceditor-emoticon';
+	var EMOTICON_DATA_ATTR = 'data-emleditor-emoticon';
 
-	var getEditorCommand = sceditor.command.get;
+	var getEditorCommand = emleditor.command.get;
 
 	var QuoteType = {
 		/** @lends BBCodeParser.QuoteType */
@@ -511,7 +511,7 @@
 			tags: {
 				img: {
 					src: null,
-					'data-sceditor-emoticon': null
+					'data-emleditor-emoticon': null
 				}
 			},
 			format: function (element, content) {
@@ -2425,7 +2425,7 @@
 					if (nodeType === 1) {
 						// skip empty nlf elements (new lines automatically
 						// added after block level elements like quotes)
-						if (is(node, '.sceditor-nlf') && !firstChild) {
+						if (is(node, '.emleditor-nlf') && !firstChild) {
 							return;
 						}
 
@@ -2541,8 +2541,8 @@
 				css(container, 'whiteSpace', css(parent, 'whiteSpace'));
 			}
 
-			// Remove all nodes with sceditor-ignore class
-			elements = container.getElementsByClassName('sceditor-ignore');
+			// Remove all nodes with emleditor-ignore class
+			elements = container.getElementsByClassName('emleditor-ignore');
 			while (elements.length) {
 				elements[0].parentNode.removeChild(elements[0]);
 			}
@@ -2641,6 +2641,6 @@
 
 	bbcodeFormat.formatBBCodeString = formatBBCodeString;
 
-	sceditor.formats.bbcode = bbcodeFormat;
-	sceditor.BBCodeParser = BBCodeParser;
-}(sceditor));
+	emleditor.formats.bbcode = bbcodeFormat;
+	emleditor.BBCodeParser = BBCodeParser;
+}(emleditor));

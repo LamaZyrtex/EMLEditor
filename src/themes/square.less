@@ -15,12 +15,12 @@
 
 @import "default.less";
 
-.sceditor-container {
+.emleditor-container {
   border: 1px solid #d6d6d6;
   .rounded(0);
 }
 
-.sceditor-container textarea {
+.emleditor-container textarea {
   font-family: Consolas, "Bitstream Vera Sans Mono", "Andale Mono", Monaco,
     "DejaVu Sans Mono", "Lucida Console", monospace;
   background: #2e3436;
@@ -29,18 +29,18 @@
   padding: 5px;
 }
 
-div.sceditor-toolbar,
-div.sceditor-group {
+div.emleditor-toolbar,
+div.emleditor-group {
   background: #f2f2f2;
   background: linear-gradient(to bottom, #f2f2f2 0%, #dddddd 89%);
 }
 
-div.sceditor-toolbar {
+div.emleditor-toolbar {
   padding: 0;
   border-bottom: 1px solid #bbb;
   background-size: 100% 32px;
 }
-div.sceditor-group {
+div.emleditor-group {
   margin: 0;
   padding: 2px 4px;
   border: 0;
@@ -48,48 +48,48 @@ div.sceditor-group {
   border-left: 1px solid #eaeaea;
   .rounded(0);
 }
-div.sceditor-group:last-child {
+div.emleditor-group:last-child {
   border-right: 0;
 }
-div.sceditor-group:first-child {
+div.emleditor-group:first-child {
   border-left: 0;
 }
-.sceditor-button {
+.emleditor-button {
   height: 16px;
   padding: 5px;
   margin: 1px;
 
   .rounded(0);
 }
-.sceditor-button div,
-.sceditor-button svg {
+.emleditor-button div,
+.emleditor-button svg {
   margin: 0;
 }
-.sceditor-button.active,
-.sceditor-button:hover,
-.sceditor-button:active,
-.sceditor-button.active:hover {
+.emleditor-button.active,
+.emleditor-button:hover,
+.emleditor-button:active,
+.emleditor-button.active:hover {
   margin: 0;
   box-shadow: none;
 }
 
-.sceditor-button.active {
+.emleditor-button.active {
   background: #f4f4f4;
   border: 1px solid #ccc;
 }
-.sceditor-button:hover {
+.emleditor-button:hover {
   background: #fefefe;
   border: 1px solid #ddd;
 }
-.sceditor-button.disabled:hover {
+.emleditor-button.disabled:hover {
   margin: 1px;
   border: 0;
 }
-.sceditor-button:active {
+.emleditor-button:active {
   background: #eee;
   border: 1px solid #ccc;
 }
-.sceditor-button.active:hover {
+.emleditor-button.active:hover {
   background: #f8f8f8;
   border: 1px solid #ddd;
 }

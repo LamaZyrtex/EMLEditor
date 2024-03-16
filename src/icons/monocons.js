@@ -9,10 +9,10 @@
  *
  * @author Sam Clarke
  */
-(function (document, sceditor) {
+(function (document, emleditor) {
 	'use strict';
 
-	var dom = sceditor.dom;
+	var dom = emleditor.dom;
 
 	/* eslint max-len: off*/
 	var icons = {
@@ -61,14 +61,14 @@
 		'youtube': '<path d="M2 2C1 2 0 3 0 4v8c0 1 1 2 2 2h12c1 0 2-1 2-2V4c0-1-1-2-2-2H2zm4 3l6 3-6 3V5z"/>'
 	};
 
-	sceditor.icons.monocons = function () {
+	emleditor.icons.monocons = function () {
 		var nodes = {};
 		var colorPath;
 
 		return {
 			create: function (command) {
 				if (command in icons) {
-					nodes[command] = sceditor.dom.parseHTML(
+					nodes[command] = emleditor.dom.parseHTML(
 						'<svg xmlns="http://www.w3.org/2000/svg" ' +
 							'viewbox="0 0 16 16" unselectable="on">' +
 								icons[command] +
@@ -108,5 +108,5 @@
 		};
 	};
 
-	sceditor.icons.monocons.icons = icons;
-})(document, sceditor);
+	emleditor.icons.monocons.icons = icons;
+})(document, emleditor);

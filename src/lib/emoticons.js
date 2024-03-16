@@ -12,7 +12,7 @@ import * as escape from './escape.js';
  */
 export function checkWhitespace(node, rangeHelper) {
 	var noneWsRegex = /[^\s\xA0\u2002\u2003\u2009]+/;
-	var emoticons = node && dom.find(node, 'img[data-sceditor-emoticon]');
+	var emoticons = node && dom.find(node, 'img[data-emleditor-emoticon]');
 
 	if (!node || !emoticons.length) {
 		return;
@@ -34,7 +34,7 @@ export function checkWhitespace(node, rangeHelper) {
 		var rangeStartContainer = range.startContainer;
 		var previousText = (prev && prev.nodeValue) || '';
 
-		previousText += dom.data(emoticon, 'sceditor-emoticon');
+		previousText += dom.data(emoticon, 'emleditor-emoticon');
 
 		// If the cursor is after the removed emoticon, add
 		// the length of the newly added text to it

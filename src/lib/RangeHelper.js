@@ -76,8 +76,8 @@ var outerText = function (range, isLeft, length) {
 export default function RangeHelper(win, d, sanitize) {
 	var	_createMarker, _prepareInput,
 		doc          = d || win.contentDocument || win.document,
-		startMarker  = 'sceditor-start-marker',
-		endMarker    = 'sceditor-end-marker',
+		startMarker  = 'emleditor-start-marker',
+		endMarker    = 'emleditor-end-marker',
 		base         = this;
 
 	/**
@@ -431,7 +431,7 @@ export default function RangeHelper(win, d, sanitize) {
 
 		var marker  = dom.createElement('span', {
 			id: id,
-			className: 'sceditor-selection sceditor-ignore',
+			className: 'emleditor-selection emleditor-ignore',
 			style: 'display:none;line-height:0'
 		}, doc);
 
@@ -538,7 +538,7 @@ export default function RangeHelper(win, d, sanitize) {
 			!dom.isInline(container, true)) {
 
 			lastChild = container.lastChild;
-			while (lastChild && dom.is(lastChild, '.sceditor-ignore')) {
+			while (lastChild && dom.is(lastChild, '.emleditor-ignore')) {
 				lastChild = lastChild.previousSibling;
 			}
 

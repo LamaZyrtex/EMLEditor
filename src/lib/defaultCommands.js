@@ -210,11 +210,11 @@ var defaultCmds = {
 
 			if (!cmd._htmlCache) {
 				editor.opts.colors.split('|').forEach(function (column) {
-					html += '<div class="sceditor-color-column">';
+					html += '<div class="emleditor-color-column">';
 
 					column.split(',').forEach(function (color) {
 						html +=
-							'<a href="#" class="sceditor-color-option"' +
+							'<a href="#" class="emleditor-color-option"' +
 							' style="background-color: ' + color + '"' +
 							' data-color="' + color + '"></a>';
 					});
@@ -708,7 +708,7 @@ var defaultCmds = {
 
 				if (!includeMore && opts.emoticons.more) {
 					moreLink = dom.createElement('a', {
-						className: 'sceditor-more'
+						className: 'emleditor-more'
 					});
 
 					dom.appendChild(moreLink,

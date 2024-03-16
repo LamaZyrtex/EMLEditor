@@ -104,7 +104,7 @@
 
 			emlEditor.utils.each(tags, function (tag, val) {
 				var link = document.createElement('a');
-				link.className = 'sceditor-option';
+				link.className = 'emleditor-option';
 				link.textContent = val.name || val;
 				link.addEventListener('click', function (e) {
 					editor.closeDropDown(true);

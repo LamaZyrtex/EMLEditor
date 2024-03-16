@@ -87,7 +87,7 @@ window.emlEditor = {
 
 		// Don't allow the editor to be initialised
 		// on it's own source editor
-		if (dom.parent(textarea, '.sceditor-container')) {
+		if (dom.parent(textarea, '.emleditor-container')) {
 			return;
 		}
 
