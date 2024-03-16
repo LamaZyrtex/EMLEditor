@@ -49,12 +49,12 @@ function wrapInlines(body, doc) {
 /**
  * EmlEditor - A lightweight WYSIWYG editor
  *
- * @param {HTMLTextAreaElement} original The textarea to be converted
+ * @param {HTMLTextAreaElement} textarea The textarea to be converted
  * @param {Object} userOptions
  * @class EmlEditor
  * @name EmlEditor
  */
-export default function EmlEditor(original, userOptions) {
+export default function EmlEditor(textarea, userOptions) {
 	/**
 	 * Alias of this
 	 *
@@ -440,7 +440,7 @@ export default function EmlEditor(original, userOptions) {
 	 * @private
 	 */
 	init = function () {
-		original._sceditor = base;
+		textarea._sceditor = base;
 
 		// Load locale
 		if (options.locale && options.locale !== 'en') {
@@ -451,11 +451,11 @@ export default function EmlEditor(original, userOptions) {
 			className: 'sceditor-container'
 		});
 
-		dom.insertBefore(editorContainer, original);
+		dom.insertBefore(editorContainer, textarea);
 		dom.css(editorContainer, 'z-index', options.zIndex);
 
-		isRequired = original.required;
-		original.required = false;
+		isRequired = textarea.required;
+		textarea.required = false;
 
 		var FormatCtor = EmlEditor.formats[options.format];
 		format = FormatCtor ? new FormatCtor() : {};
@@ -568,8 +568,8 @@ export default function EmlEditor(original, userOptions) {
 
 		// TODO: make this optional somehow
 		base.dimensions(
-			options.width || dom.width(original),
-			options.height || dom.height(original)
+			options.width || dom.width(textarea),
+			options.height || dom.height(textarea)
 		);
 
 		// Add ios to HTML so can apply CSS fix to only it
@@ -596,18 +596,18 @@ export default function EmlEditor(original, userOptions) {
 			dom.on(wysiwygBody, 'touchend', base.focus);
 		}
 
-		var tabIndex = dom.attr(original, 'tabindex');
+		var tabIndex = dom.attr(textarea, 'tabindex');
 		dom.attr(sourceEditor, 'tabindex', tabIndex);
 		dom.attr(wysiwygEditor, 'tabindex', tabIndex);
 
 		rangeHelper = new RangeHelper(wysiwygWindow, null, sanitize);
 
 		// load any textarea value into the editor
-		dom.hide(original);
-		base.val(original.value);
+		dom.hide(textarea);
+		base.val(textarea.value);
 
 		var placeholder = options.placeholder ||
-			dom.attr(original, 'placeholder');
+			dom.attr(textarea, 'placeholder');
 
 		if (placeholder) {
 			sourceEditor.placeholder = placeholder;
@@ -651,7 +651,7 @@ export default function EmlEditor(original, userOptions) {
 	 * @private
 	 */
 	initEvents = function () {
-		var form = original.form;
+		var form = textarea.form;
 		var compositionEvents = 'compositionstart compositionend';
 		var eventsToForward =
 			'keydown keyup keypress focus blur contextmenu input';
@@ -1355,7 +1355,7 @@ export default function EmlEditor(original, userOptions) {
 
 		if (!autoExpandBounds) {
 			var height = options.resizeMinHeight || options.height ||
-				dom.height(original);
+				dom.height(textarea);
 
 			autoExpandBounds = {
 				min: height,
@@ -1405,7 +1405,7 @@ export default function EmlEditor(original, userOptions) {
 
 		dom.off(globalDoc, 'click', handleDocumentClick);
 
-		var form = original.form;
+		var form = textarea.form;
 		if (form) {
 			dom.off(form, 'reset', handleFormReset);
 			dom.off(form, 'submit', base.updateOriginal, dom.EVENT_CAPTURE);
@@ -1417,10 +1417,10 @@ export default function EmlEditor(original, userOptions) {
 		dom.remove(toolbar);
 		dom.remove(editorContainer);
 
-		delete original._sceditor;
-		dom.show(original);
+		delete textarea._sceditor;
+		dom.show(textarea);
 
-		original.required = isRequired;
+		textarea.required = isRequired;
 	};
 
 
@@ -2155,7 +2155,7 @@ export default function EmlEditor(original, userOptions) {
 	 * @memberOf EmlEditor.prototype
 	 */
 	base.updateOriginal = function () {
-		original.value = base.val();
+		textarea.value = base.val();
 	};
 
 	/**
@@ -2588,7 +2588,7 @@ export default function EmlEditor(original, userOptions) {
 	 * @private
 	 */
 	handleFormReset = function () {
-		base.val(original.value);
+		base.val(textarea.value);
 	};
 
 	/**
