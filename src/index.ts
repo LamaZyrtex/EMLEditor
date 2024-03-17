@@ -1,5 +1,5 @@
 import EmlEditor from './lib/EmlEditor.js';
-import PluginManager from './lib/PluginManager.js';
+import { PluginManager } from './lib/pluginManager';
 import * as escape from './lib/escape.js';
 import * as browser from './lib/browser.js';
 import * as dom from './lib/dom.js';
@@ -82,7 +82,7 @@ window.emlEditor = {
 
 	plugins: PluginManager.plugins,
 
-	create: function (textarea: any, options: any) {
+	create: function (textarea: HTMLTextAreaElement, options: any) {
 		options = options || {};
 
 		// Don't allow the editor to be initialised

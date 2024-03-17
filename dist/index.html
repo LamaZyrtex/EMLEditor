@@ -13,15 +13,14 @@
 <body>
     <form method="post">
         <div>
-            <textarea id="editor" style="height:300px;width:600px;">
+            <textarea id="emlEditor" style="height:300px;width:600px;">
                 </textarea>
         </div>
     </form>
-
-
     <script>
-        var textarea = document.getElementById('editor');
+        var textarea = document.getElementById('emlEditor');
         emlEditor.create(textarea, {
+            plugins: 'undo',
             format: 'xhtml',
             width: '80%',
             icons: 'monocons',
