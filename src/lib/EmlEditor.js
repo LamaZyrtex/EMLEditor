@@ -3,7 +3,7 @@ import * as utils from './utils.js';
 import defaultOptions from './defaultOptions.js';
 import defaultCommands from './defaultCommands.js';
 import { PluginManager } from './pluginManager';
-import RangeHelper from './RangeHelper.js';
+import {RangeHelper} from './rangeHelper';
 import _tmpl from './templates.js';
 import * as escape from './escape.js';
 import * as browser from './browser.js';

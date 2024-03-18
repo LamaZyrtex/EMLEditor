@@ -138,7 +138,7 @@ export function remove(node) {
  * Appends child to parent node
  *
  * @param {!HTMLElement} node
- * @param {!HTMLElement} child
+ * @param {Node | string | null } child
  */
 export function appendChild(node, child) {
 	node.appendChild(child);
