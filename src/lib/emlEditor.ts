@@ -61,11 +61,11 @@ export default class EmlEditor {
 	toggleSourceMode: () => void;
 	longestEmoticonCode: number;
 	inSourceMode: () => boolean;
-	blur: (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean) => any;
+	blur: (handler?: Function, excludeWysiwyg?: boolean, excludeSource?: boolean) => any;
 	setWysiwygEditorValue: (value: string) => void;
 	setSourceEditorValue: (value: string) => void;
 	updateOriginal: () => void;
-	getSourceEditorValue: (filter: boolean) => string;
+	getSourceEditorValue: (filter?: boolean) => string;
 	dimensions: (width?: any, height?: any, save?: boolean) => any;
 	readOnly: (readOnly?: any) => any;
 	focus: (handler?: any, excludeWysiwyg?: boolean, excludeSource?: boolean) => any;
@@ -74,20 +74,20 @@ export default class EmlEditor {
 	rtl: (rtl?: boolean) => any;
 	emoticons: (enable: boolean) => any;
 	sourceMode: (enable?: boolean) => any;
-	width: (width: number, saveWidth: boolean) => any;
-	height: (height: number, saveHeight: boolean) => any;
+	width: (width?: number, saveWidth?: boolean) => any;
+	height: (height?: number, saveHeight?: boolean) => any;
 	createDropDown: (menuItem: HTMLElement, name: string, content: HTMLElement) => void;
-	maximize: (maximize: boolean) => any;
+	maximize: (maximize?: boolean) => any;
 	destroy: () => void;
 	closeDropDown: (focus?: boolean) => void;
-	wysiwygEditorInsertHtml: (html: string, endHtml: string, overrideCodeBlocking: boolean) => void;
+	wysiwygEditorInsertHtml: (html: string, endHtml?: string, overrideCodeBlocking?: boolean) => void;
 	wysiwygEditorInsertText: (text: string, endText: string) => void;
 	insertText: (text: string, endText: string) => any;
 	sourceEditorInsertText: (text: string, endText: string) => void;
 	getRangeHelper: () => RangeHelper;
 	sourceEditorCaret: (position: any) => any;
 	insert: (start: string, end: string, filter: boolean, convertEmoticons: boolean, allowMixed: boolean) => any;
-	getWysiwygEditorValue: (filter: boolean) => string;
+	getWysiwygEditorValue: (filter?: boolean) => string;
 	getBody: () => HTMLBodyElement;
 	getContentAreaContainer: () => HTMLElement;
 	execCommand: (command: string, param: string | boolean) => void;
@@ -106,7 +106,7 @@ export default class EmlEditor {
 	emoticonsCache: any;
 	addShortcut: (shortcut: string, cmd: string | Function) => any;
 	clearBlockFormatting: (block: HTMLElement) => any;
-	translate: () => string;
+	translate: (...args: any) => string;
 
 	// Static
 	static locale: any = {};
@@ -115,6 +115,8 @@ export default class EmlEditor {
 	static command: any = {};
 
 	constructor(textarea: any, userOptions: any) {
+
+		let emlEditor = this;
 
 		/**
 		 * Editor format like BBCode or HTML
@@ -377,7 +379,7 @@ export default class EmlEditor {
 		 * @name commands
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.commands = utils
+		emlEditor.commands = utils
 			.extend(true, {}, (userOptions.commands || defaultCommands));
 
 		/**
@@ -385,12 +387,12 @@ export default class EmlEditor {
 		 * @name opts
 		 * @memberOf EmlEditor.prototype
 		 */
-		let options: any = this.opts = utils.extend(
+		let options: any = emlEditor.opts = utils.extend(
 			true, {}, (defaultOptions as any), userOptions
 		);
 
 		// Don't deep extend emoticons (fixes #565)
-		this.opts.emoticons = userOptions.emoticons || (defaultOptions as any).emoticons;
+		emlEditor.opts.emoticons = userOptions.emoticons || (defaultOptions as any).emoticons;
 
 		if (!Array.isArray(options.allowedIframeUrls)) {
 			options.allowedIframeUrls = [];
@@ -464,8 +466,8 @@ export default class EmlEditor {
 		 * @since 1.4.0
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.toggleSourceMode = function () {
-			let isInSourceMode = this.inSourceMode();
+		emlEditor.toggleSourceMode = function () {
+			let isInSourceMode = emlEditor.inSourceMode();
 
 			// don't allow switching to WYSIWYG if doesn't support it
 			if (!browser.isWysiwygSupported && isInSourceMode) {
@@ -478,12 +480,12 @@ export default class EmlEditor {
 			}
 
 			currentSelection = null;
-			this.blur();
+			emlEditor.blur();
 
 			if (isInSourceMode) {
-				this.setWysiwygEditorValue(this.getSourceEditorValue());
+				emlEditor.setWysiwygEditorValue(emlEditor.getSourceEditorValue());
 			} else {
-				this.setSourceEditorValue(this.getWysiwygEditorValue());
+				emlEditor.setSourceEditorValue(emlEditor.getWysiwygEditorValue());
 			}
 
 			dom.toggle(sourceEditor);
@@ -504,7 +506,7 @@ export default class EmlEditor {
 		* @name inSourceMode
 		* @memberOf EmlEditor.prototype
 		*/
-		this.inSourceMode = function (): boolean {
+		emlEditor.inSourceMode = function (): boolean {
 			return dom.hasClass(editorContainer, 'sourceMode');
 		};
 
@@ -522,16 +524,16 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.blur = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+		emlEditor.blur = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
 			if (utils.isFunction(handler)) {
-				this.bind('blur', handler, excludeWysiwyg, excludeSource);
-			} else if (!this.sourceMode()) {
+				emlEditor.bind('blur', handler, excludeWysiwyg, excludeSource);
+			} else if (!emlEditor.sourceMode()) {
 				wysiwygBody.blur();
 			} else {
 				sourceEditor.blur();
 			}
 
-			return this;
+			return emlEditor;
 		};
 
 		/**
@@ -543,7 +545,7 @@ export default class EmlEditor {
 		 * @name setWysiwygEditorValue
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.setWysiwygEditorValue = function (value: string) {
+		emlEditor.setWysiwygEditorValue = function (value: string) {
 			if (!value) {
 				value = '<p><br /></p>';
 			}
@@ -564,7 +566,7 @@ export default class EmlEditor {
 		 * @name setSourceEditorValue
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.setSourceEditorValue = function (value: string) {
+		emlEditor.setSourceEditorValue = function (value: string) {
 			sourceEditor.value = value;
 
 			triggerValueChanged();
@@ -579,8 +581,8 @@ export default class EmlEditor {
 		 * @since 1.4.0
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.updateOriginal = function () {
-			textarea.value = this.val();
+		emlEditor.updateOriginal = function () {
+			textarea.value = emlEditor.val();
 		};
 
 		/**
@@ -598,7 +600,7 @@ export default class EmlEditor {
 		 * @name getSourceEditorValue
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.getSourceEditorValue = function (filter: boolean): string {
+		emlEditor.getSourceEditorValue = function (filter: boolean): string {
 			let val = sourceEditor.value;
 
 			if (filter !== false && 'toHtml' in format) {
@@ -625,13 +627,13 @@ export default class EmlEditor {
 		 * @name dimensions^3
 		 * @return {this}
 		 */
-		this.dimensions = function (width?: any, height?: any, save?: boolean): any {
+		emlEditor.dimensions = function (width?: any, height?: any, save?: boolean): any {
 			// set undefined width/height to boolean false
 			width = (!width && width !== 0) ? false : width;
 			height = (!height && height !== 0) ? false : height;
 
 			if (width === false && height === false) {
-				return { width: this.width(), height: this.height() };
+				return { width: emlEditor.width(), height: emlEditor.height() };
 			}
 
 			if (width !== false) {
@@ -663,7 +665,7 @@ export default class EmlEditor {
 		 * @name readOnly^2
 		 * @return {this}
 		 */
-		this.readOnly = function (readOnly?: any): any {
+		emlEditor.readOnly = function (readOnly?: any): any {
 			if (typeof readOnly !== 'boolean') {
 				return !sourceEditor.readOnly;
 			}
@@ -690,10 +692,10 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.focus = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+		emlEditor.focus = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
 			if (utils.isFunction(handler)) {
-				this.bind('focus', handler, excludeWysiwyg, excludeSource);
-			} else if (!this.inSourceMode()) {
+				emlEditor.bind('focus', handler, excludeWysiwyg, excludeSource);
+			} else if (!emlEditor.inSourceMode()) {
 				// Already has focus so do nothing
 				if (dom.find(wysiwygDocument, ':focus').length) {
 					return;
@@ -748,21 +750,21 @@ export default class EmlEditor {
 		 * @name val^2
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.val = function (val?: string, filter: boolean = true): any {
+		emlEditor.val = function (val?: string, filter: boolean = true): any {
 			if (!utils.isString(val)) {
-				return this.inSourceMode() ?
-					this.getSourceEditorValue(false) :
-					this.getWysiwygEditorValue(filter);
+				return emlEditor.inSourceMode() ?
+					emlEditor.getSourceEditorValue(false) :
+					emlEditor.getWysiwygEditorValue(filter);
 			}
 
-			if (!this.inSourceMode()) {
+			if (!emlEditor.inSourceMode()) {
 				if (filter !== false && 'toHtml' in format) {
 					val = format.toHtml(val);
 				}
 
-				this.setWysiwygEditorValue(val);
+				emlEditor.setWysiwygEditorValue(val);
 			} else {
-				this.setSourceEditorValue(val);
+				emlEditor.setSourceEditorValue(val);
 			}
 
 			return this;
@@ -781,8 +783,8 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @see #resizeToContent
 		 */
-		this.expandToContent = function (ignoreMaxHeight: boolean) {
-			if (this.maximize()) {
+		emlEditor.expandToContent = function (ignoreMaxHeight: boolean) {
+			if (emlEditor.maximize()) {
 				return;
 			}
 
@@ -805,13 +807,13 @@ export default class EmlEditor {
 			let rect = range.getBoundingClientRect();
 			let current = wysiwygDocument.documentElement.clientHeight - 1;
 			let spaceNeeded = rect.bottom - rect.top;
-			let newHeight = this.height() + 1 + (spaceNeeded - current);
+			let newHeight = emlEditor.height() + 1 + (spaceNeeded - current);
 
 			if (!ignoreMaxHeight && autoExpandBounds.max !== -1) {
 				newHeight = Math.min(newHeight, autoExpandBounds.max);
 			}
 
-			this.height(Math.ceil(Math.max(newHeight, autoExpandBounds.min)));
+			emlEditor.height(Math.ceil(Math.max(newHeight, autoExpandBounds.min)));
 		};
 
 		/**
@@ -824,7 +826,7 @@ export default class EmlEditor {
 		 * @name rtl^2
 		 * @return {this}
 		 */
-		this.rtl = function (rtl?: boolean): any {
+		emlEditor.rtl = function (rtl?: boolean): any {
 			let dir = rtl ? 'rtl' : 'ltr';
 
 			if (typeof rtl !== 'boolean') {
@@ -855,7 +857,7 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.2
 		 */
-		this.emoticons = function (enable: boolean): any {
+		emlEditor.emoticons = function (enable: boolean): any {
 			if (!enable && enable !== false) {
 				return options.emoticonsEnabled;
 			}
@@ -865,7 +867,7 @@ export default class EmlEditor {
 			if (enable) {
 				dom.on(wysiwygBody, 'keypress', null, emoticonsKeyPress);
 
-				if (!this.sourceMode()) {
+				if (!emlEditor.sourceMode()) {
 					rangeHelper.saveRange();
 
 					replaceEmoticons();
@@ -899,15 +901,15 @@ export default class EmlEditor {
 		 * @name sourceMode^2
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.sourceMode = function (enable?: boolean): any {
-			let inSourceMode = this.inSourceMode();
+		emlEditor.sourceMode = function (enable?: boolean): any {
+			let inSourceMode = emlEditor.inSourceMode();
 
 			if (typeof enable !== 'boolean') {
 				return inSourceMode;
 			}
 
 			if ((inSourceMode && !enable) || (!inSourceMode && enable)) {
-				this.toggleSourceMode();
+				emlEditor.toggleSourceMode();
 			}
 			return this;
 		};
@@ -926,12 +928,12 @@ export default class EmlEditor {
 		 * @name width^3
 		 * @return {this}
 		 */
-		this.width = function (width: number, saveWidth: boolean): any {
+		emlEditor.width = function (width: number, saveWidth: boolean): any {
 			if (!width && width !== 0) {
 				return dom.width(editorContainer);
 			}
 
-			this.dimensions(width, null, saveWidth);
+			emlEditor.dimensions(width, null, saveWidth);
 
 			return this;
 		};
@@ -952,12 +954,12 @@ export default class EmlEditor {
 		 * @name height^3
 		 * @return {this}
 		 */
-		this.height = function (height: number, saveHeight: boolean): any {
+		emlEditor.height = function (height?: number, saveHeight?: boolean): any {
 			if (!height && height !== 0) {
 				return dom.height(editorContainer);
 			}
 
-			this.dimensions(null, height, saveHeight);
+			emlEditor.dimensions(null, height, saveHeight);
 
 			return this;
 		};
@@ -973,11 +975,11 @@ export default class EmlEditor {
 		 * @name createDropDown
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.createDropDown = function (menuItem: HTMLElement, name: string, content: HTMLElement) {
+		emlEditor.createDropDown = function (menuItem: HTMLElement, name: string, content: HTMLElement) {
 			// first click for create second click for close
 			let dropDownCss, dropDownClass = 'emleditor-' + name;
 
-			this.closeDropDown();
+			emlEditor.closeDropDown();
 
 			// Only close the dropdown if it was already open
 			if (dropdown && dom.hasClass(dropdown, dropDownClass)) {
@@ -1020,7 +1022,7 @@ export default class EmlEditor {
 		 * @name maximize^2
 		 * @return {this}
 		 */
-		this.maximize = function (maximize: boolean): any {
+		emlEditor.maximize = function (maximize?: boolean): any {
 			let maximizeSize = 'emleditor-maximize';
 
 			if (utils.isUndefined(maximize)) {
@@ -1036,8 +1038,8 @@ export default class EmlEditor {
 			dom.toggleClass(globalDoc.documentElement, maximizeSize, maximize);
 			dom.toggleClass(globalDoc.body, maximizeSize, maximize);
 			dom.toggleClass(editorContainer, maximizeSize, maximize);
-			this.width(maximize ? '100%' : options.width, false);
-			this.height(maximize ? '100%' : options.height, false);
+			emlEditor.width(maximize ? '100%' : options.width, false);
+			emlEditor.height(maximize ? '100%' : options.height, false);
 
 			if (!maximize) {
 				globalWin.scrollTo(0, maximizeScrollPosition);
@@ -1058,7 +1060,7 @@ export default class EmlEditor {
 		 * @name destroy
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.destroy = function () {
+		emlEditor.destroy = function () {
 			// Don't destroy if the editor has already been destroyed
 			if (!pluginManager) {
 				return;
@@ -1078,10 +1080,10 @@ export default class EmlEditor {
 			let form = textarea.form;
 			if (form) {
 				dom.off(form, 'reset', null, handleFormReset);
-				dom.off(form, 'submit', null, this.updateOriginal, dom.EVENT_CAPTURE);
+				dom.off(form, 'submit', null, emlEditor.updateOriginal, dom.EVENT_CAPTURE);
 			}
 
-			dom.off(window, 'pagehide', null, this.updateOriginal);
+			dom.off(window, 'pagehide', null, emlEditor.updateOriginal);
 			dom.off(window, 'pageshow', null, handleFormReset);
 			dom.remove(sourceEditor);
 			dom.remove(toolbar);
@@ -1102,14 +1104,14 @@ export default class EmlEditor {
 		 * @name closeDropDown
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.closeDropDown = function (focus?: boolean) {
+		emlEditor.closeDropDown = function (focus?: boolean) {
 			if (dropdown) {
 				dom.remove(dropdown);
 				dropdown = null;
 			}
 
 			if (focus === true) {
-				this.focus();
+				emlEditor.focus();
 			}
 		};
 
@@ -1130,10 +1132,10 @@ export default class EmlEditor {
 		 * @name wysiwygEditorInsertHtml
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.wysiwygEditorInsertHtml = function (html: string, endHtml: string, overrideCodeBlocking: boolean) {
+		emlEditor.wysiwygEditorInsertHtml = function (html: string, endHtml?: string, overrideCodeBlocking?: boolean) {
 			let marker: any, scrollTop, scrollTo, editorHeight = dom.height(wysiwygEditor);
 
-			this.focus();
+			emlEditor.focus();
 
 			// TODO: This code tag should be configurable and
 			// should maybe convert the HTML into text instead
@@ -1186,8 +1188,8 @@ export default class EmlEditor {
 		 * @name wysiwygEditorInsertText
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.wysiwygEditorInsertText = function (text: string, endText: string) {
-			this.wysiwygEditorInsertHtml(
+		emlEditor.wysiwygEditorInsertText = function (text: string, endText: string) {
+			emlEditor.wysiwygEditorInsertHtml(
 				escape.entities(text), escape.entities(endText)
 			);
 		};
@@ -1207,11 +1209,11 @@ export default class EmlEditor {
 		 * @name insertText
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.insertText = function (text: string, endText: string): any {
-			if (this.inSourceMode()) {
-				this.sourceEditorInsertText(text, endText);
+		emlEditor.insertText = function (text: string, endText: string): any {
+			if (emlEditor.inSourceMode()) {
+				emlEditor.sourceEditorInsertText(text, endText);
 			} else {
-				this.wysiwygEditorInsertText(text, endText);
+				emlEditor.wysiwygEditorInsertText(text, endText);
 			}
 
 			return this;
@@ -1258,7 +1260,7 @@ export default class EmlEditor {
 			pluginManager.call('pasteHtml', paste);
 
 			let parent = rangeHelper.getFirstBlockParent();
-			this.wysiwygEditorInsertHtml(paste.val, null, true);
+			emlEditor.wysiwygEditorInsertHtml(paste.val, null, true);
 			dom.merge(parent);
 		};
 
@@ -1287,7 +1289,7 @@ export default class EmlEditor {
 		 * @name sourceEditorInsertText
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.sourceEditorInsertText = function (text: string, endText: string): void {
+		emlEditor.sourceEditorInsertText = function (text: string, endText: string): void {
 			let scrollTop, currentValue, startPos = sourceEditor.selectionStart, endPos = sourceEditor.selectionEnd;
 
 			scrollTop = sourceEditor.scrollTop;
@@ -1322,7 +1324,7 @@ export default class EmlEditor {
 		 * @name getRangeHelper
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.getRangeHelper = function (): RangeHelper {
+		emlEditor.getRangeHelper = function (): RangeHelper {
 			return rangeHelper;
 		};
 
@@ -1337,7 +1339,7 @@ export default class EmlEditor {
 		 * @name sourceEditorCaret
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.sourceEditorCaret = function (position: any): any {
+		emlEditor.sourceEditorCaret = function (position: any): any {
 			sourceEditor.focus();
 
 			if (position) {
@@ -1381,11 +1383,11 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 */
 		// eslint-disable-next-line max-params
-		this.insert = function (
+		emlEditor.insert = function (
 			start: string, end: string, filter: boolean, convertEmoticons: boolean, allowMixed: boolean
 		): any {
-			if (this.inSourceMode()) {
-				this.sourceEditorInsertText(start, end);
+			if (emlEditor.inSourceMode()) {
+				emlEditor.sourceEditorInsertText(start, end);
 				return this;
 			}
 
@@ -1412,7 +1414,7 @@ export default class EmlEditor {
 					.replace(/&amp;/g, '&');
 			}
 
-			this.wysiwygEditorInsertHtml(start);
+			emlEditor.wysiwygEditorInsertHtml(start);
 
 			return this;
 		};
@@ -1431,7 +1433,7 @@ export default class EmlEditor {
 		 * @name getWysiwygEditorValue
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.getWysiwygEditorValue = function (filter: boolean): string {
+		emlEditor.getWysiwygEditorValue = function (filter: boolean): string {
 			let html;
 			// Create a tmp node to store contents so it can be modified
 			// without affecting anything else.
@@ -1466,7 +1468,7 @@ export default class EmlEditor {
 		 * @name getBody
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.getBody = function (): HTMLBodyElement {
+		emlEditor.getBody = function (): HTMLBodyElement {
 			return wysiwygBody;
 		};
 
@@ -1479,7 +1481,7 @@ export default class EmlEditor {
 		 * @name getContentAreaContainer
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.getContentAreaContainer = function (): HTMLElement {
+		emlEditor.getContentAreaContainer = function (): HTMLElement {
 			return wysiwygEditor;
 		};
 
@@ -1493,10 +1495,10 @@ export default class EmlEditor {
 		 * @name execCommand
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.execCommand = function (command: string, param: any): void {
-			let executed = false, commandObj = this.commands[command];
+		emlEditor.execCommand = function (command: string, param: any): void {
+			let executed = false, commandObj = emlEditor.commands[command];
 
-			this.focus();
+			emlEditor.focus();
 
 			// TODO: make configurable
 			// don't apply any commands to code elements
@@ -1510,7 +1512,7 @@ export default class EmlEditor {
 
 			// show error if execution failed and an error message exists
 			if (!executed && commandObj && commandObj.errorMessage) {
-				alert(this.translate(commandObj.errorMessage));
+				alert(emlEditor.translate(commandObj.errorMessage));
 			}
 
 			updateActiveButtons();
@@ -1527,7 +1529,7 @@ export default class EmlEditor {
 		 * @name currentNode
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.currentNode = function (): any {
+		emlEditor.currentNode = function (): any {
 			return currentNode;
 		};
 
@@ -1544,7 +1546,7 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.4
 		 */
-		this.currentBlockNode = function (): any {
+		emlEditor.currentBlockNode = function (): any {
 			return currentBlockNode;
 		};
 
@@ -1560,8 +1562,8 @@ export default class EmlEditor {
 		 * @name _
 		 * @memberOf EmlEditor.prototype
 		 */
-		this.translate = function (): string {
-			let undef: any, args = arguments;
+		emlEditor.translate = function (...args: any): string {
+			let undef: any;
 
 			if (locale && locale[args[0]]) {
 				args[0] = locale[args[0]];
@@ -1611,7 +1613,7 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.bind = function (events: string, handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+		emlEditor.bind = function (events: string, handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
 			let eventsArr = events.split(' ');
 
 			let i = eventsArr.length;
@@ -1659,7 +1661,7 @@ export default class EmlEditor {
 		 * @since 1.4.1
 		 * @see bind
 		 */
-		this.unbind = function (events: string, handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+		emlEditor.unbind = function (events: string, handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
 			let eventsArr = events.split(' ');
 
 			let i = eventsArr.length;
@@ -1694,8 +1696,8 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.keyDown = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
-			return this.bind('keydown', handler, excludeWysiwyg, excludeSource);
+		emlEditor.keyDown = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+			return emlEditor.bind('keydown', handler, excludeWysiwyg, excludeSource);
 		};
 
 		/**
@@ -1712,7 +1714,7 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.keyPress = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+		emlEditor.keyPress = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
 			return this
 				.bind('keypress', handler, excludeWysiwyg, excludeSource);
 		};
@@ -1731,8 +1733,8 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.keyUp = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
-			return this.bind('keyup', handler, excludeWysiwyg, excludeSource);
+		emlEditor.keyUp = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+			return emlEditor.bind('keyup', handler, excludeWysiwyg, excludeSource);
 		};
 
 
@@ -1749,8 +1751,8 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.nodeChanged = function (handler: Function): any {
-			return this.bind('nodechanged', handler, false, true);
+		emlEditor.nodeChanged = function (handler: Function): any {
+			return emlEditor.bind('nodechanged', handler, false, true);
 		};
 
 		/**
@@ -1765,8 +1767,8 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.1
 		 */
-		this.selectionChanged = function (handler: Function): any {
-			return this.bind('selectionchanged', handler, false, true);
+		emlEditor.selectionChanged = function (handler: Function): any {
+			return emlEditor.bind('selectionchanged', handler, false, true);
 		};
 
 		/**
@@ -1790,7 +1792,7 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.5
 		 */
-		this.valueChanged = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
+		emlEditor.valueChanged = function (handler: Function, excludeWysiwyg: boolean, excludeSource: boolean): any {
 			return this
 				.bind('valuechanged', handler, excludeWysiwyg, excludeSource);
 		};
@@ -1814,7 +1816,7 @@ export default class EmlEditor {
 		 * @memberOf EmlEditor.prototype
 		 * @since 1.4.3
 		 */
-		this.css = function (css: string): any {
+		emlEditor.css = function (css: string): any {
 			if (!inlineCss) {
 				inlineCss = dom.createElement('style', {
 					id: 'inline'
@@ -1842,7 +1844,7 @@ export default class EmlEditor {
 		 * @param  {string} shortcut
 		 * @return {EmlEditor}
 		 */
-		this.removeShortcut = function (shortcut: string): any {
+		emlEditor.removeShortcut = function (shortcut: string): any {
 			delete shortcutHandlers[shortcut.toLowerCase()];
 
 			return this;
@@ -1854,14 +1856,14 @@ export default class EmlEditor {
 		 * @param  {String|Function} cmd
 		 * @return {emleditor}
 		 */
-		this.addShortcut = function (shortcut: string, cmd: string | Function): any {
+		emlEditor.addShortcut = function (shortcut: string, cmd: string | Function): any {
 			shortcut = shortcut.toLowerCase()
 			let shortcutKey = shortcut as keyof typeof shortcutHandlers;
 
 			if (utils.isString(cmd)) {
 				let strCmd = cmd as string;
 				shortcutHandlers[shortcutKey] = function () {
-					handleCommand(toolbarButtons[strCmd], this.commands[strCmd]);
+					handleCommand(toolbarButtons[strCmd], emlEditor.commands[strCmd]);
 
 					return false;
 				};
@@ -1880,7 +1882,7 @@ export default class EmlEditor {
 		 * @param  {HTMLElement} block
 		 * @since 1.4.4
 		 */
-		this.clearBlockFormatting = function (block: HTMLElement): any {
+		emlEditor.clearBlockFormatting = function (block: HTMLElement): any {
 			block = block || currentStyledBlockNode();
 
 			if (!block || dom.is(block, 'body')) {
@@ -1949,7 +1951,7 @@ export default class EmlEditor {
 			// force into source mode if is a browser that can't handle
 			// full editing
 			if (!browser.isWysiwygSupported) {
-				this.toggleSourceMode();
+				emlEditor.toggleSourceMode();
 			}
 
 			updateActiveButtons();
@@ -2033,7 +2035,7 @@ export default class EmlEditor {
 			dom.appendChild(editorContainer, sourceEditor);
 
 			// TODO: make this optional somehow
-			this.dimensions(
+			emlEditor.dimensions(
 				options.width || dom.width(textarea),
 				options.height || dom.height(textarea)
 			);
@@ -2054,12 +2056,12 @@ export default class EmlEditor {
 			wysiwygBody = wysiwygDocument.body as HTMLBodyElement;
 			wysiwygWindow = wysiwygEditor.contentWindow;
 
-			this.readOnly(!!options.readOnly);
+			emlEditor.readOnly(!!options.readOnly);
 
 			// iframe overflow fix for iOS
 			if (browser.ios) {
 				dom.height(wysiwygBody, '100%');
-				dom.on(wysiwygBody, 'touchend', null, this.focus);
+				dom.on(wysiwygBody, 'touchend', null, emlEditor.focus);
 			}
 
 			let tabIndex = dom.attr(textarea, 'tabindex');
@@ -2070,7 +2072,7 @@ export default class EmlEditor {
 
 			// load any textarea value into the editor
 			dom.hide(textarea);
-			this.val(textarea.value);
+			emlEditor.val(textarea.value);
 
 			let placeholder = options.placeholder ||
 				dom.attr(textarea, 'placeholder');
@@ -2096,7 +2098,7 @@ export default class EmlEditor {
 				options.rtl = dom.css(sourceEditor, 'direction') === 'rtl';
 			}
 
-			this.rtl(!!options.rtl);
+			emlEditor.rtl(!!options.rtl);
 
 			if (options.autoExpand) {
 				// Need to update when images (or anything else) loads
@@ -2109,7 +2111,7 @@ export default class EmlEditor {
 			}
 
 			dom.attr(editorContainer, 'id', options.id);
-			this.emoticons(options.emoticonsEnabled);
+			emlEditor.emoticons(options.emoticonsEnabled);
 		};
 
 		/**
@@ -2128,10 +2130,10 @@ export default class EmlEditor {
 
 			if (form) {
 				dom.on(form, 'reset', null, handleFormReset);
-				dom.on(form, 'submit', null, this.updateOriginal, dom.EVENT_CAPTURE);
+				dom.on(form, 'submit', null, emlEditor.updateOriginal, dom.EVENT_CAPTURE);
 			}
 
-			dom.on(window, 'pagehide', null, this.updateOriginal);
+			dom.on(window, 'pagehide', null, emlEditor.updateOriginal);
 			dom.on(window, 'pageshow', null, handleFormReset);
 			dom.on(wysiwygBody, 'keypress', null, handleKeyPress);
 			dom.on(wysiwygBody, 'keydown', null, handleKeyDown);
@@ -2150,7 +2152,7 @@ export default class EmlEditor {
 			}
 
 			dom.on(wysiwygBody, 'blur', null, function () {
-				if (!this.val()) {
+				if (!emlEditor.val()) {
 					dom.addClass(wysiwygBody, 'placeholder');
 				}
 			});
@@ -2296,7 +2298,7 @@ export default class EmlEditor {
 				// still gets mouse move events
 				cover = dom.createElement('div', {
 					className: 'emleditor-resize-cover'
-				}), moveEvents = 'touchmove mousemove', endEvents = 'touchcancel touchend mouseup', startX = 0, startY = 0, newX = 0, newY = 0, startWidth = 0, startHeight = 0, origWidth = dom.width(editorContainer), origHeight = dom.height(editorContainer), isDragging = false, rtl = this.rtl();
+				}), moveEvents = 'touchmove mousemove', endEvents = 'touchcancel touchend mouseup', startX = 0, startY = 0, newX = 0, newY = 0, startWidth = 0, startHeight = 0, origWidth = dom.width(editorContainer), origHeight = dom.height(editorContainer), isDragging = false, rtl = emlEditor.rtl();
 
 			minHeight = options.resizeMinHeight || origHeight / 1.5;
 			maxHeight = options.resizeMaxHeight || origHeight * 2.5;
@@ -2339,7 +2341,7 @@ export default class EmlEditor {
 				}
 
 				if (newWidth || newHeight) {
-					this.dimensions(newWidth, newHeight);
+					emlEditor.dimensions(newWidth, newHeight);
 				}
 
 				e.preventDefault();
@@ -2439,7 +2441,7 @@ export default class EmlEditor {
 				return;
 			}
 
-			if (this.sourceMode()) {
+			if (emlEditor.sourceMode()) {
 				txtPos = focusEnd ? sourceEditor.value.length : 0;
 
 				sourceEditor.setSelectionRange(txtPos, txtPos);
@@ -2485,7 +2487,7 @@ export default class EmlEditor {
 				wysiwygBody.scrollTop = wysiwygBody.scrollHeight;
 			}
 
-			this.focus();
+			emlEditor.focus();
 		};
 
 		/**
@@ -2493,7 +2495,7 @@ export default class EmlEditor {
 		 * @private
 		 */
 		let updateToolBar = (disable?: boolean): void => {
-			let mode = this.inSourceMode() ? '_emlTxtMode' : '_emlWysiwygMode';
+			let mode = emlEditor.inSourceMode() ? '_emlTxtMode' : '_emlWysiwygMode';
 
 			utils.each(toolbarButtons, function (_, button) {
 				dom.toggleClass(button, 'disabled', disable || !button[mode]);
@@ -2502,7 +2504,7 @@ export default class EmlEditor {
 
 		autoExpand = () => {
 			if (options.autoExpand && !autoExpandThrottle) {
-				autoExpandThrottle = setTimeout(this.expandToContent, 200);
+				autoExpandThrottle = setTimeout(emlEditor.expandToContent, 200);
 			}
 		};
 
@@ -2515,7 +2517,7 @@ export default class EmlEditor {
 			if (e.which !== 3 && dropdown && !e.defaultPrevented) {
 				autoUpdate();
 
-				this.closeDropDown();
+				emlEditor.closeDropDown();
 			}
 		};
 
@@ -2568,7 +2570,7 @@ export default class EmlEditor {
 					}
 				});
 
-				// range.toString() doesn't include newlines so can't use that.
+				// range.toString() doesn't include newlines so can't use emlEditor.
 				// selection.toString() seems to use the same method as innerText
 				// but needs to be normalised first so using container.innerText
 				dom.appendChild(wysiwygBody, container);
@@ -2689,10 +2691,10 @@ export default class EmlEditor {
 		 */
 		handleCommand = (caller: any, cmd: any) => {
 			// check if in text mode and handle text commands
-			if (this.inSourceMode()) {
+			if (emlEditor.inSourceMode()) {
 				if (cmd.txtExec) {
 					if (Array.isArray(cmd.txtExec)) {
-						this.sourceEditorInsertText.apply(this, cmd.txtExec);
+						emlEditor.sourceEditorInsertText.apply(this, cmd.txtExec);
 					} else {
 						cmd.txtExec.call(this, caller, sourceEditorSelectedText());
 					}
@@ -2701,7 +2703,7 @@ export default class EmlEditor {
 				if (utils.isFunction(cmd.exec)) {
 					cmd.exec.call(this, caller);
 				} else {
-					this.execCommand(
+					emlEditor.execCommand(
 						cmd.exec,
 						Object.prototype.hasOwnProperty.call(cmd, 'execParam') ? cmd.execParam : null
 					);
@@ -2802,9 +2804,9 @@ export default class EmlEditor {
 			let firstBlock, parent;
 			let activeClass = 'active';
 			let doc = wysiwygDocument;
-			let isSource = this.sourceMode();
+			let isSource = emlEditor.sourceMode();
 
-			if (this.readOnly()) {
+			if (emlEditor.readOnly()) {
 				utils.each(dom.find(toolbar, activeClass), function (_, menuItem) {
 					dom.removeClass(menuItem, activeClass);
 				});
@@ -2858,7 +2860,7 @@ export default class EmlEditor {
 				return;
 			}
 
-			this.closeDropDown();
+			emlEditor.closeDropDown();
 
 			// 13 = enter key
 			if (e.which === 13) {
@@ -2940,7 +2942,7 @@ export default class EmlEditor {
 		 * @private
 		 */
 		handleFormReset = () => {
-			this.val(textarea.value);
+			emlEditor.val(textarea.value);
 		};
 
 		/**
@@ -2948,7 +2950,7 @@ export default class EmlEditor {
 		 * @private
 		 */
 		handleMouseDown = () => {
-			this.closeDropDown();
+			emlEditor.closeDropDown();
 		};
 
 		/**
@@ -2977,7 +2979,7 @@ export default class EmlEditor {
 		 * @private
 		 */
 		emoticonsKeyPress = (e: any) => {
-			let replacedEmoticon, cachePos = 0, emoticonsCache = this.emoticonsCache, curChar = String.fromCharCode(e.which);
+			let replacedEmoticon, cachePos = 0, emoticonsCache = emlEditor.emoticonsCache, curChar = String.fromCharCode(e.which);
 
 			// TODO: Make configurable
 			if (dom.closest(currentBlockNode, 'code')) {
@@ -2995,16 +2997,16 @@ export default class EmlEditor {
 					return a[0].length - b[0].length;
 				});
 
-				this.emoticonsCache = emoticonsCache;
-				this.longestEmoticonCode =
+				emlEditor.emoticonsCache = emoticonsCache;
+				emlEditor.longestEmoticonCode =
 					emoticonsCache[emoticonsCache.length - 1][0].length;
 			}
 
 			replacedEmoticon = rangeHelper.replaceKeyword(
-				this.emoticonsCache,
+				emlEditor.emoticonsCache,
 				true,
 				true,
-				this.longestEmoticonCode,
+				emlEditor.longestEmoticonCode,
 				options.emoticonsCompat,
 				curChar
 			);
@@ -3204,7 +3206,7 @@ export default class EmlEditor {
 
 			// The backspace was pressed at the start of
 			// the container so clear the style
-			this.clearBlockFormatting(parent);
+			emlEditor.clearBlockFormatting(parent);
 			e.preventDefault();
 		};
 
@@ -3243,7 +3245,7 @@ export default class EmlEditor {
 				return;
 			}
 
-			let currentHtml, sourceMode = this.sourceMode(), hasSelection = !sourceMode && rangeHelper.hasSelection();
+			let currentHtml, sourceMode = emlEditor.sourceMode(), hasSelection = !sourceMode && rangeHelper.hasSelection();
 
 			// Composition end isn't guaranteed to fire but must have
 			// ended when triggerValueChanged() is called so reset it
@@ -3271,7 +3273,7 @@ export default class EmlEditor {
 				triggerValueChanged.lastVal = currentHtml;
 
 				dom.trigger(editorContainer, 'valuechanged', {
-					rawValue: sourceMode ? this.val() : currentHtml
+					rawValue: sourceMode ? emlEditor.val() : currentHtml
 				});
 			}
 
@@ -3345,7 +3347,7 @@ export default class EmlEditor {
 		};
 
 		autoUpdate = function () {
-			this.updateOriginal();
+			emlEditor.updateOriginal();
 		};
 
 		// run the initializer
