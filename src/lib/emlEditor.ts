@@ -999,7 +999,7 @@ export default class EmlEditor {
 			dom.css(dropdown, dropDownCss);
 			dom.appendChild(dropdown, content);
 			dom.appendChild(editorContainer, dropdown);
-			dom.on(dropdown, 'click focusin', null, function (e) {
+			dom.on(dropdown, 'click focusin', null, function (e: any) {
 				// stop clicks within the dropdown from being handled
 				e.stopPropagation();
 			});
@@ -2234,7 +2234,7 @@ export default class EmlEditor {
 					button._emlTxtMode = !!command.txtExec;
 					button._emlWysiwygMode = !!command.exec;
 					dom.toggleClass(button, 'disabled', !command.exec);
-					dom.on(button, 'click', null, function (e) {
+					dom.on(button, 'click', null, function (e: any) {
 						if (!dom.hasClass(button, 'disabled')) {
 							handleCommand(button, command);
 						}
@@ -2243,7 +2243,7 @@ export default class EmlEditor {
 						e.preventDefault();
 					});
 					// Prevent editor losing focus when button clicked
-					dom.on(button, 'mousedown', null, function (e) {
+					dom.on(button, 'mousedown', null, function (e: any) {
 						editor.closeDropDown();
 						e.preventDefault();
 					});
@@ -3354,8 +3354,6 @@ export default class EmlEditor {
 		init();
 	}
 }
-
-
 
 /**
  * Static command helper class

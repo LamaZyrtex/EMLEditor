@@ -284,10 +284,10 @@ var defaultCmds = {
 				editor  = this;
 
 			dom.appendChild(content, _tmpl('pastetext', {
-				label: editor._(
+				label: editor.translate(
 					'Paste your text inside the following box:'
 				),
-				insert: editor._('Insert')
+				insert: editor.translate('Insert')
 			}, true));
 
 			dom.on(content, 'click', '.button', function (e) {
@@ -399,9 +399,9 @@ var defaultCmds = {
 				content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('table', {
-				rows: editor._('Rows:'),
-				cols: editor._('Cols:'),
-				insert: editor._('Insert')
+				rows: editor.translate('Rows:'),
+				cols: editor.translate('Cols:'),
+				insert: editor.translate('Insert')
 			}, true));
 
 			dom.on(content, 'click', '.button', function (e) {
@@ -457,10 +457,10 @@ var defaultCmds = {
 			var	content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('image', {
-				url: editor._('URL:'),
-				width: editor._('Width (optional):'),
-				height: editor._('Height (optional):'),
-				insert: editor._('Insert')
+				url: editor.translate('URL:'),
+				width: editor.translate('Width (optional):'),
+				height: editor.translate('Height (optional):'),
+				insert: editor.translate('Insert')
 			}, true));
 
 
@@ -519,9 +519,9 @@ var defaultCmds = {
 			var	content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('email', {
-				label: editor._('E-mail:'),
-				desc: editor._('Description (optional):'),
-				insert: editor._('Insert')
+				label: editor.translate('E-mail:'),
+				desc: editor.translate('Description (optional):'),
+				insert: editor.translate('Insert')
 			}, true));
 
 			dom.on(content, 'click', '.button', function (e) {
@@ -567,9 +567,9 @@ var defaultCmds = {
 			var content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('link', {
-				url: editor._('URL:'),
-				desc: editor._('Description (optional):'),
-				ins: editor._('Insert')
+				url: editor.translate('URL:'),
+				desc: editor.translate('Description (optional):'),
+				ins: editor.translate('Insert')
 			}, true));
 
 			var linkInput = dom.find(content, '#link')[0];
@@ -712,7 +712,7 @@ var defaultCmds = {
 					});
 
 					dom.appendChild(moreLink,
-						document.createTextNode(editor._('More')));
+						document.createTextNode(editor.translate('More')));
 
 					dom.on(moreLink, 'click', function (e) {
 						editor.createDropDown(
@@ -743,8 +743,8 @@ var defaultCmds = {
 			var	content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('youtubeMenu', {
-				label: editor._('Video URL:'),
-				insert: editor._('Insert')
+				label: editor.translate('Video URL:'),
+				insert: editor.translate('Insert')
 			}, true));
 
 			dom.on(content, 'click', '.button', function (e) {

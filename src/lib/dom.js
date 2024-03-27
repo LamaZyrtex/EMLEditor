@@ -182,7 +182,7 @@ export var EVENT_BUBBLE = false;
  * @param {!Node | HTMLElement | Window} node
  * @param {string} events
  * @param {string} [selector]
- * @param {function(...any)} fn
+ * @param {function(...any)}
  * @param {boolean} [capture=false]
  * @see off()
  */
@@ -206,8 +206,7 @@ export function on(node, events, selector, fn, capture) {
 
 			fn['_eml-event-' + event + selector] = handler;
 		} else {
-			handler = selector;
-			capture = fn;
+			handler = fn;
 		}
 
 		node.addEventListener(event, handler, capture || false);
@@ -232,8 +231,7 @@ export function off(node, events, selector, fn, capture) {
 		if (utils.isString(selector)) {
 			handler = fn['_eml-event-' + event + selector];
 		} else {
-			handler = selector;
-			capture = fn;
+			handler = fn;
 		}
 
 		node.removeEventListener(event, handler, capture || false);

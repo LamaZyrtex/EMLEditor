@@ -183,7 +183,7 @@
 
 			cover = container.appendChild(emlEditor.dom.parseHTML(
 				'<div class="emlEditor-dnd-cover" style="display: none">' +
-					'<p>' + editor._('Drop files here') + '</p>' +
+					'<p>' + editor.translate('Drop files here') + '</p>' +
 				'</div>'
 			).firstChild);
 
