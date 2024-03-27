@@ -12,7 +12,7 @@
 (function (emlEditor) {
 	'use strict';
 
-	var defaultKey = 'sce-autodraft-' + location.pathname + location.search;
+	var defaultKey = 'eml-autodraft-' + location.pathname + location.search;
 
 	function clear(key) {
 		localStorage.removeItem(key || defaultKey);
@@ -36,7 +36,7 @@
 			for (var i = 0; i < localStorage.length; i++) {
 				var key = localStorage.key(i);
 
-				if (/^sce\-autodraft\-/.test(key)) {
+				if (/^eml\-autodraft\-/.test(key)) {
 					var item = JSON.parse(localStorage.getItem(storageKey));
 					if (item && item.time < Date.now() - expires) {
 						clear(key);

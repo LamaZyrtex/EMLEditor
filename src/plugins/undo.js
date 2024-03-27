@@ -272,7 +272,7 @@
 					lastInputType = inputType;
 					break;
 				default:
-					lastInputType = 'sce-misc';
+					lastInputType = 'eml-misc';
 					charChangedCount = 0;
 					storeState();
 					break;

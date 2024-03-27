@@ -106,8 +106,7 @@ export default class EmlEditor {
 	emoticonsCache: any;
 	addShortcut: (shortcut: string, cmd: string | Function) => any;
 	clearBlockFormatting: (block: HTMLElement) => any;
-
-	_: () => string;
+	translate: () => string;
 
 	// Static
 	static locale: any = {};
@@ -429,11 +428,11 @@ export default class EmlEditor {
 			}
 		});
 
-		// Convert target attribute into data-sce-target attributes so XHTML format
+		// Convert target attribute into data-eml-target attributes so XHTML format
 		// can allow them
 		domPurify.addHook('afterSanitizeAttributes', function (node: HTMLElement) {
 			if ('target' in node) {
-				dom.attr(node, 'data-sce-target', dom.attr(node, 'target'));
+				dom.attr(node, 'data-eml-target', dom.attr(node, 'target'));
 			}
 
 			dom.removeAttr(node, 'target');
@@ -1088,7 +1087,7 @@ export default class EmlEditor {
 			dom.remove(toolbar);
 			dom.remove(editorContainer);
 
-			delete textarea._sceditor;
+			delete textarea._emleditor;
 			dom.show(textarea);
 
 			textarea.required = isRequired;
@@ -1511,7 +1510,7 @@ export default class EmlEditor {
 
 			// show error if execution failed and an error message exists
 			if (!executed && commandObj && commandObj.errorMessage) {
-				alert(this._(commandObj.errorMessage));
+				alert(this.translate(commandObj.errorMessage));
 			}
 
 			updateActiveButtons();
@@ -1561,7 +1560,7 @@ export default class EmlEditor {
 		 * @name _
 		 * @memberOf EmlEditor.prototype
 		 */
-		this._ = function (): string {
+		this.translate = function (): string {
 			let undef: any, args = arguments;
 
 			if (locale && locale[args[0]]) {
@@ -1618,8 +1617,8 @@ export default class EmlEditor {
 			let i = eventsArr.length;
 			while (i--) {
 				if (utils.isFunction(handler)) {
-					let wysEvent = 'scewys' + eventsArr[i];
-					let srcEvent = 'scesrc' + eventsArr[i];
+					let wysEvent = 'emlwys' + eventsArr[i];
+					let srcEvent = 'emlsrc' + eventsArr[i];
 					// Use custom events to allow passing the instance as the
 					// 2nd argument.
 					// Also allows unbinding without unbinding the editors own
@@ -1668,12 +1667,12 @@ export default class EmlEditor {
 				if (utils.isFunction(handler)) {
 					if (!excludeWysiwyg) {
 						utils.arrayRemove(
-							eventHandlers['scewys' + eventsArr[i]] || [], handler);
+							eventHandlers['emlwys' + eventsArr[i]] || [], handler);
 					}
 
 					if (!excludeSource) {
 						utils.arrayRemove(
-							eventHandlers['scesrc' + eventsArr[i]] || [], handler);
+							eventHandlers['emlsrc' + eventsArr[i]] || [], handler);
 					}
 				}
 			}
@@ -1907,7 +1906,7 @@ export default class EmlEditor {
 		 * @private
 		 */
 		init = () => {
-			textarea._sceditor = this;
+			textarea._emleditor = this;
 
 			// Load locale
 			if (options.locale && options.locale !== 'en') {
@@ -2186,7 +2185,11 @@ export default class EmlEditor {
 		 * @private
 		 */
 		initToolBar = () => {
-			let group: any, commands = this.commands, exclude = (options.toolbarExclude || '').split(','), groups = options.toolbar.split('|');
+			let editor: any = this;
+			let group: any;
+			let commands = editor.commands;
+			let exclude = (options.toolbarExclude || '').split(',');
+			let groups = options.toolbar.split('|');
 
 			toolbar = dom.createElement('div', {
 				className: 'emleditor-toolbar',
@@ -2213,7 +2216,7 @@ export default class EmlEditor {
 					shortcut = command.shortcut;
 					button = templates('toolbarButton', {
 						name: commandName,
-						dispName: this._(command.name ||
+						dispName: editor.translate(command.name ||
 							command.tooltip || commandName)
 					}, true).firstChild;
 
@@ -2226,8 +2229,8 @@ export default class EmlEditor {
 						}
 					}
 
-					button._sceTxtMode = !!command.txtExec;
-					button._sceWysiwygMode = !!command.exec;
+					button._emlTxtMode = !!command.txtExec;
+					button._emlWysiwygMode = !!command.exec;
 					dom.toggleClass(button, 'disabled', !command.exec);
 					dom.on(button, 'click', null, function (e) {
 						if (!dom.hasClass(button, 'disabled')) {
@@ -2239,19 +2242,19 @@ export default class EmlEditor {
 					});
 					// Prevent editor losing focus when button clicked
 					dom.on(button, 'mousedown', null, function (e) {
-						this.closeDropDown();
+						editor.closeDropDown();
 						e.preventDefault();
 					});
 
 					if (command.tooltip) {
 						dom.attr(button, 'title',
-							this._(command.tooltip) +
+							editor.translate(command.tooltip) +
 							(shortcut ? ' (' + shortcut + ')' : '')
 						);
 					}
 
 					if (shortcut) {
-						this.addShortcut(shortcut, commandName);
+						editor.addShortcut(shortcut, commandName);
 					}
 
 					if (command.state) {
@@ -2490,7 +2493,7 @@ export default class EmlEditor {
 		 * @private
 		 */
 		let updateToolBar = (disable?: boolean): void => {
-			let mode = this.inSourceMode() ? '_sceTxtMode' : '_sceWysiwygMode';
+			let mode = this.inSourceMode() ? '_emlTxtMode' : '_emlWysiwygMode';
 
 			utils.each(toolbarButtons, function (_, button) {
 				dom.toggleClass(button, 'disabled', disable || !button[mode]);
@@ -2817,8 +2820,8 @@ export default class EmlEditor {
 				let state = 0;
 				let btn = toolbarButtons[btnStateHandlers[j].name];
 				let stateFn = btnStateHandlers[j].state;
-				let isDisabled = (isSource && !btn._sceTxtMode) ||
-					(!isSource && !btn._sceWysiwygMode);
+				let isDisabled = (isSource && !btn._emlTxtMode) ||
+					(!isSource && !btn._emlWysiwygMode);
 
 				if (utils.isString(stateFn)) {
 					if (!isSource) {
@@ -2960,7 +2963,7 @@ export default class EmlEditor {
 			}
 
 			// convert the event into a custom event to send
-			let name = (e.target === sourceEditor ? 'scesrc' : 'scewys') + e.type as keyof typeof eventHandlers;
+			let name = (e.target === sourceEditor ? 'emlsrc' : 'emlwys') + e.type as keyof typeof eventHandlers;
 
 			if (eventHandlers[name]) {
 				eventHandlers[name].forEach(function (fn: any) {

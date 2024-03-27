@@ -192,7 +192,7 @@ export function on(node, events, selector, fn, capture) {
 		var handler;
 
 		if (utils.isString(selector)) {
-			handler = fn['_sce-event-' + event + selector] || function (e) {
+			handler = fn['_eml-event-' + event + selector] || function (e) {
 				var target = e.target;
 				while (target && target !== node) {
 					if (is(target, selector)) {
@@ -204,7 +204,7 @@ export function on(node, events, selector, fn, capture) {
 				}
 			};
 
-			fn['_sce-event-' + event + selector] = handler;
+			fn['_eml-event-' + event + selector] = handler;
 		} else {
 			handler = selector;
 			capture = fn;
@@ -230,7 +230,7 @@ export function off(node, events, selector, fn, capture) {
 		var handler;
 
 		if (utils.isString(selector)) {
-			handler = fn['_sce-event-' + event + selector];
+			handler = fn['_eml-event-' + event + selector];
 		} else {
 			handler = selector;
 			capture = fn;

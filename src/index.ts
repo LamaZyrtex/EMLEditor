@@ -92,12 +92,11 @@ window.emlEditor = {
 		}
 
 		if (options.runWithoutWysiwygSupport || browser.isWysiwygSupported) {
-			/*eslint no-new: off*/
 			(new EmlEditor(textarea, options));
 		}
 	},
 
 	instance: function (textarea: any) {
-		return textarea._sceditor;
+		return textarea._emleditor;
 	}
 };

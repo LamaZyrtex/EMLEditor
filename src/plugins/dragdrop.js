@@ -106,7 +106,7 @@
 			var placeholder = document.createElement('img');
 			placeholder.src = loadingGif;
 			placeholder.className = 'emleditor-ignore';
-			placeholder.id = 'sce-dragdrop-' + placeholderId++;
+			placeholder.id = 'eml-dragdrop-' + placeholderId++;
 
 			function replace(html) {
 				var node = editor
