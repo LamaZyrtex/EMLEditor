@@ -60,8 +60,8 @@ export class PluginManager {
 		 * @name call
 		 * @memberOf PluginManager.prototype
 		 */
-		this.call = function (): void {
-			callHandlers(arguments, false);
+		this.call = function (...args: any): void {
+			callHandlers(args, false);
 		};
 
 		/**
@@ -219,7 +219,7 @@ export class PluginManager {
 	}
 
 	static plugins: {};
-	call: () => void;
+	call: (...arg: any) => void;
 	callOnlyFirst: () => any;
 	hasHandler: (signal: string) => boolean;
 	exists: (plugin: string) => boolean;
@@ -228,3 +228,4 @@ export class PluginManager {
 	deregister: (plugin: string) => boolean;
 	destroy: () => void;
 }
+

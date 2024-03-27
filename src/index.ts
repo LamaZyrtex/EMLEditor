@@ -1,4 +1,4 @@
-import EmlEditor from './lib/EmlEditor.js';
+import EmlEditor from './lib/emlEditor';
 import { PluginManager } from './lib/pluginManager';
 import * as escape from './lib/escape.js';
 import * as browser from './lib/browser.js';

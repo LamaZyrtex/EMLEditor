@@ -137,8 +137,8 @@ export function remove(node) {
 /**
  * Appends child to parent node
  *
- * @param {!HTMLElement} node
- * @param {Node | string | null } child
+ * @param {!HTMLElement | DocumentFragment} node
+ * @param {Node | HTMLElement | string | null } child
  */
 export function appendChild(node, child) {
 	node.appendChild(child);
@@ -147,7 +147,7 @@ export function appendChild(node, child) {
 /**
  * Finds any child nodes that match the selector
  *
- * @param {!HTMLElement} node
+ * @param {!HTMLElement | Document} node
  * @param {!string} selector
  * @returns {NodeList}
  */
@@ -179,10 +179,10 @@ export var EVENT_BUBBLE = false;
  * If selector is specified the handler will only be
  * called when the event target matches the selector.
  *
- * @param {!Node} node
+ * @param {!Node | HTMLElement | Window} node
  * @param {string} events
  * @param {string} [selector]
- * @param {function(Object)} fn
+ * @param {function(...any)} fn
  * @param {boolean} [capture=false]
  * @see off()
  */
@@ -217,7 +217,7 @@ export function on(node, events, selector, fn, capture) {
 /**
  * Removes an event listener for the specified events.
  *
- * @param {!Node} node
+ * @param {!Node | HTMLElement | Window} node
  * @param {string} events
  * @param {string} [selector]
  * @param {function(Object)} fn
@@ -312,10 +312,10 @@ export function toggle(node) {
  * Rules should be in camelCase format and not
  * hyphenated like CSS properties.
  *
- * @param {!HTMLElement} node
- * @param {!Object|string} rule
- * @param {string|number} [value]
- * @return {string|number|undefined}
+ * @param {any} node
+ * @param {any} rule
+ * @param {any} [value]
+ * @return {any}
  */
 export function css(node, rule, value) {
 	if (arguments.length < 3) {
@@ -373,7 +373,7 @@ export function data(node, key, value) {
 /**
  * Checks if node matches the given selector.
  *
- * @param {?HTMLElement} node
+ * @param {?HTMLElement | ChildNode} node
  * @param {string} selector
  * @returns {boolean}
  */
@@ -729,7 +729,7 @@ export function canHaveChildren(node) {
 /**
  * Checks if an element is inline
  *
- * @param {HTMLElement} elm
+ * @param {HTMLElement | any} elm
  * @param {boolean} [includeCodeAsBlock=false]
  * @return {boolean}
  */

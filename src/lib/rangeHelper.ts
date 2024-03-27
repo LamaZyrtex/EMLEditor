@@ -74,14 +74,15 @@ var outerText = function (range: any, isLeft: boolean, length: number): any {
  * @name RangeHelper
  */
 export class RangeHelper {
-	insertHTML: (html: string, endHTML: string) => boolean;
-	insertNode: (node: Node, endNode: Node) => false | undefined;
+
+	insertHTML: (html: string, endHTML?: string) => boolean;
+	insertNode: (node?: any, endNode?: any) => false | undefined;
 	cloneSelected: () => Range;
 	selectedRange: () => Range;
 	hasSelection: () => boolean;
 	selectedHtml: () => string;
 	parentNode: () => HTMLElement;
-	getFirstBlockParent: (node: any) => any;
+	getFirstBlockParent: (node?: any) => any;
 	insertNodeAt: (start: any, node: any) => boolean;
 	insertMarkers: () => void;
 	getMarker: (id: any) => any;
@@ -93,8 +94,9 @@ export class RangeHelper {
 	selectOuterText: (left: any, right: any) => boolean;
 	getOuterText: (before: any, length: any) => any;
 	replaceKeyword: (keywords: any, includeAfter: any, keywordsSorted: any, longestKeyword: any, requireWhitespace: any, keypressChar: any) => boolean;
-	compare: (rngA: any, rngB: any) => boolean;
+	compare: (rngA?: any, rngB?: any) => boolean;
 	clear: () => void;
+
 	constructor(win: any, d: null, sanitize: { (html: string): string; (arg0: any): string; }) {
 		let _createMarker: any;
 		let _prepareInput: any;
@@ -117,7 +119,7 @@ export class RangeHelper {
 		 * @name insertHTML
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.insertHTML = function (html: string, endHTML: string) {
+		this.insertHTML = function (html: string, endHTML?: string) {
 			var node, div, range = this.selectedRange();
 
 			if (!range) {
@@ -140,67 +142,15 @@ export class RangeHelper {
 		};
 
 		/**
-		 * Prepares HTML to be inserted by adding a zero width space
-		 * if the last child is empty and adding the range start/end
-		 * markers to the last child.
-		 *
-		 * @param  {Node|string} node
-		 * @param  {Node|string} [endNode]
-		 * @param  {boolean} [returnHtml]
-		 * @return {Node|string}
-		 * @private
-		 */
-		_prepareInput = function (node: Node | string, endNode: Node | string, returnHtml: boolean): Node | string {
-			var lastChild, frag = doc.createDocumentFragment();
-
-			if (typeof node === 'string') {
-				if (endNode) {
-					node += this.selectedHtml() + endNode;
-				}
-
-				frag = dom.parseHTML(node);
-			} else {
-				dom.appendChild(frag, node);
-
-				if (endNode) {
-					dom.appendChild(frag, this.selectedRange().extractContents());
-					dom.appendChild(frag, endNode);
-				}
-			}
-
-			if (!(lastChild = frag.lastChild)) {
-				return;
-			}
-
-			while (!dom.isInline(lastChild.lastChild, true)) {
-				lastChild = lastChild.lastChild;
-			}
-
-			if (dom.canHaveChildren(lastChild)) {
-				// Webkit won't allow the cursor to be placed inside an
-				// empty tag, so add a zero width space to it.
-				if (!lastChild.lastChild) {
-					dom.appendChild(lastChild, document.createTextNode('\u200B'));
-				}
-			} else {
-				lastChild = frag;
-			}
-
-			this.removeMarkers();
-
-			// Append marks to last child so when restored cursor will be in
-			// the right place
-			dom.appendChild(lastChild, _createMarker(startMarker));
-			dom.appendChild(lastChild, _createMarker(endMarker));
-
-			if (returnHtml) {
-				var div = dom.createElement('div');
-				dom.appendChild(div, frag);
-
-				return div.innerHTML;
-			}
-
-			return frag;
+		* Removes the start/end markers
+		*
+		* @function
+		* @name removeMarkers
+		* @memberOf RangeHelper.prototype
+		*/
+		this.removeMarkers = function () {
+			this.removeMarker(startMarker);
+			this.removeMarker(endMarker);
 		};
 
 		/**
@@ -219,7 +169,7 @@ export class RangeHelper {
 		 * @name insertNode
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.insertNode = function (node: Node, endNode: Node): false | undefined {
+		this.insertNode = function (node?: Node, endNode?: Node): false | undefined {
 			let first, last, input = _prepareInput(node, endNode), range = this.selectedRange(), parent = range.commonAncestorContainer;
 			let emptyNodes: any = [];
 
@@ -395,7 +345,7 @@ export class RangeHelper {
 		 * @since 1.4.1
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.getFirstBlockParent = function (node): HTMLElement {
+		this.getFirstBlockParent = function (node?: any): HTMLElement {
 			var func = function (elm: any): any {
 				if (!dom.isInline(elm, true)) {
 					return elm;
@@ -431,27 +381,6 @@ export class RangeHelper {
 			// Reselect the current range.
 			// Fixes issue with Chrome losing the selection. Issue#82
 			this.selectRange(currentRange);
-		};
-
-		/**
-		 * Creates a marker node
-		 *
-		 * @param {string} id
-		 * @return {HTMLSpanElement}
-		 * @private
-		 */
-		_createMarker = function (id: string) {
-			this.removeMarker(id);
-
-			var marker = dom.createElement('span', {
-				id: id,
-				className: 'emleditor-selection emleditor-ignore',
-				style: 'display:none;line-height:0'
-			}, doc);
-
-			marker.innerHTML = ' ';
-
-			return marker;
 		};
 
 		/**
@@ -507,18 +436,6 @@ export class RangeHelper {
 			if (marker) {
 				dom.remove(marker);
 			}
-		};
-
-		/**
-		 * Removes the start/end markers
-		 *
-		 * @function
-		 * @name removeMarkers
-		 * @memberOf RangeHelper.prototype
-		 */
-		this.removeMarkers = function () {
-			this.removeMarker(startMarker);
-			this.removeMarker(endMarker);
 		};
 
 		/**
@@ -763,7 +680,7 @@ export class RangeHelper {
 		 * @name compare
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.compare = function (rngA, rngB) {
+		this.compare = function (rngA?: Range, rngB?: Range): boolean {
 			if (!rngB) {
 				rngB = this.selectedRange();
 			}
@@ -794,6 +711,91 @@ export class RangeHelper {
 					sel.empty();
 				}
 			}
+		};
+
+		/**
+		 * Prepares HTML to be inserted by adding a zero width space
+		 * if the last child is empty and adding the range start/end
+		 * markers to the last child.
+		 *
+		 * @param  {Node|string} node
+		 * @param  {Node|string} [endNode]
+		 * @param  {boolean} [returnHtml]
+		 * @return {Node|string}
+		 * @private
+		 */
+		_prepareInput = (node: Node | string, endNode: Node | string, returnHtml: boolean): Node | string => {
+			var lastChild, frag = doc.createDocumentFragment();
+
+			if (typeof node === 'string') {
+				if (endNode) {
+					node += this.selectedHtml() + endNode;
+				}
+
+				frag = dom.parseHTML(node);
+			} else {
+				dom.appendChild(frag, node);
+
+				if (endNode) {
+					dom.appendChild(frag, this.selectedRange().extractContents());
+					dom.appendChild(frag, endNode);
+				}
+			}
+
+			if (!(lastChild = frag.lastChild)) {
+				return;
+			}
+
+			while (!dom.isInline(lastChild.lastChild, true)) {
+				lastChild = lastChild.lastChild;
+			}
+
+			if (dom.canHaveChildren(lastChild)) {
+				// Webkit won't allow the cursor to be placed inside an
+				// empty tag, so add a zero width space to it.
+				if (!lastChild.lastChild) {
+					dom.appendChild(lastChild, document.createTextNode('\u200B'));
+				}
+			} else {
+				lastChild = frag;
+			}
+
+			this.removeMarkers();
+
+			// Append marks to last child so when restored cursor will be in
+			// the right place
+			dom.appendChild(lastChild, _createMarker(startMarker));
+			dom.appendChild(lastChild, _createMarker(endMarker));
+
+			if (returnHtml) {
+				var div = dom.createElement('div');
+				dom.appendChild(div, frag);
+
+				return div.innerHTML;
+			}
+
+			return frag;
+		};
+
+		/**
+		 * Creates a marker node
+		 *
+		 * @param {string} id
+		 * @return {HTMLSpanElement}
+		 * @private
+		 */
+		_createMarker = (id: string): HTMLSpanElement => {
+			this.removeMarker(id);
+
+			var marker = dom.createElement('span', {
+				id: id,
+				className: 'emleditor-selection emleditor-ignore',
+				style: 'display:none;line-height:0'
+			}, doc);
+
+			marker.innerHTML = ' ';
+
+			return marker;
 		};
 	}
 }

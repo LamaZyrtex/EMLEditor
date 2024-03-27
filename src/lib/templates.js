@@ -92,10 +92,10 @@ var _templates = {
  * @param {string} name
  * @param {Object} [params]
  * @param {boolean} [createHtml]
- * @returns {string|DocumentFragment}
+ * @returns {any}
  * @private
  */
-export default function (name, params, createHtml) {
+export default function templates (name, params, createHtml) {
 	var template = _templates[name];
 
 	Object.keys(params).forEach(function (name) {
