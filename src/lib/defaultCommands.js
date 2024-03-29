@@ -154,7 +154,7 @@ var defaultCmds = {
 				e.preventDefault();
 			});
 
-			editor.opts.fonts.split(',').forEach(function (font) {
+			editor.editorOptions.fonts.split(',').forEach(function (font) {
 				dom.appendChild(content, _tmpl('fontOpt', {
 					font: font
 				}, true));
@@ -209,7 +209,7 @@ var defaultCmds = {
 				cmd     = defaultCmds.color;
 
 			if (!cmd._htmlCache) {
-				editor.opts.colors.split('|').forEach(function (column) {
+				editor.editorOptions.colors.split('|').forEach(function (column) {
 					html += '<div class="emleditor-color-column">';
 
 					column.split(',').forEach(function (color) {
@@ -584,7 +584,7 @@ var defaultCmds = {
 			}
 
 			dom.on(content, 'click', '.button', insertUrl);
-			dom.on(content, 'keypress', function (e) {
+			dom.on(content, 'keypress', null,  function (e) {
 				// 13 = enter key
 				if (e.which === 13 && linkInput.value) {
 					insertUrl(e);
@@ -615,10 +615,10 @@ var defaultCmds = {
 	// START_COMMAND: Unlink
 	unlink: {
 		state: function () {
-			return dom.closest(this.currentNode(), 'a') ? 0 : -1;
+			return dom.closest(this.CurrentNode(), 'a') ? 0 : -1;
 		},
 		exec: function () {
-			var anchor = dom.closest(this.currentNode(), 'a');
+			var anchor = dom.closest(this.CurrentNode(), 'a');
 
 			if (anchor) {
 				while (anchor.firstChild) {
@@ -665,7 +665,7 @@ var defaultCmds = {
 
 			var createContent = function (includeMore) {
 				var	moreLink,
-					opts            = editor.opts,
+					opts            = editor.editorOptions,
 					emoticonsRoot   = opts.emoticonsRoot || '',
 					emoticonsCompat = opts.emoticonsCompat,
 					rangeHelper     = editor.getRangeHelper(),
@@ -714,7 +714,7 @@ var defaultCmds = {
 					dom.appendChild(moreLink,
 						document.createTextNode(editor.translate('More')));
 
-					dom.on(moreLink, 'click', function (e) {
+					dom.on(moreLink, 'click', null, function (e) {
 						editor.createDropDown(
 							caller, 'more-emoticons', createContent(true)
 						);
@@ -805,7 +805,7 @@ var defaultCmds = {
 				day = '0' + day;
 			}
 
-			return editor.opts.dateFormat
+			return editor.editorOptions.dateFormat
 				.replace(/year/i, year)
 				.replace(/month/i, month)
 				.replace(/day/i, day);

@@ -87,7 +87,7 @@
 		this.signalPasteRaw = function (data) {
 			// TODO: Make this tag configurable.
 			// Skip code tags
-			if (dom.closest(this.currentNode(), 'code')) {
+			if (dom.closest(this.CurrentNode(), 'code')) {
 				return;
 			}
 
