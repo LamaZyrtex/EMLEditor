@@ -215,15 +215,51 @@ export default class EmlEditor {
 	};
 
 	/**
+	 * Sets the value of the editor.
+	 *
+	 * If filter set true the val will be passed through the filter
+	 * function. If using the BBCode plugin it will pass the val to
+	 * the BBCode filter to convert any BBCode into HTML.
+	 *
+	 * @param {string | undefined | null} val
+	 * @param {boolean} [filter=true]
+	 * @return {this}
+	 * @since 1.3.5
+	 * @function
+	 * @name val^2
+	 * @memberOf EmlEditor.prototype
+	 */
+	public val(val?: string, filter: boolean = true): any {
+		if (!utils.isString(val)) {
+			return this.inSourceMode() ?
+				this.getSourceEditorValue(false) :
+				this.getWysiwygEditorValue(filter);
+		}
+
+		if (!this.inSourceMode()) {
+			if (filter !== false && 'toHtml' in this.format) {
+				val = this.format.toHtml(val);
+			}
+
+			this.setWysiwygEditorValue(val);
+		} else {
+			this.setSourceEditorValue(val);
+		}
+
+		return this;
+	};
+
+	/**
 	 * Updates the textarea that the editor is replacing
 	 * with the value currently inside the editor.
 	 *
 	 * @function
-	 * @name updateOriginal
+	 * @name setTextareaValue
 	 * @since 1.4.0
 	 * @memberOf EmlEditor.prototype
 	 */
-	public updateOriginal() {
+	public setTextareaValue() {
+		//TODO
 		this.textarea.value = this.val();
 	};
 
@@ -394,41 +430,6 @@ export default class EmlEditor {
 		}
 
 		this.updateActiveButtons();
-
-		return this;
-	};
-
-	/**
-	 * Sets the value of the editor.
-	 *
-	 * If filter set true the val will be passed through the filter
-	 * function. If using the BBCode plugin it will pass the val to
-	 * the BBCode filter to convert any BBCode into HTML.
-	 *
-	 * @param {string | undefined | null} val
-	 * @param {boolean} [filter=true]
-	 * @return {this}
-	 * @since 1.3.5
-	 * @function
-	 * @name val^2
-	 * @memberOf EmlEditor.prototype
-	 */
-	public val(val?: string, filter: boolean = true): any {
-		if (!utils.isString(val)) {
-			return this.inSourceMode() ?
-				this.getSourceEditorValue(false) :
-				this.getWysiwygEditorValue(filter);
-		}
-
-		if (!this.inSourceMode()) {
-			if (filter !== false && 'toHtml' in this.format) {
-				val = this.format.toHtml(val);
-			}
-
-			this.setWysiwygEditorValue(val);
-		} else {
-			this.setSourceEditorValue(val);
-		}
 
 		return this;
 	};
@@ -744,10 +745,10 @@ export default class EmlEditor {
 		let form = this.textarea.form;
 		if (form) {
 			dom.off(form, 'reset', null, this.handleFormReset);
-			dom.off(form, 'submit', null, this.updateOriginal, dom.EVENT_CAPTURE);
+			dom.off(form, 'submit', null, this.setTextareaValue, dom.EVENT_CAPTURE);
 		}
 
-		dom.off(window, 'pagehide', null, this.updateOriginal);
+		dom.off(window, 'pagehide', null, this.setTextareaValue);
 		dom.off(window, 'pageshow', null, this.handleFormReset);
 		dom.remove(this.sourceEditor);
 		dom.remove(this.toolbar);
@@ -1741,7 +1742,6 @@ export default class EmlEditor {
 	 */
 	private allEmoticons: any = {};
 
-
 	/**
 	 * Current icon set if any
 	 *
@@ -2138,10 +2138,10 @@ export default class EmlEditor {
 
 		if (form) {
 			dom.on(form, 'reset', null, thisEditor.handleFormReset);
-			dom.on(form, 'submit', null, thisEditor.updateOriginal, dom.EVENT_CAPTURE);
+			dom.on(form, 'submit', null, thisEditor.setTextareaValue, dom.EVENT_CAPTURE);
 		}
 
-		dom.on(window, 'pagehide', null, thisEditor.updateOriginal);
+		dom.on(window, 'pagehide', null, thisEditor.setTextareaValue);
 		dom.on(window, 'pageshow', null, thisEditor.handleFormReset);
 		dom.on(thisEditor.wysiwygBody, 'keypress', null, thisEditor.handleKeyPress);
 		dom.on(thisEditor.wysiwygBody, 'keydown', null, thisEditor.handleKeyDown);
@@ -3312,7 +3312,7 @@ export default class EmlEditor {
 	};
 
 	private autoUpdate = (): void => {
-		this.updateOriginal();
+		this.setTextareaValue();
 	};
 
 	/**
