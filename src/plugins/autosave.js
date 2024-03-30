@@ -47,7 +47,7 @@
 
 		base.init = function () {
 			editor = this;
-			var opts = editor.opts && editor.opts.autosave || {};
+			var opts = editor.editorOptions && editor.editorOptions.autosave || {};
 
 			saveHandler = opts.save || saveHandler;
 			loadHandler = opts.load || loadHandler;

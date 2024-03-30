@@ -82,7 +82,7 @@ window.emlEditor = {
 
 	plugins: PluginManager.plugins,
 
-	create: function (textarea: HTMLTextAreaElement, options: any) {
+	create: (textarea: HTMLTextAreaElement, options: any): void => {
 		options = options || {};
 
 		// Don't allow the editor to be initialised

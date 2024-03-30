@@ -176,7 +176,7 @@
 
 		base.signalReady = function () {
 			editor = this;
-			opts = editor.opts.dragdrop || {};
+			opts = editor.editorOptions.dragdrop || {};
 			handleFile = opts.handleFile;
 
 			container = editor.getContentAreaContainer().parentNode;
