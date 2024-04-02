@@ -2,7 +2,7 @@ import EmlEditor from './lib/emlEditor';
 import { PluginManager } from './lib/pluginManager';
 import * as escape from './lib/escape.js';
 import * as browser from './lib/browser.js';
-import * as dom from './lib/dom.js';
+import * as dom from './lib/dom';
 import * as utils from './lib/utils.js';
 import defaultCommands from './lib/defaultCommands.js';
 import defaultOptions from './lib/defaultOptions.js';

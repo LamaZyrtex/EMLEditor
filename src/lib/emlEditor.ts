@@ -1,4 +1,4 @@
-﻿import * as dom from './dom.js';
+﻿import * as dom from './dom';
 import * as utils from './utils.js';
 import defaultOptions from './defaultOptions.js';
 import defaultCommands from './defaultCommands.js';
@@ -415,8 +415,7 @@ export default class EmlEditor {
 			if (rng && rng.endOffset === 1 && rng.collapsed) {
 				container = rng.endContainer;
 
-				if (container && container.childNodes.length === 1 &&
-					dom.is(container.firstChild, 'br')) {
+				if (container && container.childNodes.length === 1 && dom.is((container.firstChild as HTMLElement), 'br')) {
 					rng.setStartBefore(container.firstChild);
 					rng.collapse(true);
 					this.rangeHelper.selectRange(rng);
@@ -1055,7 +1054,7 @@ export default class EmlEditor {
 		let childNodes = this.wysiwygBody.childNodes;
 
 		for (let i = 0; i < childNodes.length; i++) {
-			dom.appendChild(tmp, childNodes[i].cloneNode(true));
+			dom.appendChild(tmp, (childNodes[i].cloneNode(true) as HTMLElement));
 		}
 
 		dom.appendChild(this.wysiwygBody, tmp);
@@ -2443,7 +2442,8 @@ export default class EmlEditor {
 	 * @private
 	 */
 	private autofocus = (focusEnd: any): void => {
-		let range, txtPos, node = this.wysiwygBody.firstChild;
+		let range, txtPos;
+		let node = this.wysiwygBody.firstChild as HTMLElement;
 
 		// Can't focus invisible elements
 		if (!dom.isVisible(this.editorContainer)) {
@@ -2461,17 +2461,18 @@ export default class EmlEditor {
 		dom.removeWhiteSpace(this.wysiwygBody);
 
 		if (focusEnd) {
-			if (!(node = this.wysiwygBody.lastChild)) {
-				node = dom.createElement('p', {}, this.wysiwygDocument);
+			let lastChild = this.wysiwygBody.lastChild as HTMLElement;
+			if (!(node = lastChild)) {
+				node = dom.createElement('p', {}, this.wysiwygDocument) as HTMLElement;
 				dom.appendChild(this.wysiwygBody, node);
 			}
 
 			while (node.lastChild) {
-				node = node.lastChild;
+				node = node.lastChild as HTMLElement;
 
 				// Should place the cursor before the last <br>
 				if (dom.is(node, 'br') && node.previousSibling) {
-					node = node.previousSibling;
+					node = node.previousSibling as HTMLElement;
 				}
 			}
 		}
@@ -2543,7 +2544,7 @@ export default class EmlEditor {
 				if (parent.nodeType === dom.ELEMENT_NODE) {
 					let clone = parent.cloneNode() as HTMLElement;
 					if (container.firstChild) {
-						dom.appendChild(clone, container.firstChild);
+						dom.appendChild(clone, container.firstChild as HTMLElement);
 					}
 
 					dom.appendChild(container, clone);
@@ -2642,7 +2643,7 @@ export default class EmlEditor {
 
 			this.pasteContentFragment = globalDoc.createDocumentFragment();
 			while (editable.firstChild) {
-				dom.appendChild(this.pasteContentFragment, editable.firstChild);
+				dom.appendChild(this.pasteContentFragment, editable.firstChild as HTMLElement);
 			}
 
 			setTimeout(() => {

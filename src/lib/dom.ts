@@ -4,44 +4,44 @@ import * as utils from './utils.js';
  * Cache of camelCase CSS property names
  * @type {Object<string, string>}
  */
-var cssPropertyNameCache = {};
+let cssPropertyNameCache: { [s: string]: string; } = {};
 
 /**
  * Node type constant for element nodes
  *
  * @type {number}
  */
-export var ELEMENT_NODE = 1;
+export const ELEMENT_NODE: number = 1;
 
 /**
  * Node type constant for text nodes
  *
  * @type {number}
  */
-export var TEXT_NODE = 3;
+export const TEXT_NODE: number = 3;
 
 /**
  * Node type constant for comment nodes
  *
  * @type {number}
  */
-export var COMMENT_NODE = 8;
+export const COMMENT_NODE: number = 8;
 
 /**
  * Node type document nodes
  *
  * @type {number}
  */
-export var DOCUMENT_NODE = 9;
+export const DOCUMENT_NODE: number = 9;
 
 /**
  * Node type constant for document fragments
  *
  * @type {number}
  */
-export var DOCUMENT_FRAGMENT_NODE = 11;
+export const DOCUMENT_FRAGMENT_NODE: number = 11;
 
-function toFloat(value) {
+function toFloat(value: any) {
 	value = parseFloat(value);
 
 	return isFinite(value) ? value : 0;
@@ -58,21 +58,26 @@ function toFloat(value) {
  * @param {!Document} [context]
  * @returns {!HTMLElement}
  */
-export function createElement(tag, attributes, context) {
-	var node = (context || document).createElement(tag);
+export function createElement(tag: string, attributes?: { [s: string]: string; }, context?: Document): HTMLElement {
+	let htmlElement = (context || document).createElement(tag);
 
-	utils.each(attributes || {}, function (key, value) {
-		if (key === 'style') {
-			node.style.cssText = value;
-		} else if (key in node) {
-			node[key] = value;
-		} else {
-			node.setAttribute(key, value);
+	utils.each(attributes || {}, function (key: keyof HTMLElement, value: any) {
+		if (key == 'style') {
+			htmlElement.style.cssText = value as string;
+		}
+		else if (htmlElement.nodeType == ELEMENT_NODE && key in htmlElement) {
+			let attribute = htmlElement[key];
+			attribute = value;
+		}
+		else {
+			htmlElement.setAttribute(key, value);
 		}
 	});
 
-	return node;
+	return htmlElement;
 }
+
+
 
 /**
  * Returns an array of parents that matches the selector
@@ -81,11 +86,12 @@ export function createElement(tag, attributes, context) {
  * @param {!string} [selector]
  * @returns {Array<HTMLElement>}
  */
-export function parents(node, selector) {
-	var parents = [];
-	var parent = node || {};
+export function parents(node: HTMLElement, selector: string): Array<HTMLElement> {
+	var parents = [] as Array<HTMLElement>;
+	var parent = node;
 
-	while ((parent = parent.parentNode) && !/(9|11)/.test(parent.nodeType)) {
+	while ((parent = parent.parentNode as HTMLElement)
+		&& !/(9|11)/.test(parent.nodeType.toString())) {
 		if (!selector || is(parent, selector)) {
 			parents.push(parent);
 		}
@@ -101,10 +107,11 @@ export function parents(node, selector) {
  * @param {!string} [selector]
  * @returns {HTMLElement|undefined}
  */
-export function parent(node, selector) {
-	var parent = node || {};
+export function parent(node: HTMLElement, selector: string): HTMLElement | undefined {
+	var parent = node;
 
-	while ((parent = parent.parentNode) && !/(9|11)/.test(parent.nodeType)) {
+	while ((parent = parent.parentNode as HTMLElement)
+		&& !/(9|11)/.test(parent.nodeType.toString())) {
 		if (!selector || is(parent, selector)) {
 			return parent;
 		}
@@ -119,7 +126,7 @@ export function parent(node, selector) {
  * @param {!string} selector
  * @returns {HTMLElement|undefined}
  */
-export function closest(node, selector) {
+export function closest(node: HTMLElement, selector: string): HTMLElement | undefined {
 	return is(node, selector) ? node : parent(node, selector);
 }
 
@@ -128,7 +135,7 @@ export function closest(node, selector) {
  *
  * @param {!HTMLElement} node
  */
-export function remove(node) {
+export function remove(node: HTMLElement) {
 	if (node.parentNode) {
 		node.parentNode.removeChild(node);
 	}
@@ -140,7 +147,7 @@ export function remove(node) {
  * @param {!HTMLElement | DocumentFragment} node
  * @param {Node | HTMLElement | string | null } child
  */
-export function appendChild(node, child) {
+export function appendChild(node: HTMLElement | DocumentFragment, child: HTMLElement | DocumentFragment | Text) {
 	node.appendChild(child);
 }
 
@@ -151,7 +158,7 @@ export function appendChild(node, child) {
  * @param {!string} selector
  * @returns {NodeList}
  */
-export function find(node, selector) {
+export function find(node: HTMLElement | Document, selector: string): NodeList {
 	return node.querySelectorAll(selector);
 }
 
@@ -161,7 +168,7 @@ export function find(node, selector) {
  *
  * @type {boolean}
  */
-export var EVENT_CAPTURE = true;
+export let EVENT_CAPTURE: boolean = true;
 
 /**
  * For on() and off() if to add/remove the event
@@ -169,7 +176,7 @@ export var EVENT_CAPTURE = true;
  *
  * @type {boolean}
  */
-export var EVENT_BUBBLE = false;
+export let EVENT_BUBBLE: boolean = false;
 
 /**
  * Adds an event listener for the specified events.
@@ -187,12 +194,12 @@ export var EVENT_BUBBLE = false;
  * @see off()
  */
 // eslint-disable-next-line max-params
-export function on(node, events, selector, fn, capture) {
+export function on(node: (Window & typeof globalThis) | Document | HTMLElement, events: string, selector: string, fn: any, capture: boolean = false) {
 	events.split(' ').forEach(function (event) {
 		var handler;
 
 		if (utils.isString(selector)) {
-			handler = fn['_eml-event-' + event + selector] || function (e) {
+			handler = fn['_eml-event-' + event + selector] || function (e: any) {
 				var target = e.target;
 				while (target && target !== node) {
 					if (is(target, selector)) {
@@ -224,12 +231,13 @@ export function on(node, events, selector, fn, capture) {
  * @see on()
  */
 // eslint-disable-next-line max-params
-export function off(node, events, selector, fn, capture) {
+export function off(node: Node | HTMLElement | Window, events: string, selector: string, fn: (arg0: object) => any, capture: boolean = false) {
 	events.split(' ').forEach(function (event) {
 		var handler;
 
 		if (utils.isString(selector)) {
-			handler = fn['_eml-event-' + event + selector];
+			let key = '_eml-event-' + event + selector;
+			handler = fn[key as keyof typeof fn];
 		} else {
 			handler = fn;
 		}
@@ -250,13 +258,13 @@ export function off(node, events, selector, fn, capture) {
  * @param {!string} attr
  * @param {?string} [value]
  */
-export function attr(node, attr, value) {
+export function attr(node: HTMLElement, attr: string, value?: string): any {
 	if (arguments.length < 3) {
 		return node.getAttribute(attr);
 	}
 
 	// eslint-disable-next-line eqeqeq, no-eq-null
-	if (value == null) {
+	if (!value) {
 		removeAttr(node, attr);
 	} else {
 		node.setAttribute(attr, value);
@@ -269,7 +277,7 @@ export function attr(node, attr, value) {
  * @param {!HTMLElement} node
  * @param {!string} attr
  */
-export function removeAttr(node, attr) {
+export function removeAttr(node: HTMLElement, attr: string) {
 	node.removeAttribute(attr);
 }
 
@@ -278,7 +286,7 @@ export function removeAttr(node, attr) {
  *
  * @param {!HTMLElement} node
  */
-export function hide(node) {
+export function hide(node: HTMLElement) {
 	css(node, 'display', 'none');
 }
 
@@ -287,7 +295,7 @@ export function hide(node) {
  *
  * @param {!HTMLElement} node
  */
-export function show(node) {
+export function show(node: any) {
 	css(node, 'display', '');
 }
 
@@ -296,7 +304,7 @@ export function show(node) {
  *
  * @param {!HTMLElement} node
  */
-export function toggle(node) {
+export function toggle(node: any) {
 	if (isVisible(node)) {
 		hide(node);
 	} else {
@@ -315,7 +323,7 @@ export function toggle(node) {
  * @param {any} [value]
  * @return {any}
  */
-export function css(node, rule, value) {
+export function css(node: any, rule: any, value?: any) {
 	if (arguments.length < 3) {
 		if (utils.isString(rule)) {
 			return node.nodeType === 1 ? getComputedStyle(node)[rule] : null;
@@ -345,15 +353,16 @@ export function css(node, rule, value) {
  * @param {string} [value]
  * @return {Object|undefined}
  */
-export function data(node, key, value) {
+export function data(node: any, key?: any, value?: any): object | undefined {
 	var argsLength = arguments.length;
-	var data = {};
+	var data: any = {};
 
 	if (node.nodeType === ELEMENT_NODE) {
 		if (argsLength === 1) {
 			utils.each(node.attributes, function (_, attr) {
 				if (/^data-/i.test(attr.name)) {
-					data[attr.name.substr(5)] = attr.value;
+					let idx = attr.name.substr(5) as keyof typeof data;
+					data[idx] = attr.value;
 				}
 			});
 
@@ -375,12 +384,11 @@ export function data(node, key, value) {
  * @param {string} selector
  * @returns {boolean}
  */
-export function is(node, selector) {
+export function is(node: HTMLElement, selector: string): boolean {
 	var result = false;
 
 	if (node && node.nodeType === ELEMENT_NODE) {
-		result = (node.matches || node.msMatchesSelector ||
-			node.webkitMatchesSelector).call(node, selector);
+		result = (node.matches).call(node, selector);
 	}
 
 	return result;
@@ -397,17 +405,17 @@ export function is(node, selector) {
  * @param {HTMLElement} child
  * @returns {boolean}
  */
-export function contains(node, child) {
+export function contains(node: Node, child: HTMLElement): boolean {
 	return node !== child && node.contains && node.contains(child);
 }
 
 /**
- * @param {Node} node
+ * @param {Element} node
  * @param {string} [selector]
  * @returns {?HTMLElement}
  */
-export function previousElementSibling(node, selector) {
-	var prev = node.previousElementSibling;
+export function previousElementSibling(node: HTMLElement, selector?: string) {
+	var prev = node.previousElementSibling as HTMLElement;
 
 	if (selector && prev) {
 		return is(prev, selector) ? prev : null;
@@ -421,7 +429,7 @@ export function previousElementSibling(node, selector) {
  * @param {!Node} refNode
  * @returns {Node}
  */
-export function insertBefore(node, refNode) {
+export function insertBefore(node: HTMLElement | DocumentFragment, refNode: Element) {
 	return refNode.parentNode.insertBefore(node, refNode);
 }
 
@@ -429,8 +437,9 @@ export function insertBefore(node, refNode) {
  * @param {?HTMLElement} node
  * @returns {!Array.<string>}
  */
-function classes(node) {
-	return node.className.trim().split(/\s+/);
+function classes(node: HTMLElement): string[] {
+	const retValue = node.className.trim().split(/\s+/);
+	return retValue;
 }
 
 /**
@@ -438,7 +447,7 @@ function classes(node) {
  * @param {string} className
  * @returns {boolean}
  */
-export function hasClass(node, className) {
+export function hasClass(node: HTMLElement, className: string) {
 	return is(node, '.' + className);
 }
 
@@ -446,7 +455,7 @@ export function hasClass(node, className) {
  * @param {!HTMLElement} node
  * @param {string} className
  */
-export function addClass(node, className) {
+export function addClass(node: HTMLElement, className: string): void {
 	var classList = classes(node);
 
 	if (classList.indexOf(className) < 0) {
@@ -460,7 +469,7 @@ export function addClass(node, className) {
  * @param {!HTMLElement} node
  * @param {string} className
  */
-export function removeClass(node, className) {
+export function removeClass(node: HTMLElement, className: string) {
 	var classList = classes(node);
 
 	utils.arrayRemove(classList, className);
@@ -481,7 +490,7 @@ export function removeClass(node, className) {
  * @param {string} className
  * @param {boolean} [state]
  */
-export function toggleClass(node, className, state) {
+export function toggleClass(node: HTMLElement, className: string, state?: boolean) {
 	state = utils.isUndefined(state) ? !hasClass(node, className) : state;
 
 	if (state) {
@@ -498,7 +507,7 @@ export function toggleClass(node, className, state) {
  * @param {number|string} [value]
  * @returns {number|undefined}
  */
-export function width(node, value) {
+export function width(node: HTMLElement, value?: number | string) {
 	if (utils.isUndefined(value)) {
 		var cs = getComputedStyle(node);
 		var padding = toFloat(cs.paddingLeft) + toFloat(cs.paddingRight);
@@ -517,7 +526,7 @@ export function width(node, value) {
  * @param {number|string} [value]
  * @returns {number|undefined}
  */
-export function height(node, value) {
+export function height(node: HTMLElement, value?: number | string) {
 	if (utils.isUndefined(value)) {
 		var cs = getComputedStyle(node);
 		var padding = toFloat(cs.paddingTop) + toFloat(cs.paddingBottom);
@@ -537,7 +546,7 @@ export function height(node, value) {
  * @param {string} eventName
  * @param {Object} [data]
  */
-export function trigger(node, eventName, data) {
+export function trigger(node: HTMLElement, eventName: string, data?: any) {
 	var event;
 
 	if (utils.isFunction(window.CustomEvent)) {
@@ -560,7 +569,7 @@ export function trigger(node, eventName, data) {
  * @param {HTMLElement}
  * @returns {boolean}
  */
-export function isVisible(node) {
+export function isVisible(node: HTMLElement) {
 	return !!node.getClientRects().length;
 }
 
@@ -570,8 +579,8 @@ export function isVisible(node) {
  * @param {string} string
  * @returns {string}
  */
-function camelCase(string) {
-	return string
+function camelCase(str: string) {
+	return str
 		.replace(/^-ms-/, 'ms-')
 		.replace(/-(\w)/g, function (match, char) {
 			return char.toUpperCase();
@@ -594,7 +603,7 @@ function camelCase(string) {
  * @param  {boolean} [reverse=false] If to traverse the nodes in reverse
  */
 // eslint-disable-next-line max-params
-export function traverse(node, func, innermostFirst, siblingsOnly, reverse) {
+export function traverse(node: any, func: (node: HTMLElement) => any, innermostFirst?: boolean, siblingsOnly?: boolean, reverse: boolean = false) {
 	node = reverse ? node.lastChild : node.firstChild;
 
 	while (node) {
@@ -618,7 +627,7 @@ export function traverse(node, func, innermostFirst, siblingsOnly, reverse) {
  * Like traverse but loops in reverse
  * @see traverse
  */
-export function rTraverse(node, func, innermostFirst, siblingsOnly) {
+export function rTraverse(node: any, func: (node: Node) => boolean, innermostFirst?: boolean, siblingsOnly?: boolean) {
 	traverse(node, func, innermostFirst, siblingsOnly, true);
 }
 
@@ -630,16 +639,17 @@ export function rTraverse(node, func, innermostFirst, siblingsOnly) {
  * @since 1.4.4
  * @return {DocumentFragment}
  */
-export function parseHTML(html, context) {
+export function parseHTML(html: string, context?: Document) {
 	context = context || document;
 
-	var	ret = context.createDocumentFragment();
+	var ret = context.createDocumentFragment();
 	var tmp = createElement('div', {}, context);
 
 	tmp.innerHTML = html;
 
-	while (tmp.firstChild) {
-		appendChild(ret, tmp.firstChild);
+	let tmpFirstChild = tmp.firstChild as HTMLElement
+	while (tmpFirstChild) {
+		appendChild(ret, tmpFirstChild);
 	}
 
 	return ret;
@@ -651,11 +661,11 @@ export function parseHTML(html, context) {
  * It has styling if it is not a plain <div> or <p> or
  * if it has a class, style attribute or data.
  *
- * @param  {HTMLElement} elm
+ * @param  {HTMLElement} node
  * @return {boolean}
  * @since 1.4.4
  */
-export function hasStyling(node) {
+export function hasStyling(node: HTMLElement) {
 	return node && (!is(node, 'p,div') || node.className ||
 		attr(node, 'style') || !utils.isEmptyObject(data(node)));
 }
@@ -670,7 +680,7 @@ export function hasStyling(node) {
  * @return {HTMLElement}
  * @since 1.4.4
  */
-export function convertElement(element, toTagName) {
+export function convertElement(element: HTMLElement, toTagName: string) {
 	var newElement = createElement(toTagName, {}, element.ownerDocument);
 
 	utils.each(element.attributes, function (_, attribute) {
@@ -682,8 +692,9 @@ export function convertElement(element, toTagName) {
 		} catch (ex) { /* empty */ }
 	});
 
+	let elementFirstChild = element.firstChild as HTMLElement;
 	while (element.firstChild) {
-		appendChild(newElement, element.firstChild);
+		appendChild(newElement, elementFirstChild);
 	}
 
 	element.parentNode.replaceChild(newElement, element);
@@ -696,7 +707,7 @@ export function convertElement(element, toTagName) {
  *
  * @type {string}
  */
-export var blockLevelList = '|body|hr|p|div|h1|h2|h3|h4|h5|h6|address|pre|' +
+export var blockLevelList: string = '|body|hr|p|div|h1|h2|h3|h4|h5|h6|address|pre|' +
 	'form|table|tbody|thead|tfoot|th|tr|td|li|ol|ul|blockquote|center|' +
 	'details|section|article|aside|nav|main|header|hgroup|footer|fieldset|' +
 	'dl|dt|dd|figure|figcaption|';
@@ -708,11 +719,11 @@ export var blockLevelList = '|body|hr|p|div|h1|h2|h3|h4|h5|h6|address|pre|' +
  * @return {boolean}
  * @since  1.4.5
  */
-export function canHaveChildren(node) {
+export function canHaveChildren(node: Element | Document | DocumentFragment | HTMLElement) {
 	// 1  = Element
 	// 9  = Document
 	// 11 = Document Fragment
-	if (!/11?|9/.test(node.nodeType)) {
+	if (!/11?|9/.test(node.nodeType.toString())) {
 		return false;
 	}
 
@@ -731,7 +742,7 @@ export function canHaveChildren(node) {
  * @param {boolean} [includeCodeAsBlock=false]
  * @return {boolean}
  */
-export function isInline(elm, includeCodeAsBlock) {
+export function isInline(elm: HTMLElement | any, includeCodeAsBlock: boolean = false) {
 	var tagName,
 		nodeType = (elm || {}).nodeType || TEXT_NODE;
 
@@ -757,7 +768,7 @@ export function isInline(elm, includeCodeAsBlock) {
  * @param {HTMLElement} to
  * @deprecated since v3.1.0
  */
-export function copyCSS(from, to) {
+export function copyCSS(from: HTMLElement, to: HTMLElement) {
 	if (to.style && from.style) {
 		to.style.cssText = from.style.cssText + to.style.cssText;
 	}
@@ -769,9 +780,10 @@ export function copyCSS(from, to) {
  * @param {Node} node
  * @returns {boolean}
  */
-export function isEmpty(node) {
-	if (node.lastChild && isEmpty(node.lastChild)) {
-		remove(node.lastChild);
+export function isEmpty(node: HTMLElement | DocumentFragment): boolean {
+	let lastChild = node.lastChild as HTMLElement;
+	if (lastChild && isEmpty(lastChild)) {
+		remove(lastChild);
 	}
 
 	return node.nodeType === 3 ? !node.nodeValue :
@@ -786,36 +798,38 @@ export function isEmpty(node) {
  *
  * @param {HTMLElement} node
  */
-export function fixNesting(node) {
+export function fixNesting(node: HTMLElement) {
 	traverse(node, function (node) {
-		var list = 'ul,ol',
+		let list = 'ul,ol',
 			isBlock = !isInline(node, true) && node.nodeType !== COMMENT_NODE,
-			parent = node.parentNode;
+			parent = node.parentNode as HTMLElement;
 
 		// Any blocklevel element inside an inline element needs fixing.
 		// Also <p> tags that contain blocks should be fixed
 		if (isBlock && (isInline(parent, true) || parent.tagName === 'P')) {
 			// Find the last inline parent node
-			var	lastInlineParent = node;
-			while (isInline(lastInlineParent.parentNode, true) ||
-				lastInlineParent.parentNode.tagName === 'P') {
-				lastInlineParent = lastInlineParent.parentNode;
+			let lastInlineParent = node as HTMLElement;
+			let lastInlineParentNode = lastInlineParent.parentNode as HTMLElement
+			while (isInline(lastInlineParentNode, true) ||
+				lastInlineParentNode.tagName === 'P') {
+				lastInlineParent = lastInlineParent.parentNode as HTMLElement;
 			}
 
-			var before = extractContents(lastInlineParent, node);
-			var middle = node;
+			let before = extractContents(lastInlineParent, node);
+			let middle = node as HTMLElement;
 
 			// Clone inline styling and apply it to the blocks children
 			while (parent && isInline(parent, true)) {
 				if (parent.nodeType === ELEMENT_NODE) {
-					var clone = parent.cloneNode();
-					while (middle.firstChild) {
-						appendChild(clone, middle.firstChild);
+					let clone = parent.cloneNode() as HTMLElement;
+					let middleFirstChild = middle.firstChild as HTMLElement;
+					while (middleFirstChild) {
+						appendChild(clone, middleFirstChild);
 					}
 
 					appendChild(middle, clone);
 				}
-				parent = parent.parentNode;
+				parent = parent.parentNode as HTMLElement;
 			}
 
 			insertBefore(middle, lastInlineParent);
@@ -828,7 +842,8 @@ export function fixNesting(node) {
 		}
 
 		// Fix invalid nested lists which should be wrapped in an li tag
-		if (isBlock && is(node, list) && is(node.parentNode, list)) {
+		let nodeParentNode = node.parentNode as HTMLElement;
+		if (isBlock && is(node, list) && is(nodeParentNode, list)) {
 			var li = previousElementSibling(node, 'li');
 
 			if (!li) {
@@ -848,8 +863,8 @@ export function fixNesting(node) {
  * @param {!HTMLElement} node2
  * @return {?HTMLElement}
  */
-export function findCommonAncestor(node1, node2) {
-	while ((node1 = node1.parentNode)) {
+export function findCommonAncestor(node1: HTMLElement, node2: HTMLElement): HTMLElement | null {
+	while ((node1 = node1.parentNode as HTMLElement)) {
 		if (contains(node1, node2)) {
 			return node1;
 		}
@@ -861,13 +876,13 @@ export function findCommonAncestor(node1, node2) {
  * @param {boolean} [previous=false]
  * @returns {?Node}
  */
-export function getSibling(node, previous) {
+export function getSibling(node?: HTMLElement, previous: boolean = false): HTMLElement | null {
 	if (!node) {
 		return null;
 	}
 
-	return (previous ? node.previousSibling : node.nextSibling) ||
-		getSibling(node.parentNode, previous);
+	let sibling = (previous ? node.previousSibling : node.nextSibling) || getSibling(node.parentNode as HTMLElement, previous);
+	return sibling as HTMLElement;
 }
 
 /**
@@ -876,13 +891,13 @@ export function getSibling(node, previous) {
  * @param {!HTMLElement} root
  * @since 1.4.3
  */
-export function removeWhiteSpace(root) {
-	var	nodeValue, nodeType, next, previous, previousSibling,
+export function removeWhiteSpace(root: HTMLElement) {
+	var nodeValue, nodeType, next, previous, previousSibling,
 		nextNode, trimStart,
 		cssWhiteSpace = css(root, 'whiteSpace'),
 		// Preserve newlines if is pre-line
 		preserveNewLines = /line$/i.test(cssWhiteSpace),
-		node = root.firstChild;
+		node = root.firstChild as HTMLElement;
 
 	// Skip pre & pre-wrap with any vendor prefix
 	if (/pre(-wrap)?$/i.test(cssWhiteSpace)) {
@@ -890,17 +905,17 @@ export function removeWhiteSpace(root) {
 	}
 
 	while (node) {
-		nextNode  = node.nextSibling;
+		nextNode = node.nextSibling as HTMLElement;
 		nodeValue = node.nodeValue;
-		nodeType  = node.nodeType;
+		nodeType = node.nodeType;
 
 		if (nodeType === ELEMENT_NODE && node.firstChild) {
 			removeWhiteSpace(node);
 		}
 
 		if (nodeType === TEXT_NODE) {
-			next      = getSibling(node);
-			previous  = getSibling(node, true);
+			next = getSibling(node);
+			previous = getSibling(node, true);
 			trimStart = false;
 
 			while (hasClass(previous, 'emleditor-ignore')) {
@@ -913,7 +928,7 @@ export function removeWhiteSpace(root) {
 				previousSibling = previous;
 
 				while (previousSibling.lastChild) {
-					previousSibling = previousSibling.lastChild;
+					previousSibling = previousSibling.lastChild as HTMLElement;
 
 					// eslint-disable-next-line max-depth
 					while (hasClass(previousSibling, 'emleditor-ignore')) {
@@ -967,7 +982,7 @@ export function removeWhiteSpace(root) {
  * @param {HTMLElement} endNode		The node to stop extracting at
  * @return {DocumentFragment}
  */
-export function extractContents(startNode, endNode) {
+export function extractContents(startNode: HTMLElement, endNode: HTMLElement): DocumentFragment {
 	var range = startNode.ownerDocument.createRange();
 
 	range.setStartBefore(startNode);
@@ -982,14 +997,14 @@ export function extractContents(startNode, endNode) {
  * @param  {HTMLElement} node
  * @return {Object} An object with left and top properties
  */
-export function getOffset(node) {
-	var	left = 0,
+export function getOffset(node: HTMLElement): { left: number, top: number } {
+	var left = 0,
 		top = 0;
 
 	while (node) {
 		left += node.offsetLeft;
-		top  += node.offsetTop;
-		node  = node.offsetParent;
+		top += node.offsetTop;
+		node = node.offsetParent as HTMLElement;
 	}
 
 	return {
@@ -1005,16 +1020,16 @@ export function getOffset(node) {
  * @param  {string} property
  * @return {string}
  */
-export function getStyle(elm, property) {
-	var	styleValue,
-		elmStyle = elm.style;
+export function getStyle(elm: HTMLElement, property: string): string {
+	let styleValue: string;
+	let elmStyle = elm.style;
 
 	if (!cssPropertyNameCache[property]) {
 		cssPropertyNameCache[property] = camelCase(property);
 	}
 
-	property   = cssPropertyNameCache[property];
-	styleValue = elmStyle[property];
+	property = cssPropertyNameCache[property];
+	styleValue = elmStyle.getPropertyValue(property);
 
 	// Add an exception for text-align
 	if ('textAlign' === property) {
@@ -1040,7 +1055,7 @@ export function getStyle(elm, property) {
  * @param  {string|array} [values]
  * @return {boolean}
  */
-export function hasStyle(elm, property, values) {
+export function hasStyle(elm: HTMLElement, property: string, values?: string | Array<any>): boolean {
 	var styleValue = getStyle(elm, property);
 
 	if (!styleValue) {
@@ -1059,15 +1074,15 @@ export function hasStyle(elm, property, values) {
  * @param {HTMLElement} nodeB
  * @returns {boolean}
  */
-function stylesMatch(nodeA, nodeB) {
+function stylesMatch(nodeA: HTMLElement, nodeB: HTMLElement): boolean {
 	var i = nodeA.style.length;
 	if (i !== nodeB.style.length) {
 		return false;
 	}
 
 	while (i--) {
-		var prop = nodeA.style[i];
-		if (nodeA.style[prop] !== nodeB.style[prop]) {
+		let prop: string = nodeA.style[i];
+		if (nodeA.style.getPropertyValue(prop) !== nodeB.style.getPropertyValue(prop)) {
 			return false;
 		}
 	}
@@ -1083,7 +1098,7 @@ function stylesMatch(nodeA, nodeB) {
  * @param {HTMLElement} nodeB
  * @returns {boolean}
  */
-function attributesMatch(nodeA, nodeB) {
+function attributesMatch(nodeA: HTMLElement, nodeB: HTMLElement): boolean {
 	var i = nodeA.attributes.length;
 	if (i !== nodeB.attributes.length) {
 		return false;
@@ -1108,9 +1123,10 @@ function attributesMatch(nodeA, nodeB) {
  *
  * @param {HTMLElement} node
  */
-function removeKeepChildren(node) {
-	while (node.firstChild) {
-		insertBefore(node.firstChild, node);
+function removeKeepChildren(node: HTMLElement) {
+	let nodeFirstChild = node.firstChild as HTMLElement | DocumentFragment;
+	while (nodeFirstChild) {
+		insertBefore(nodeFirstChild, node);
 	}
 
 	remove(node);
@@ -1122,19 +1138,19 @@ function removeKeepChildren(node) {
  * @param {Node} node
  * @since 3.1.0
  */
-export function merge(node) {
+export function merge(node: HTMLElement) {
 	if (node.nodeType !== ELEMENT_NODE) {
 		return;
 	}
 
-	var parent = node.parentNode;
+	var parent = node.parentNode as HTMLElement;
 	var tagName = node.tagName;
 	var mergeTags = /B|STRONG|EM|SPAN|FONT/;
 
 	// Merge children (in reverse as children can be removed)
 	var i = node.childNodes.length;
 	while (i--) {
-		merge(node.childNodes[i]);
+		merge(node.childNodes[i] as HTMLElement);
 	}
 
 	// Should only merge inline tags and should not merge <br> tags
@@ -1192,13 +1208,13 @@ export function merge(node) {
 					break;
 				}
 
-				parent = parent.parentNode;
+				parent = parent.parentNode as HTMLElement;
 			}
 		}
 	}
 
 	// Merge siblings if attributes, including inline styles, match
-	var next = node.nextSibling;
+	var next = node.nextSibling as HTMLElement;
 	if (next && next.tagName === tagName && attributesMatch(next, node)) {
 		appendChild(node, next);
 		removeKeepChildren(next);
