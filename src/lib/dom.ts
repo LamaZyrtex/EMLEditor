@@ -60,14 +60,16 @@ function toFloat(value: any) {
  */
 export function createElement(tag: string, attributes?: { [s: string]: string; }, context?: Document): HTMLElement {
 	let htmlElement = (context || document).createElement(tag);
+	let attribs = attributes;
 
-	utils.each(attributes || {}, function (key: keyof HTMLElement, value: any) {
+	utils.each(attribs || {}, function (key: keyof HTMLElement, value: any) {
 		if (key == 'style') {
 			htmlElement.style.cssText = value as string;
 		}
-		else if (htmlElement.nodeType == ELEMENT_NODE && key in htmlElement) {
-			let attribute = htmlElement[key];
-			attribute = value;
+		else if (key in htmlElement) {
+			//@ts-expect-error
+			htmlElement[key] = value;
+
 		}
 		else {
 			htmlElement.setAttribute(key, value);
@@ -76,8 +78,6 @@ export function createElement(tag: string, attributes?: { [s: string]: string; }
 
 	return htmlElement;
 }
-
-
 
 /**
  * Returns an array of parents that matches the selector
@@ -127,7 +127,11 @@ export function parent(node: HTMLElement, selector: string): HTMLElement | undef
  * @returns {HTMLElement|undefined}
  */
 export function closest(node: HTMLElement, selector: string): HTMLElement | undefined {
-	return is(node, selector) ? node : parent(node, selector);
+	if (!node) {
+		return undefined;
+	}
+	let retElement = is(node, selector) ? node : parent(node, selector);
+	return retElement;
 }
 
 /**
@@ -257,8 +261,9 @@ export function off(node: Node | HTMLElement | Window, events: string, selector:
  * @param {!HTMLElement} node
  * @param {!string} attr
  * @param {?string} [value]
+ * @return {string | undefined}
  */
-export function attr(node: HTMLElement, attr: string, value?: string): any {
+export function attr(node: HTMLElement, attr: string, value?: string): string | undefined {
 	if (arguments.length < 3) {
 		return node.getAttribute(attr);
 	}
@@ -269,6 +274,8 @@ export function attr(node: HTMLElement, attr: string, value?: string): any {
 	} else {
 		node.setAttribute(attr, value);
 	}
+
+	return undefined;
 }
 
 /**
@@ -353,7 +360,7 @@ export function css(node: any, rule: any, value?: any) {
  * @param {string} [value]
  * @return {Object|undefined}
  */
-export function data(node: any, key?: any, value?: any): object | undefined {
+export function data(node: any, key?: any, value?: any): string | undefined {
 	var argsLength = arguments.length;
 	var data: any = {};
 
@@ -647,9 +654,9 @@ export function parseHTML(html: string, context?: Document) {
 
 	tmp.innerHTML = html;
 
-	let tmpFirstChild = tmp.firstChild as HTMLElement
-	while (tmpFirstChild) {
-		appendChild(ret, tmpFirstChild);
+
+	while (tmp.firstChild as HTMLElement) {
+		appendChild(ret, tmp.firstChild as HTMLElement);
 	}
 
 	return ret;
@@ -665,9 +672,9 @@ export function parseHTML(html: string, context?: Document) {
  * @return {boolean}
  * @since 1.4.4
  */
-export function hasStyling(node: HTMLElement) {
-	return node && (!is(node, 'p,div') || node.className ||
-		attr(node, 'style') || !utils.isEmptyObject(data(node)));
+export function hasStyling(node: HTMLElement): boolean {
+	return node && (!is(node, 'p,div') || node.className?.length > 0 ||
+		(attr(node, 'style')?.length > 0) || utils.isString(data(node)));
 }
 
 /**
@@ -692,9 +699,9 @@ export function convertElement(element: HTMLElement, toTagName: string) {
 		} catch (ex) { /* empty */ }
 	});
 
-	let elementFirstChild = element.firstChild as HTMLElement;
-	while (element.firstChild) {
-		appendChild(newElement, elementFirstChild);
+
+	while (element.firstChild as HTMLElement) {
+		appendChild(newElement, element.firstChild as HTMLElement);
 	}
 
 	element.parentNode.replaceChild(newElement, element);
@@ -809,9 +816,9 @@ export function fixNesting(node: HTMLElement) {
 		if (isBlock && (isInline(parent, true) || parent.tagName === 'P')) {
 			// Find the last inline parent node
 			let lastInlineParent = node as HTMLElement;
-			let lastInlineParentNode = lastInlineParent.parentNode as HTMLElement
-			while (isInline(lastInlineParentNode, true) ||
-				lastInlineParentNode.tagName === 'P') {
+
+			while (isInline(lastInlineParent.parentNode as HTMLElement, true) ||
+				(lastInlineParent.parentNode as HTMLElement).tagName === 'P') {
 				lastInlineParent = lastInlineParent.parentNode as HTMLElement;
 			}
 
@@ -822,9 +829,8 @@ export function fixNesting(node: HTMLElement) {
 			while (parent && isInline(parent, true)) {
 				if (parent.nodeType === ELEMENT_NODE) {
 					let clone = parent.cloneNode() as HTMLElement;
-					let middleFirstChild = middle.firstChild as HTMLElement;
-					while (middleFirstChild) {
-						appendChild(clone, middleFirstChild);
+					while ((middle.firstChild as HTMLElement)) {
+						appendChild(clone, (middle.firstChild as HTMLElement));
 					}
 
 					appendChild(middle, clone);
@@ -1124,9 +1130,9 @@ function attributesMatch(nodeA: HTMLElement, nodeB: HTMLElement): boolean {
  * @param {HTMLElement} node
  */
 function removeKeepChildren(node: HTMLElement) {
-	let nodeFirstChild = node.firstChild as HTMLElement | DocumentFragment;
-	while (nodeFirstChild) {
-		insertBefore(nodeFirstChild, node);
+
+	while ((node.firstChild as HTMLElement | DocumentFragment)) {
+		insertBefore((node.firstChild as HTMLElement | DocumentFragment), node);
 	}
 
 	remove(node);
