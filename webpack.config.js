@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
+
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: './src/index.ts',
@@ -21,7 +21,7 @@ module.exports = {
             'css-loader', 
             'less-loader'
         ],
-    },
+    },      
     ],
   },
   resolve: {
@@ -38,5 +38,12 @@ module.exports = {
     compress: true,
     port: 9001,
   },
-  plugins:[new MiniCssExtractPlugin()] 
+  plugins:[
+    new MiniCssExtractPlugin(),
+    new CopyPlugin({
+      patterns: [
+        { from: "./src/emoticons", to: "emoticons" },
+        { from: "./src/languages", to: "languages" }
+      ],
+    }),] 
 };

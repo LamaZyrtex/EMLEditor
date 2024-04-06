@@ -1,6 +1,7 @@
 import * as dom from './dom';
 import * as utils from './utils.js';
 import * as escape from './escape.js';
+import { RangeHelper } from './rangeHelper';
 
 /**
  * Checks all emoticons are surrounded by whitespace and
@@ -10,29 +11,29 @@ import * as escape from './escape.js';
  * @param {rangeHelper} rangeHelper
  * @return {void}
  */
-export function checkWhitespace(node, rangeHelper) {
-	var noneWsRegex = /[^\s\xA0\u2002\u2003\u2009]+/;
-	var emoticons = node && dom.find(node, 'img[data-emleditor-emoticon]');
+export function checkWhitespace(node: HTMLElement, rangeHelper: RangeHelper): void {
+	let noneWsRegex = /[^\s\xA0\u2002\u2003\u2009]+/;
+	let emoticons = node && dom.find(node, 'img[data-emleditor-emoticon]');
 
 	if (!node || !emoticons.length) {
 		return;
 	}
 
-	for (var i = 0; i < emoticons.length; i++) {
-		var emoticon = emoticons[i];
-		var parent = emoticon.parentNode;
-		var prev = emoticon.previousSibling;
-		var next = emoticon.nextSibling;
+	for (let i = 0; i < emoticons.length; i++) {
+		let emoticon = emoticons[i] as HTMLElement;
+		let parent = emoticon.parentNode as HTMLElement;
+		let prev = emoticon.previousSibling as Element;
+		let next = emoticon.nextSibling as CharacterData;
 
 		if ((!prev || !noneWsRegex.test(prev.nodeValue.slice(-1))) &&
 			(!next || !noneWsRegex.test((next.nodeValue || '')[0]))) {
 			continue;
 		}
 
-		var range = rangeHelper.cloneSelected();
-		var rangeStart = -1;
-		var rangeStartContainer = range.startContainer;
-		var previousText = (prev && prev.nodeValue) || '';
+		let range = rangeHelper.cloneSelected();
+		let rangeStart = -1;
+		let rangeStartContainer = range.startContainer;
+		let previousText = (prev && prev.nodeValue) || '';
 
 		previousText += dom.data(emoticon, 'emleditor-emoticon');
 
@@ -87,11 +88,11 @@ export function checkWhitespace(node, rangeHelper) {
  * @param {boolean} emoticonsCompat
  * @return {void}
  */
-export function replace(root, emoticons, emoticonsCompat) {
-	var	doc           = root.ownerDocument;
-	var space         = '(^|\\s|\xA0|\u2002|\u2003|\u2009|$)';
-	var emoticonCodes = [];
-	var emoticonRegex = {};
+export function replace(root: HTMLElement, emoticons: string[], emoticonsCompat: boolean): void {
+	let doc = root.ownerDocument;
+	let space = '(^|\\s|\xA0|\u2002|\u2003|\u2009|$)';
+	let emoticonCodes: Array<any> = [];
+	let emoticonRegex: any = {};
 
 	// TODO: Make this tag configurable.
 	if (dom.parent(root, 'code')) {
@@ -106,12 +107,12 @@ export function replace(root, emoticons, emoticonsCompat) {
 	// Sort keys longest to shortest so that longer keys
 	// take precedence (avoids bugs with shorter keys partially
 	// matching longer ones)
-	emoticonCodes.sort(function (a, b) {
+	emoticonCodes.sort(function (a: string, b: string) {
 		return b.length - a.length;
 	});
 
-	(function convert(node) {
-		node = node.firstChild;
+	(function convert(node: HTMLElement) {
+		node = node.firstChild as HTMLElement;
 
 		while (node) {
 			// TODO: Make this tag configurable.
@@ -120,19 +121,19 @@ export function replace(root, emoticons, emoticonsCompat) {
 			}
 
 			if (node.nodeType === dom.TEXT_NODE) {
-				for (var i = 0; i < emoticonCodes.length; i++) {
-					var text  = node.nodeValue;
-					var key   = emoticonCodes[i];
-					var index = emoticonsCompat ?
-						text.search(emoticonRegex[key]) :
-						text.indexOf(key);
+				for (let i = 0; i < emoticonCodes.length; i++) {
+					let text = node.nodeValue;
+					let emoticonKey = emoticonCodes[i];
+					let index = emoticonsCompat ?
+						text.search(emoticonRegex[emoticonKey]) :
+						text.indexOf(emoticonKey);
 
 					if (index > -1) {
 						// When emoticonsCompat is enabled this will be the
 						// position after any white space
-						var startIndex = text.indexOf(key, index);
-						var fragment   = dom.parseHTML(emoticons[key], doc);
-						var after      = text.substr(startIndex + key.length);
+						let startIndex = text.indexOf(emoticonKey, index);
+						let fragment = dom.parseHTML(emoticons[emoticonKey], doc);
+						let after = text.substr(startIndex + emoticonKey.length);
 
 						fragment.appendChild(doc.createTextNode(after));
 
@@ -143,7 +144,7 @@ export function replace(root, emoticons, emoticonsCompat) {
 				}
 			}
 
-			node = node.nextSibling;
+			node = node.nextSibling as HTMLElement;
 		}
 	}(root));
 }
