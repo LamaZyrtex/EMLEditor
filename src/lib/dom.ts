@@ -139,7 +139,7 @@ export function closest(node: HTMLElement, selector: string): HTMLElement | unde
  *
  * @param {!HTMLElement} node
  */
-export function remove(node: HTMLElement): void {
+export function remove(node: Node): void {
 	if (node.parentNode) {
 		node.parentNode.removeChild(node);
 	}

@@ -8,6 +8,7 @@ import defaultCommands from './lib/defaultCommands';
 import defaultOptions from './lib/defaultOptions.js';
 import './themes/square.less';
 
+
 declare global {
 	interface Window {
 		emlEditor: IEditor;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="nb">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -12,10 +12,7 @@
 
 <body>
     <form method="post">
-        <div>
-            <textarea id="emlEditor" style="height:300px;width:600px;">
-                </textarea>
-        </div>
+        <div id="emlEditor" style="height:300px;width:600px;"></div>
     </form>
     <script>
         var textarea = document.getElementById('emlEditor');
@@ -25,8 +22,7 @@
             width: '80%',
             icons: 'monocons',
             locale: 'nb',
-            style: 'https://cdn.jsdelivr.net/npm/sceditor@latest/minified/themes/content/default.min.css',
-            emoticonsEnabled: false
+            style: 'https://cdn.jsdelivr.net/npm/sceditor@latest/minified/themes/content/default.min.css'
         });
     </script>
 </body>

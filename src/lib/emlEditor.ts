@@ -7,7 +7,7 @@ import { RangeHelper } from './rangeHelper';
 import templates from './templates.js';
 import * as escape from './escape.js';
 import * as browser from './browser.js';
-import * as emoticons from './emoticons.js';
+import * as emoticons from './emoticons';
 import DOMPurify from 'dompurify';
 
 var globalWin = window;
@@ -1636,7 +1636,7 @@ export default class EmlEditor {
 	 * @private
 	 * @type {Array.<HTMLImageElement>}
 	 */
-	private preLoadCache: any = Array<HTMLImageElement>;
+	private preLoadCache: Array<HTMLImageElement> = [];
 
 	/**
 	 * Plugin manager instance
@@ -2009,8 +2009,9 @@ export default class EmlEditor {
 	 * @private
 	 */
 	private initEditor = (): void => {
-		this.sourceEditor = dom.createElement('textarea', null) as HTMLTextAreaElement;
+		this.sourceEditor = dom.createElement('textarea', { id: 'sourceEditor', title: 'Source Editor' }) as HTMLTextAreaElement;
 		this.wysiwygEditor = dom.createElement('iframe', {
+			title: "emlEditorWysiwyg",
 			frameborder: "0",
 			allowfullscreen: "true"
 		}) as HTMLIFrameElement;
@@ -2433,8 +2434,8 @@ export default class EmlEditor {
 			// Preload the emoticon
 			if (thisEditor.options.emoticonsEnabled) {
 				thisEditor.preLoadCache.push(dom.createElement('img', {
-					src: root + (url.url || url)
-				}));
+					src: root + (url?.url || url)
+				}) as HTMLImageElement);
 			}
 		});
 	};
