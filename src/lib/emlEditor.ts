@@ -2009,8 +2009,9 @@ export default class EmlEditor {
 	 * @private
 	 */
 	private initEditor = (): void => {
-		this.sourceEditor = dom.createElement('textarea', null) as HTMLTextAreaElement;
+		this.sourceEditor = dom.createElement('textarea', { id: 'sourceEditor', title: 'Source Editor' }) as HTMLTextAreaElement;
 		this.wysiwygEditor = dom.createElement('iframe', {
+			title: "emlEditorWysiwyg",
 			frameborder: "0",
 			allowfullscreen: "true"
 		}) as HTMLIFrameElement;
