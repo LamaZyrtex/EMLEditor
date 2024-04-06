@@ -1,4 +1,4 @@
-import { attr } from './dom.js';
+import { attr } from './dom';
 
 /**
  * Default options for EmlEditor

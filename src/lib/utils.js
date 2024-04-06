@@ -125,7 +125,7 @@ export function arrayRemove(arr, item) {
  * @param {function(*, *)} fn
  */
 export function each(obj, fn) {
-	if (Array.isArray(obj) || 'length' in obj && isNumber(obj.length)) {
+	if (Array.isArray(obj) &&  (obj)?.length > 0) {
 		for (var i = 0; i < obj.length; i++) {
 			fn(i, obj[i]);
 		}

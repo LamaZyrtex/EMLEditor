@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
-import * as dom from './dom.js';
+import * as dom from './dom';
 import * as escape from './escape.js';
 import * as utils from './utils.js';
 
@@ -135,7 +135,8 @@ export class RangeHelper {
 			div.innerHTML = sanitize(html);
 
 			while (div.firstChild) {
-				dom.appendChild(node, div.firstChild);
+				let divFirstChild = div.firstChild as HTMLElement;
+				dom.appendChild(node, divFirstChild);
 			}
 
 			this.insertNode(node);
@@ -724,7 +725,7 @@ export class RangeHelper {
 		 * @return {Node|string}
 		 * @private
 		 */
-		_prepareInput = (node: Node | string, endNode: Node | string, returnHtml: boolean): Node | string => {
+		_prepareInput = (node: Node | string, endNode: HTMLElement | string, returnHtml?: boolean): Node | string => {
 			var lastChild, frag = doc.createDocumentFragment();
 
 			if (typeof node === 'string') {
@@ -734,10 +735,12 @@ export class RangeHelper {
 
 				frag = dom.parseHTML(node);
 			} else {
-				dom.appendChild(frag, node);
+				let htmlNode = node as HTMLElement;
+				dom.appendChild(frag, htmlNode);
 
-				if (endNode) {
-					dom.appendChild(frag, this.selectedRange().extractContents());
+				if (typeof endNode !== 'string' && endNode) {
+					let extracted = this.selectedRange().extractContents();
+					dom.appendChild(frag, extracted);
 					dom.appendChild(frag, endNode);
 				}
 			}
@@ -754,7 +757,8 @@ export class RangeHelper {
 				// Webkit won't allow the cursor to be placed inside an
 				// empty tag, so add a zero width space to it.
 				if (!lastChild.lastChild) {
-					dom.appendChild(lastChild, document.createTextNode('\u200B'));
+					let txtNode = document.createTextNode('\u200B');
+					dom.appendChild(lastChild, txtNode);
 				}
 			} else {
 				lastChild = frag;
