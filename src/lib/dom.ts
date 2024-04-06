@@ -41,7 +41,7 @@ export const DOCUMENT_NODE: number = 9;
  */
 export const DOCUMENT_FRAGMENT_NODE: number = 11;
 
-function toFloat(value: any) {
+function toFloat(value: any): number {
 	value = parseFloat(value);
 
 	return isFinite(value) ? value : 0;
@@ -139,7 +139,7 @@ export function closest(node: HTMLElement, selector: string): HTMLElement | unde
  *
  * @param {!HTMLElement} node
  */
-export function remove(node: HTMLElement) {
+export function remove(node: HTMLElement): void {
 	if (node.parentNode) {
 		node.parentNode.removeChild(node);
 	}
@@ -198,7 +198,7 @@ export let EVENT_BUBBLE: boolean = false;
  * @see off()
  */
 // eslint-disable-next-line max-params
-export function on(node: (Window & typeof globalThis) | Document | HTMLElement, events: string, selector: string, fn: any, capture: boolean = false) {
+export function on(node: (Window & typeof globalThis) | Document | HTMLElement, events: string, selector: string, fn: any, capture: boolean = false): void {
 	events.split(' ').forEach(function (event) {
 		var handler;
 
@@ -235,7 +235,7 @@ export function on(node: (Window & typeof globalThis) | Document | HTMLElement, 
  * @see on()
  */
 // eslint-disable-next-line max-params
-export function off(node: Node | HTMLElement | Window, events: string, selector: string, fn: (arg0: object) => any, capture: boolean = false) {
+export function off(node: Node | HTMLElement | Window, events: string, selector: string, fn: (arg0: object) => any, capture: boolean = false): void {
 	events.split(' ').forEach(function (event) {
 		var handler;
 
@@ -284,7 +284,7 @@ export function attr(node: HTMLElement, attr: string, value?: string): string | 
  * @param {!HTMLElement} node
  * @param {!string} attr
  */
-export function removeAttr(node: HTMLElement, attr: string) {
+export function removeAttr(node: HTMLElement, attr: string): void {
 	node.removeAttribute(attr);
 }
 
@@ -293,7 +293,7 @@ export function removeAttr(node: HTMLElement, attr: string) {
  *
  * @param {!HTMLElement} node
  */
-export function hide(node: HTMLElement) {
+export function hide(node: HTMLElement): void {
 	css(node, 'display', 'none');
 }
 
@@ -302,7 +302,7 @@ export function hide(node: HTMLElement) {
  *
  * @param {!HTMLElement} node
  */
-export function show(node: any) {
+export function show(node: HTMLElement): void {
 	css(node, 'display', '');
 }
 
@@ -311,7 +311,7 @@ export function show(node: any) {
  *
  * @param {!HTMLElement} node
  */
-export function toggle(node: any) {
+export function toggle(node: HTMLElement): void {
 	if (isVisible(node)) {
 		hide(node);
 	} else {
@@ -328,14 +328,14 @@ export function toggle(node: any) {
  * @param {any} node
  * @param {any} rule
  * @param {any} [value]
- * @return {any}
+ * @return {string | null}
  */
-export function css(node: any, rule: any, value?: any) {
+export function css(node: any, rule: any, value?: any): string | null {
+	let retVal = null;
 	if (arguments.length < 3) {
 		if (utils.isString(rule)) {
 			return node.nodeType === 1 ? getComputedStyle(node)[rule] : null;
 		}
-
 		utils.each(rule, function (key, value) {
 			css(node, key, value);
 		});
@@ -343,8 +343,9 @@ export function css(node: any, rule: any, value?: any) {
 		// isNaN returns false for null, false and empty strings
 		// so need to check it's truthy or 0
 		var isNumeric = (value || value === 0) && !isNaN(value);
-		node.style[rule] = isNumeric ? value + 'px' : value;
+		node.style[rule] = isNumeric ? value.toString() + 'px' : value;
 	}
+	return retVal;
 }
 
 
@@ -421,7 +422,7 @@ export function contains(node: Node, child: HTMLElement): boolean {
  * @param {string} [selector]
  * @returns {?HTMLElement}
  */
-export function previousElementSibling(node: HTMLElement, selector?: string) {
+export function previousElementSibling(node: HTMLElement, selector?: string): HTMLElement | null {
 	var prev = node.previousElementSibling as HTMLElement;
 
 	if (selector && prev) {
@@ -436,8 +437,9 @@ export function previousElementSibling(node: HTMLElement, selector?: string) {
  * @param {!Node} refNode
  * @returns {Node}
  */
-export function insertBefore(node: HTMLElement | DocumentFragment, refNode: Element) {
-	return refNode.parentNode.insertBefore(node, refNode);
+export function insertBefore(node: HTMLElement | DocumentFragment, refNode: Element): HTMLElement | DocumentFragment {
+	let retVal = refNode.parentNode.insertBefore(node, refNode);
+	return retVal;
 }
 
 /**
@@ -454,7 +456,7 @@ function classes(node: HTMLElement): string[] {
  * @param {string} className
  * @returns {boolean}
  */
-export function hasClass(node: HTMLElement, className: string) {
+export function hasClass(node: HTMLElement, className: string): boolean {
 	return is(node, '.' + className);
 }
 
@@ -476,7 +478,7 @@ export function addClass(node: HTMLElement, className: string): void {
  * @param {!HTMLElement} node
  * @param {string} className
  */
-export function removeClass(node: HTMLElement, className: string) {
+export function removeClass(node: HTMLElement, className: string): void {
 	var classList = classes(node);
 
 	utils.arrayRemove(classList, className);
@@ -497,7 +499,7 @@ export function removeClass(node: HTMLElement, className: string) {
  * @param {string} className
  * @param {boolean} [state]
  */
-export function toggleClass(node: HTMLElement, className: string, state?: boolean) {
+export function toggleClass(node: HTMLElement, className: string, state?: boolean): void {
 	state = utils.isUndefined(state) ? !hasClass(node, className) : state;
 
 	if (state) {
@@ -514,7 +516,7 @@ export function toggleClass(node: HTMLElement, className: string, state?: boolea
  * @param {number|string} [value]
  * @returns {number|undefined}
  */
-export function width(node: HTMLElement, value?: number | string) {
+export function width(node: HTMLElement, value?: number | string): number | undefined {
 	if (utils.isUndefined(value)) {
 		var cs = getComputedStyle(node);
 		var padding = toFloat(cs.paddingLeft) + toFloat(cs.paddingRight);
@@ -533,7 +535,7 @@ export function width(node: HTMLElement, value?: number | string) {
  * @param {number|string} [value]
  * @returns {number|undefined}
  */
-export function height(node: HTMLElement, value?: number | string) {
+export function height(node: HTMLElement, value?: number | string): number | undefined {
 	if (utils.isUndefined(value)) {
 		var cs = getComputedStyle(node);
 		var padding = toFloat(cs.paddingTop) + toFloat(cs.paddingBottom);
@@ -553,7 +555,7 @@ export function height(node: HTMLElement, value?: number | string) {
  * @param {string} eventName
  * @param {Object} [data]
  */
-export function trigger(node: HTMLElement, eventName: string, data?: any) {
+export function trigger(node: HTMLElement, eventName: string, data?: any): void {
 	var event;
 
 	if (utils.isFunction(window.CustomEvent)) {
@@ -576,7 +578,7 @@ export function trigger(node: HTMLElement, eventName: string, data?: any) {
  * @param {HTMLElement}
  * @returns {boolean}
  */
-export function isVisible(node: HTMLElement) {
+export function isVisible(node: HTMLElement): boolean {
 	return !!node.getClientRects().length;
 }
 
@@ -586,7 +588,7 @@ export function isVisible(node: HTMLElement) {
  * @param {string} string
  * @returns {string}
  */
-function camelCase(str: string) {
+function camelCase(str: string): string {
 	return str
 		.replace(/^-ms-/, 'ms-')
 		.replace(/-(\w)/g, function (match, char) {
@@ -610,7 +612,7 @@ function camelCase(str: string) {
  * @param  {boolean} [reverse=false] If to traverse the nodes in reverse
  */
 // eslint-disable-next-line max-params
-export function traverse(node: any, func: (node: HTMLElement) => any, innermostFirst?: boolean, siblingsOnly?: boolean, reverse: boolean = false) {
+export function traverse(node: any, func: (node: HTMLElement) => any, innermostFirst?: boolean, siblingsOnly?: boolean, reverse: boolean = false): boolean {
 	node = reverse ? node.lastChild : node.firstChild;
 
 	while (node) {
@@ -628,13 +630,15 @@ export function traverse(node: any, func: (node: HTMLElement) => any, innermostF
 
 		node = next;
 	}
+
+	return true;
 }
 
 /**
  * Like traverse but loops in reverse
  * @see traverse
  */
-export function rTraverse(node: any, func: (node: Node) => boolean, innermostFirst?: boolean, siblingsOnly?: boolean) {
+export function rTraverse(node: any, func: (node: Node) => boolean, innermostFirst?: boolean, siblingsOnly?: boolean): void {
 	traverse(node, func, innermostFirst, siblingsOnly, true);
 }
 
@@ -646,7 +650,7 @@ export function rTraverse(node: any, func: (node: Node) => boolean, innermostFir
  * @since 1.4.4
  * @return {DocumentFragment}
  */
-export function parseHTML(html: string, context?: Document) {
+export function parseHTML(html: string, context?: Document): DocumentFragment {
 	context = context || document;
 
 	var ret = context.createDocumentFragment();
@@ -687,7 +691,7 @@ export function hasStyling(node: HTMLElement): boolean {
  * @return {HTMLElement}
  * @since 1.4.4
  */
-export function convertElement(element: HTMLElement, toTagName: string) {
+export function convertElement(element: HTMLElement, toTagName: string): HTMLElement {
 	var newElement = createElement(toTagName, {}, element.ownerDocument);
 
 	utils.each(element.attributes, function (_, attribute) {
@@ -726,7 +730,7 @@ export var blockLevelList: string = '|body|hr|p|div|h1|h2|h3|h4|h5|h6|address|pr
  * @return {boolean}
  * @since  1.4.5
  */
-export function canHaveChildren(node: Element | Document | DocumentFragment | HTMLElement) {
+export function canHaveChildren(node: Element | Document | DocumentFragment | HTMLElement): boolean {
 	// 1  = Element
 	// 9  = Document
 	// 11 = Document Fragment
@@ -749,7 +753,7 @@ export function canHaveChildren(node: Element | Document | DocumentFragment | HT
  * @param {boolean} [includeCodeAsBlock=false]
  * @return {boolean}
  */
-export function isInline(elm: HTMLElement | any, includeCodeAsBlock: boolean = false) {
+export function isInline(elm: HTMLElement | any, includeCodeAsBlock: boolean = false): boolean {
 	var tagName,
 		nodeType = (elm || {}).nodeType || TEXT_NODE;
 
@@ -775,7 +779,7 @@ export function isInline(elm: HTMLElement | any, includeCodeAsBlock: boolean = f
  * @param {HTMLElement} to
  * @deprecated since v3.1.0
  */
-export function copyCSS(from: HTMLElement, to: HTMLElement) {
+export function copyCSS(from: HTMLElement, to: HTMLElement): void {
 	if (to.style && from.style) {
 		to.style.cssText = from.style.cssText + to.style.cssText;
 	}
@@ -805,7 +809,7 @@ export function isEmpty(node: HTMLElement | DocumentFragment): boolean {
  *
  * @param {HTMLElement} node
  */
-export function fixNesting(node: HTMLElement) {
+export function fixNesting(node: HTMLElement): void {
 	traverse(node, function (node) {
 		let list = 'ul,ol',
 			isBlock = !isInline(node, true) && node.nodeType !== COMMENT_NODE,
@@ -897,7 +901,7 @@ export function getSibling(node?: HTMLElement, previous: boolean = false): HTMLE
  * @param {!HTMLElement} root
  * @since 1.4.3
  */
-export function removeWhiteSpace(root: HTMLElement) {
+export function removeWhiteSpace(root: HTMLElement): void {
 	var nodeValue, nodeType, next, previous, previousSibling,
 		nextNode, trimStart,
 		cssWhiteSpace = css(root, 'whiteSpace'),
@@ -1129,7 +1133,7 @@ function attributesMatch(nodeA: HTMLElement, nodeB: HTMLElement): boolean {
  *
  * @param {HTMLElement} node
  */
-function removeKeepChildren(node: HTMLElement) {
+function removeKeepChildren(node: HTMLElement): void {
 
 	while ((node.firstChild as HTMLElement | DocumentFragment)) {
 		insertBefore((node.firstChild as HTMLElement | DocumentFragment), node);
@@ -1144,7 +1148,7 @@ function removeKeepChildren(node: HTMLElement) {
  * @param {Node} node
  * @since 3.1.0
  */
-export function merge(node: HTMLElement) {
+export function merge(node: HTMLElement): void {
 	if (node.nodeType !== ELEMENT_NODE) {
 		return;
 	}

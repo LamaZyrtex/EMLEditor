@@ -3,17 +3,18 @@ import * as dom from './dom';
 import * as utils from './utils.js';
 import * as escape from './escape.js';
 import _tmpl from './templates.js';
+import EmlEditor from './emlEditor';
 
 /**
  * Fixes a bug in FF where it sometimes wraps
  * new lines in their own list item.
  * See issue #359
  */
-function fixFirefoxListBug(editor) {
+function fixFirefoxListBug(editor: EmlEditor) {
 	// Only apply to Firefox as will break other browsers.
 	if ('mozHidden' in document) {
-		var node = editor.getBody();
-		var next;
+		let node = editor.getBody();
+		let next;
 
 		while (node) {
 			next = node;
@@ -38,7 +39,7 @@ function fixFirefoxListBug(editor) {
 				}
 			}
 
-			node = next;
+			node = next as any;
 		}
 	}
 }
@@ -49,7 +50,8 @@ function fixFirefoxListBug(editor) {
  * @type {Object}
  * @name commands
  */
-var defaultCmds = {
+var defaultCmds: any = {
+
 	// START_COMMAND: Bold
 	bold: {
 		exec: 'bold',
@@ -92,9 +94,9 @@ var defaultCmds = {
 
 	// START_COMMAND: Left
 	left: {
-		state: function (node) {
+		state: function (node: HTMLElement) {
 			if (node && node.nodeType === 3) {
-				node = node.parentNode;
+				node = node.parentNode as HTMLElement;
 			}
 
 			if (node) {
@@ -118,9 +120,9 @@ var defaultCmds = {
 	// END_COMMAND
 	// START_COMMAND: Right
 	right: {
-		state: function (node) {
+		state: function (node: HTMLElement) {
 			if (node && node.nodeType === 3) {
-				node = node.parentNode;
+				node = node.parentNode as HTMLElement;
 			}
 
 			if (node) {
@@ -145,16 +147,16 @@ var defaultCmds = {
 
 	// START_COMMAND: Font
 	font: {
-		_dropDown: function (editor, caller, callback) {
-			var	content = dom.createElement('div');
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (str: string) => any) {
+			var content = dom.createElement('div');
 
-			dom.on(content, 'click', 'a', function (e) {
+			dom.on(content, 'click', 'a', function (e: Event) {
 				callback(dom.data(this, 'font'));
 				editor.closeDropDown(true);
 				e.preventDefault();
 			});
 
-			editor.editorOptions.fonts.split(',').forEach(function (font) {
+			editor.editorOptions.fonts.split(',').forEach(function (font: any) {
 				dom.appendChild(content, _tmpl('fontOpt', {
 					font: font
 				}, true));
@@ -162,10 +164,10 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'font-picker', content);
 		},
-		exec: function (caller) {
+		exec: function (caller: HTMLElement) {
 			var editor = this;
 
-			defaultCmds.font._dropDown(editor, caller, function (fontName) {
+			defaultCmds.font._dropDown(editor, caller, function (fontName: string) {
 				editor.execCommand('fontname', fontName);
 			});
 		},
@@ -174,10 +176,10 @@ var defaultCmds = {
 	// END_COMMAND
 	// START_COMMAND: Size
 	size: {
-		_dropDown: function (editor, caller, callback) {
-			var	content = dom.createElement('div');
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (str: string) => any) {
+			var content = dom.createElement('div');
 
-			dom.on(content, 'click', 'a', function (e) {
+			dom.on(content, 'click', 'a', function (e: Event) {
 				callback(dom.data(this, 'size'));
 				editor.closeDropDown(true);
 				e.preventDefault();
@@ -191,10 +193,10 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'fontsize-picker', content);
 		},
-		exec: function (caller) {
+		exec: function (caller: HTMLElement) {
 			var editor = this;
 
-			defaultCmds.size._dropDown(editor, caller, function (fontSize) {
+			defaultCmds.size._dropDown(editor, caller, function (fontSize: string) {
 				editor.execCommand('fontsize', fontSize);
 			});
 		},
@@ -203,16 +205,16 @@ var defaultCmds = {
 	// END_COMMAND
 	// START_COMMAND: Colour
 	color: {
-		_dropDown: function (editor, caller, callback) {
-			var	content = dom.createElement('div'),
-				html    = '',
-				cmd     = defaultCmds.color;
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (str: string) => any) {
+			var content = dom.createElement('div');
+			var html = '';
+			var cmd = defaultCmds.color;
 
 			if (!cmd._htmlCache) {
-				editor.editorOptions.colors.split('|').forEach(function (column) {
+				editor.editorOptions.colors.split('|').forEach(function (column: string) {
 					html += '<div class="emleditor-color-column">';
 
-					column.split(',').forEach(function (color) {
+					column.split(',').forEach(function (color: string) {
 						html +=
 							'<a href="#" class="emleditor-color-option"' +
 							' style="background-color: ' + color + '"' +
@@ -227,7 +229,7 @@ var defaultCmds = {
 
 			dom.appendChild(content, dom.parseHTML(cmd._htmlCache));
 
-			dom.on(content, 'click', 'a', function (e) {
+			dom.on(content, 'click', 'a', function (e: Event) {
 				callback(dom.data(this, 'color'));
 				editor.closeDropDown(true);
 				e.preventDefault();
@@ -235,10 +237,10 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'color-picker', content);
 		},
-		exec: function (caller) {
+		exec: function (caller: HTMLElement) {
 			var editor = this;
 
-			defaultCmds.color._dropDown(editor, caller, function (color) {
+			defaultCmds.color._dropDown(editor, caller, function (color: string) {
 				editor.execCommand('forecolor', color);
 			});
 		},
@@ -278,10 +280,10 @@ var defaultCmds = {
 	// END_COMMAND
 	// START_COMMAND: Paste Text
 	pastetext: {
-		exec: function (caller) {
-			var	val,
+		exec: function (caller: HTMLElement) {
+			var val,
 				content = dom.createElement('div'),
-				editor  = this;
+				editor = this;
 
 			dom.appendChild(content, _tmpl('pastetext', {
 				label: editor.translate(
@@ -290,8 +292,8 @@ var defaultCmds = {
 				insert: editor.translate('Insert')
 			}, true));
 
-			dom.on(content, 'click', '.button', function (e) {
-				val = dom.find(content, '#txt')[0].value;
+			dom.on(content, 'click', '.button', function (e: Event) {
+				val = (dom.find(content, '#txt')[0] as HTMLTextAreaElement).value;
 
 				if (val) {
 					editor.wysiwygEditorInsertText(val);
@@ -326,9 +328,9 @@ var defaultCmds = {
 	// END_COMMAND
 	// START_COMMAND: Indent
 	indent: {
-		state: function (parent, firstBlock) {
+		state: function (parent: any, firstBlock: HTMLElement) {
 			// Only works with lists, for now
-			var	range, startParent, endParent;
+			var range, startParent, endParent;
 
 			if (dom.is(firstBlock, 'li')) {
 				return 0;
@@ -341,7 +343,7 @@ var defaultCmds = {
 				range = this.getRangeHelper().selectedRange();
 
 				startParent = range.startContainer.parentNode;
-				endParent   = range.endContainer.parentNode;
+				endParent = range.endContainer.parentNode;
 
 				// TODO: could use nodeType for this?
 				// Maybe just check the firstBlock contains both the start
@@ -379,11 +381,11 @@ var defaultCmds = {
 	// END_COMMAND
 	// START_COMMAND: Outdent
 	outdent: {
-		state: function (parents, firstBlock) {
+		state: function (parents: any, firstBlock: HTMLElement) {
 			return dom.closest(firstBlock, 'ul,ol,menu') ? 0 : -1;
 		},
 		exec: function () {
-			var	block = this.getRangeHelper().getFirstBlockParent();
+			var block = this.getRangeHelper().getFirstBlockParent();
 			if (dom.closest(block, 'ul,ol,menu')) {
 				this.execCommand('outdent');
 			}
@@ -394,8 +396,8 @@ var defaultCmds = {
 
 	// START_COMMAND: Table
 	table: {
-		exec: function (caller) {
-			var	editor  = this,
+		exec: function (caller: HTMLElement) {
+			var editor = this,
 				content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('table', {
@@ -404,17 +406,17 @@ var defaultCmds = {
 				insert: editor.translate('Insert')
 			}, true));
 
-			dom.on(content, 'click', '.button', function (e) {
-				var	rows = Number(dom.find(content, '#rows')[0].value),
-					cols = Number(dom.find(content, '#cols')[0].value),
+			dom.on(content, 'click', '.button', function (e: Event) {
+				var rows = Number((dom.find(content, '#rows')[0] as HTMLTextAreaElement).value),
+					cols = Number((dom.find(content, '#cols')[0] as HTMLTextAreaElement).value),
 					html = '<table>';
 
 				if (rows > 0 && cols > 0) {
 					html += Array(rows + 1).join(
 						'<tr>' +
-							Array(cols + 1).join(
-								'<td><br /></td>'
-							) +
+						Array(cols + 1).join(
+							'<td><br /></td>'
+						) +
 						'</tr>'
 					);
 
@@ -453,8 +455,8 @@ var defaultCmds = {
 
 	// START_COMMAND: Image
 	image: {
-		_dropDown: function (editor, caller, selected, cb) {
-			var	content = dom.createElement('div');
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, selected: any, callback: (inputVal: string, widthVal: string, heightVal: string) => void) {
+			var content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('image', {
 				url: editor.translate('URL:'),
@@ -464,16 +466,16 @@ var defaultCmds = {
 			}, true));
 
 
-			var	urlInput = dom.find(content, '#image')[0];
+			var urlInput = dom.find(content, '#image')[0] as HTMLInputElement;
 
 			urlInput.value = selected;
 
-			dom.on(content, 'click', '.button', function (e) {
+			dom.on(content, 'click', '.button', function (e: Event) {
 				if (urlInput.value) {
-					cb(
+					callback(
 						urlInput.value,
-						dom.find(content, '#width')[0].value,
-						dom.find(content, '#height')[0].value
+						(dom.find(content, '#width')[0] as HTMLInputElement).value,
+						(dom.find(content, '#height')[0] as HTMLInputElement).value
 					);
 				}
 
@@ -483,15 +485,15 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'insertimage', content);
 		},
-		exec: function (caller) {
-			var	editor  = this;
+		exec: function (caller: HTMLElement) {
+			var editor = this;
 
 			defaultCmds.image._dropDown(
 				editor,
 				caller,
 				'',
-				function (url, width, height) {
-					var attrs  = '';
+				function (url: string, width?: string, height?: string) {
+					var attrs = '';
 
 					if (width) {
 						attrs += ' width="' + parseInt(width, 10) + '"';
@@ -515,8 +517,8 @@ var defaultCmds = {
 
 	// START_COMMAND: E-mail
 	email: {
-		_dropDown: function (editor, caller, cb) {
-			var	content = dom.createElement('div');
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (email: string, des: string) => void) {
+			var content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('email', {
 				label: editor.translate('E-mail:'),
@@ -524,11 +526,11 @@ var defaultCmds = {
 				insert: editor.translate('Insert')
 			}, true));
 
-			dom.on(content, 'click', '.button', function (e) {
-				var email = dom.find(content, '#email')[0].value;
+			dom.on(content, 'click', '.button', function (e: Event) {
+				let email: string = (dom.find(content, '#email')[0] as HTMLInputElement).value;
 
 				if (email) {
-					cb(email, dom.find(content, '#des')[0].value);
+					callback(email, (dom.find(content, '#des')[0] as HTMLInputElement).value);
 				}
 
 				editor.closeDropDown(true);
@@ -537,18 +539,18 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'insertemail', content);
 		},
-		exec: function (caller) {
-			var	editor  = this;
+		exec: function (caller: HTMLElement) {
+			var editor = this;
 
 			defaultCmds.email._dropDown(
 				editor,
 				caller,
-				function (email, text) {
+				function (email: string, text: string) {
 					if (!editor.getRangeHelper().selectedHtml() || text) {
 						editor.wysiwygEditorInsertHtml(
 							'<a href="' +
 							'mailto:' + escape.entities(email) + '">' +
-								escape.entities((text || email)) +
+							escape.entities((text || email)) +
 							'</a>'
 						);
 					} else {
@@ -563,7 +565,7 @@ var defaultCmds = {
 
 	// START_COMMAND: Link
 	link: {
-		_dropDown: function (editor, caller, cb) {
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (link: string, val: string) => void) {
 			var content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('link', {
@@ -572,11 +574,12 @@ var defaultCmds = {
 				ins: editor.translate('Insert')
 			}, true));
 
-			var linkInput = dom.find(content, '#link')[0];
+			var linkInput = dom.find(content, '#link')[0] as HTMLInputElement;
+			var desInput = dom.find(content, '#des')[0] as HTMLInputElement;
 
-			function insertUrl(e) {
+			function insertUrl(e: Event) {
 				if (linkInput.value) {
-					cb(linkInput.value, dom.find(content, '#des')[0].value);
+					callback(linkInput.value, desInput.value);
 				}
 
 				editor.closeDropDown(true);
@@ -584,7 +587,7 @@ var defaultCmds = {
 			}
 
 			dom.on(content, 'click', '.button', insertUrl);
-			dom.on(content, 'keypress', null,  function (e) {
+			dom.on(content, 'keypress', null, function (e: KeyboardEvent) {
 				// 13 = enter key
 				if (e.which === 13 && linkInput.value) {
 					insertUrl(e);
@@ -593,14 +596,14 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'insertlink', content);
 		},
-		exec: function (caller) {
+		exec: function (caller: HTMLElement) {
 			var editor = this;
 
-			defaultCmds.link._dropDown(editor, caller, function (url, text) {
+			defaultCmds.link._dropDown(editor, caller, function (url: string, text: string) {
 				if (text || !editor.getRangeHelper().selectedHtml()) {
 					editor.wysiwygEditorInsertHtml(
 						'<a href="' + escape.entities(url) + '">' +
-							escape.entities(text || url) +
+						escape.entities(text || url) +
 						'</a>'
 					);
 				} else {
@@ -622,7 +625,7 @@ var defaultCmds = {
 
 			if (anchor) {
 				while (anchor.firstChild) {
-					dom.insertBefore(anchor.firstChild, anchor);
+					dom.insertBefore(anchor.firstChild as HTMLElement, anchor);
 				}
 
 				dom.remove(anchor);
@@ -635,19 +638,19 @@ var defaultCmds = {
 
 	// START_COMMAND: Quote
 	quote: {
-		exec: function (caller, html, author) {
-			var	before = '<blockquote>',
-				end    = '</blockquote>';
+		exec: function (caller: HTMLElement, html: string, author: string) {
+			var before = '<blockquote>',
+				end = '</blockquote>';
 
 			// if there is HTML passed set end to null so any selected
 			// text is replaced
 			if (html) {
 				author = (author ? '<cite>' +
 					escape.entities(author) +
-				'</cite>' : '');
+					'</cite>' : '');
 				before = before + author + html + end;
-				end    = null;
-			// if not add a newline to the end of the inserted quote
+				end = null;
+				// if not add a newline to the end of the inserted quote
 			} else if (this.getRangeHelper().selectedHtml() === '') {
 				end = '<br />' + end;
 			}
@@ -660,23 +663,23 @@ var defaultCmds = {
 
 	// START_COMMAND: Emoticons
 	emoticon: {
-		exec: function (caller) {
+		exec: function (caller: HTMLElement) {
 			var editor = this;
 
-			var createContent = function (includeMore) {
-				var	moreLink,
-					opts            = editor.editorOptions,
-					emoticonsRoot   = opts.emoticonsRoot || '',
+			var createContent = function (includeMore: boolean) {
+				var moreLink,
+					opts = editor.editorOptions,
+					emoticonsRoot = opts.emoticonsRoot || '',
 					emoticonsCompat = opts.emoticonsCompat,
-					rangeHelper     = editor.getRangeHelper(),
-					startSpace      = emoticonsCompat &&
+					rangeHelper = editor.getRangeHelper(),
+					startSpace = emoticonsCompat &&
 						rangeHelper.getOuterText(true, 1) !== ' ' ? ' ' : '',
-					endSpace        = emoticonsCompat &&
+					endSpace = emoticonsCompat &&
 						rangeHelper.getOuterText(false, 1) !== ' ' ? ' ' : '',
-					content         = dom.createElement('div'),
-					line            = dom.createElement('div'),
-					perLine         = 0,
-					emoticons       = utils.extend(
+					content = dom.createElement('div'),
+					line = dom.createElement('div'),
+					perLine = 0,
+					emoticons = utils.extend(
 						{},
 						opts.emoticons.dropdown,
 						includeMore ? opts.emoticons.more : {}
@@ -686,7 +689,7 @@ var defaultCmds = {
 
 				perLine = Math.sqrt(Object.keys(emoticons).length);
 
-				dom.on(content, 'click', 'img', function (e) {
+				dom.on(content, 'click', 'img', function (e: Event) {
 					editor.insert(startSpace + dom.attr(this, 'alt') + endSpace,
 						null, false).closeDropDown(true);
 
@@ -714,7 +717,7 @@ var defaultCmds = {
 					dom.appendChild(moreLink,
 						document.createTextNode(editor.translate('More')));
 
-					dom.on(moreLink, 'click', null, function (e) {
+					dom.on(moreLink, 'click', null, function (e: Event) {
 						editor.createDropDown(
 							caller, 'more-emoticons', createContent(true)
 						);
@@ -730,7 +733,7 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'emoticons', createContent(false));
 		},
-		txtExec: function (caller) {
+		txtExec: function (caller: HTMLElement) {
 			defaultCmds.emoticon.exec.call(this, caller);
 		},
 		tooltip: 'Insert an emoticon'
@@ -739,16 +742,16 @@ var defaultCmds = {
 
 	// START_COMMAND: YouTube
 	youtube: {
-		_dropDown: function (editor, caller, callback) {
-			var	content = dom.createElement('div');
+		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (match: any, time: number) => void) {
+			var content = dom.createElement('div');
 
 			dom.appendChild(content, _tmpl('youtubeMenu', {
 				label: editor.translate('Video URL:'),
 				insert: editor.translate('Insert')
 			}, true));
 
-			dom.on(content, 'click', '.button', function (e) {
-				var val = dom.find(content, '#link')[0].value;
+			dom.on(content, 'click', '.button', function (e: Event) {
+				var val = (dom.find(content, '#link')[0] as HTMLInputElement).value;
 				var idMatch = val.match(/(?:v=|v\/|embed\/|youtu.be\/)?([a-zA-Z0-9_-]{11})/);
 				var timeMatch = val.match(/[&|?](?:star)?t=((\d+[hms]?){1,3})/);
 				var time = 0;
@@ -771,10 +774,10 @@ var defaultCmds = {
 
 			editor.createDropDown(caller, 'insertlink', content);
 		},
-		exec: function (btn) {
+		exec: function (btn: any) {
 			var editor = this;
 
-			defaultCmds.youtube._dropDown(editor, btn, function (id, time) {
+			defaultCmds.youtube._dropDown(editor, btn, function (id: any, time: any) {
 				editor.wysiwygEditorInsertHtml(_tmpl('youtube', {
 					id: id,
 					time: time
@@ -787,28 +790,27 @@ var defaultCmds = {
 
 	// START_COMMAND: Date
 	date: {
-		_date: function (editor) {
-			var	now   = new Date(),
-				year  = now.getYear(),
-				month = now.getMonth() + 1,
-				day   = now.getDate();
-
-			if (year < 2000) {
-				year = 1900 + year;
-			}
+		_date: function (editor: EmlEditor) {
+			let now = new Date();
+			let year = now.getFullYear();
+			let month = now.getMonth() + 1;
+			let day = now.getDate();
+			let yearAsString = year.toString();
+			let monthAsString = month.toString();
+			let dayAsString = day.toString();
 
 			if (month < 10) {
-				month = '0' + month;
+				monthAsString = '0' + month;
 			}
 
 			if (day < 10) {
-				day = '0' + day;
+				dayAsString = '0' + day;
 			}
 
 			return editor.editorOptions.dateFormat
-				.replace(/year/i, year)
-				.replace(/month/i, month)
-				.replace(/day/i, day);
+				.replace(/year/i, yearAsString)
+				.replace(/month/i, monthAsString)
+				.replace(/day/i, dayAsString);
 		},
 		exec: function () {
 			this.insertText(defaultCmds.date._date(this));
@@ -823,24 +825,27 @@ var defaultCmds = {
 	// START_COMMAND: Time
 	time: {
 		_time: function () {
-			var	now   = new Date(),
+			var now = new Date(),
 				hours = now.getHours(),
-				mins  = now.getMinutes(),
-				secs  = now.getSeconds();
+				mins = now.getMinutes(),
+				secs = now.getSeconds();
+			let hoursAsString = hours.toString();
+			let minshAsString = mins.toString();
+			let secsAsString = secs.toString();
 
 			if (hours < 10) {
-				hours = '0' + hours;
+				hoursAsString = '0' + hours.toString();
 			}
 
 			if (mins < 10) {
-				mins = '0' + mins;
+				minshAsString = '0' + mins.toString();
 			}
 
 			if (secs < 10) {
-				secs = '0' + secs;
+				secsAsString = '0' + secs.toString();
 			}
 
-			return hours + ':' + mins + ':' + secs;
+			return hoursAsString + ':' + minshAsString + ':' + secsAsString;
 		},
 		exec: function () {
 			this.insertText(defaultCmds.time._time());
@@ -855,11 +860,11 @@ var defaultCmds = {
 
 	// START_COMMAND: Ltr
 	ltr: {
-		state: function (parents, firstBlock) {
+		state: function (parents: any, firstBlock: HTMLElement) {
 			return firstBlock && firstBlock.style.direction === 'ltr';
 		},
 		exec: function () {
-			var	editor = this,
+			var editor = this,
 				rangeHelper = editor.getRangeHelper(),
 				node = rangeHelper.getFirstBlockParent();
 
@@ -868,7 +873,7 @@ var defaultCmds = {
 			if (!node || dom.is(node, 'body')) {
 				editor.execCommand('formatBlock', 'p');
 
-				node  = rangeHelper.getFirstBlockParent();
+				node = rangeHelper.getFirstBlockParent();
 
 				if (!node || dom.is(node, 'body')) {
 					return;
@@ -884,11 +889,11 @@ var defaultCmds = {
 
 	// START_COMMAND: Rtl
 	rtl: {
-		state: function (parents, firstBlock) {
+		state: function (parents: any, firstBlock: HTMLElement) {
 			return firstBlock && firstBlock.style.direction === 'rtl';
 		},
 		exec: function () {
-			var	editor = this,
+			var editor = this,
 				rangeHelper = editor.getRangeHelper(),
 				node = rangeHelper.getFirstBlockParent();
 

@@ -1,7 +1,7 @@
 ﻿import * as dom from './dom';
 import * as utils from './utils.js';
 import defaultOptions from './defaultOptions.js';
-import defaultCommands from './defaultCommands.js';
+import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
 import templates from './templates.js';
@@ -663,7 +663,7 @@ export default class EmlEditor {
 		dom.css(thisEditor.dropdown, dropDownCss);
 		dom.appendChild(thisEditor.dropdown, content);
 		dom.appendChild(thisEditor.editorContainer, thisEditor.dropdown);
-		dom.on(thisEditor.dropdown, 'click focusin', null, (e: any) => {
+		dom.on(thisEditor.dropdown, 'click focusin', null, (e: Event) => {
 			// stop clicks within the dropdown from being handled
 			e.stopPropagation();
 		});
@@ -2241,7 +2241,7 @@ export default class EmlEditor {
 				button._emlTxtMode = !!command.txtExec;
 				button._emlWysiwygMode = !!command.exec;
 				dom.toggleClass(button, 'disabled', !command.exec);
-				dom.on(button, 'click', null, (e: any) => {
+				dom.on(button, 'click', null, (e: Event) => {
 					if (!dom.hasClass(button, 'disabled')) {
 						thisEditor.handleCommand(button, command);
 					}
@@ -2250,7 +2250,7 @@ export default class EmlEditor {
 					e.preventDefault();
 				});
 				// Prevent editor losing focus when button clicked
-				dom.on(button, 'mousedown', null, (e: any) => {
+				dom.on(button, 'mousedown', null, (e: Event) => {
 					thisEditor.closeDropDown();
 					e.preventDefault();
 				});
@@ -2312,15 +2312,16 @@ export default class EmlEditor {
 		minWidth = this.options.resizeMinWidth || origWidth / 1.25;
 		maxWidth = this.options.resizeMaxWidth || origWidth * 1.25;
 
-		mouseMoveFunc = (e: any) => {
+		mouseMoveFunc = (e: Event) => {
 			// iOS uses window.event
 			if (e.type === 'touchmove') {
-				e = globalWin.event;
-				newX = e.changedTouches[0].pageX;
-				newY = e.changedTouches[0].pageY;
+				let touchEvent = (e as TouchEvent);
+				newX = touchEvent.changedTouches[0].pageX;
+				newY = touchEvent.changedTouches[0].pageY;
 			} else {
-				newX = e.pageX;
-				newY = e.pageY;
+				let mouseEvent = (e as MouseEvent);
+				newX = mouseEvent.pageX;
+				newY = mouseEvent.pageY;
 			}
 
 			let newHeight = startHeight + (newY - startY), newWidth = rtl ?
@@ -2354,7 +2355,7 @@ export default class EmlEditor {
 			e.preventDefault();
 		};
 
-		mouseUpFunc = (e: any) => {
+		mouseUpFunc = (e: Event) => {
 			if (!isDragging) {
 				return;
 			}
@@ -2381,15 +2382,16 @@ export default class EmlEditor {
 		dom.appendChild(this.editorContainer, cover);
 		dom.hide(cover);
 
-		dom.on(grip, 'touchstart mousedown', null, (e: any) => {
+		dom.on(grip, 'touchstart mousedown', null, (e: Event) => {
 			// iOS uses window.event
 			if (e.type === 'touchstart') {
-				e = globalWin.event;
-				startX = e.touches[0].pageX;
-				startY = e.touches[0].pageY;
+				let te = e as TouchEvent;
+				startX = te.touches[0].pageX;
+				startY = te.touches[0].pageY;
 			} else {
-				startX = e.pageX;
-				startY = e.pageY;
+				let me = e as MouseEvent
+				startX = me.pageX;
+				startY = me.pageY;
 			}
 
 			startWidth = dom.width(this.editorContainer);
@@ -2513,7 +2515,7 @@ export default class EmlEditor {
 	 * Handles any document click and closes the dropdown if open
 	 * @private
 	 */
-	private handleDocumentClick = (e: any): void => {
+	private handleDocumentClick = (e: KeyboardEvent): void => {
 		// ignore right clicks
 		if (e.which !== 3 && this.dropdown && !e.defaultPrevented) {
 			this.autoUpdate();
@@ -2531,7 +2533,7 @@ export default class EmlEditor {
 	 * This will ignore inherited styles and only copy inline styling.
 	 * @private
 	 */
-	private handleCutCopyEvt = (e: any): void => {
+	private handleCutCopyEvt = (e: ClipboardEvent): void => {
 		let range = this.rangeHelper.selectedRange();
 		if (range) {
 			let container = dom.createElement('div', {}, this.wysiwygDocument);
@@ -2813,7 +2815,7 @@ export default class EmlEditor {
 	 *
 	 * @private
 	 */
-	private handleKeyPress = (e: any): void => {
+	private handleKeyPress = (e: KeyboardEvent): void => {
 		// FF bug: https://bugzilla.mozilla.org/show_bug.cgi?id=501496
 		if (e.defaultPrevented) {
 			return;
@@ -2917,7 +2919,7 @@ export default class EmlEditor {
 	 * @private
 	 * @return void
 	 */
-	private handleEvent = (e: any): void => {
+	private handleEvent = (e: Event): void => {
 		if (this.pluginManager) {
 			// Send event to all plugins
 			this.pluginManager.call(e.type + 'Event', e, this);
@@ -2937,7 +2939,7 @@ export default class EmlEditor {
 	 * Emoticons keypress handler
 	 * @private
 	 */
-	private emoticonsKeyPress = (e: any): void => {
+	private emoticonsKeyPress = (e: KeyboardEvent): void => {
 		let replacedEmoticon, cachePos = 0, emoticonsCache = this.emoticonsCache, curChar = String.fromCharCode(e.which);
 
 		// TODO: Make configurable
@@ -2989,7 +2991,7 @@ export default class EmlEditor {
 	 * Handles the keydown event, used for shortcuts
 	 * @private
 	 */
-	private handleKeyDown = (e: any): void => {
+	private handleKeyDown = (e: KeyboardEvent): void => {
 		let thisEditor = this;
 		let shortcut: any = [],
 
@@ -3131,7 +3133,7 @@ export default class EmlEditor {
 	 * Will remove block styling like quotes/code ect if at the start.
 	 * @private
 	 */
-	private handleBackSpace = (e: any): void => {
+	private handleBackSpace = (e: KeyboardEvent): void => {
 		let node, offset, range, parent;
 
 		// 8 is the backspace key
@@ -3260,7 +3262,7 @@ export default class EmlEditor {
 	 * @param  {Event} e The keypress event
 	 * @private
 	 */
-	private valueChangedKeyUp = (e: any): any => {
+	private valueChangedKeyUp = (e: KeyboardEvent): any => {
 		let thisEditor = this;
 		let which = e.which;
 		let lastChar: any = which;
@@ -3304,7 +3306,7 @@ export default class EmlEditor {
 		}, 1500);
 	};
 
-	private handleComposition = (e: any): void => {
+	private handleComposition = (e: Event): void => {
 		this.isComposing = /start/i.test(e.type);
 
 		if (!this.isComposing) {
