@@ -1,4 +1,4 @@
-import * as utils from './utils.js';
+import * as utils from './utils';
 
 /**
  * Cache of camelCase CSS property names

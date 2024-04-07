@@ -1,5 +1,5 @@
 ﻿import * as dom from './dom';
-import * as utils from './utils.js';
+import * as utils from './utils';
 import defaultOptions from './defaultOptions.js';
 import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';

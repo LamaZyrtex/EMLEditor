@@ -6,29 +6,29 @@
  * @param {*} arg
  * @returns {boolean}
  */
-function isTypeof(type, arg) {
+function isTypeof(type: string, arg: any): boolean {
 	return typeof arg === type;
 }
 
 /**
  * @type {function(*): boolean}
  */
-export var isString = isTypeof.bind(null, 'string');
+export var isString: (arg0: any) => boolean = isTypeof.bind(null, 'string');
 
 /**
  * @type {function(*): boolean}
  */
-export var isUndefined = isTypeof.bind(null, 'undefined');
+export var isUndefined: (arg0: any) => boolean = isTypeof.bind(null, 'undefined');
 
 /**
  * @type {function(*): boolean}
  */
-export var isFunction = isTypeof.bind(null, 'function');
+export var isFunction: (arg0: any) => boolean = isTypeof.bind(null, 'function');
 
 /**
  * @type {function(*): boolean}
  */
-export var isNumber = isTypeof.bind(null, 'number');
+export var isNumber: (arg0: any) => boolean = isTypeof.bind(null, 'number');
 
 
 /**
@@ -37,7 +37,7 @@ export var isNumber = isTypeof.bind(null, 'number');
  * @param {!Object} obj
  * @returns {boolean}
  */
-export function isEmptyObject(obj) {
+export function isEmptyObject(obj: {}): boolean {
 	return !Object.keys(obj).length;
 }
 
@@ -48,16 +48,16 @@ export function isEmptyObject(obj) {
  * it will extend child arrays and objects recursively.
  *
  * @param {!Object|boolean} targetArg
- * @param {...Object} source
+ * @param {...Object} sourceArgs
  * @return {Object}
  */
-export function extend(targetArg, sourceArg) {
+export function extend(targetArg: any, ...sourceArgs: {}[]) {
 	var isTargetBoolean = targetArg === !!targetArg;
-	var i      = isTargetBoolean ? 2 : 1;
-	var target = isTargetBoolean ? sourceArg : targetArg;
+	var i = isTargetBoolean ? 2 : 1;
+	var target = isTargetBoolean ? sourceArgs : targetArg;
 	var isDeep = isTargetBoolean ? targetArg : false;
 
-	function isObject(value) {
+	function isObject(value: {}) {
 		return value !== null && typeof value === 'object' &&
 			Object.getPrototypeOf(value) === Object.prototype;
 	}
@@ -110,7 +110,7 @@ export function extend(targetArg, sourceArg) {
  * @param {!Array} arr
  * @param {*} item
  */
-export function arrayRemove(arr, item) {
+export function arrayRemove<T>(arr: Array<T>, item: T) {
 	var i = arr.indexOf(item);
 
 	if (i > -1) {
@@ -124,14 +124,16 @@ export function arrayRemove(arr, item) {
  * @param {!Object|Array} obj
  * @param {function(*, *)} fn
  */
-export function each(obj, fn) {
-	if (Array.isArray(obj) &&  (obj)?.length > 0) {
-		for (var i = 0; i < obj.length; i++) {
-			fn(i, obj[i]);
+export function each(obj: object | Array<any>, fn: (arg0: any, arg1: any) => any) {
+	if (Array.isArray(obj) && (obj)?.length > 0) {
+		let arrObj = obj as Array<any>;
+		for (var i = 0; i < arrObj.length; i++) {
+			fn(i, arrObj[i]);
 		}
 	} else {
+		let objObj = obj as object;
 		Object.keys(obj).forEach(function (key) {
-			fn(key, obj[key]);
+			fn(key, objObj[key as keyof typeof objObj]);
 		});
 	}
 }

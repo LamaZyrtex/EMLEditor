@@ -1,5 +1,5 @@
 import * as dom from './dom';
-import * as utils from './utils.js';
+import * as utils from './utils';
 import * as escape from './escape.js';
 import { RangeHelper } from './rangeHelper';
 

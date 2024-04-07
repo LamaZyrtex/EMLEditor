@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import * as dom from './dom';
 import * as escape from './escape.js';
-import * as utils from './utils.js';
+import * as utils from './utils';
 
 
 /**
