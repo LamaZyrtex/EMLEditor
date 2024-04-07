@@ -4,7 +4,7 @@ import defaultOptions from './defaultOptions.js';
 import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
-import templates from './templates';
+import * as templates from './templates';
 import * as escape from './escape.js';
 import * as browser from './browser.js';
 import * as emoticons from './emoticons';
@@ -542,7 +542,7 @@ export default class EmlEditor {
 		} else {
 			let emoticons = dom.find(thisEditor.wysiwygBody, 'img[data-emleditor-emoticon]');
 
-			utils.each(emoticons, (_, img) => {
+			utils.eachInObject(emoticons, (_, img) => {
 				let text: any = dom.data(img, 'emleditor-emoticon');
 				let textNode = thisEditor.wysiwygDocument.createTextNode(text);
 				img.parentNode.replaceChild(textNode, img);
@@ -1784,7 +1784,7 @@ export default class EmlEditor {
 		let isSource = this.sourceMode();
 
 		if (this.readOnly()) {
-			utils.each(dom.find(this.toolbar, activeClass), (_, menuItem) => {
+			utils.eachInObject(dom.find(this.toolbar, activeClass), (_, menuItem) => {
 				dom.removeClass(menuItem, activeClass);
 			});
 			return;
@@ -1832,7 +1832,7 @@ export default class EmlEditor {
 	 * @type {Object}
 	 * @private
 	 */
-	private toolbarButtons: any = [];
+	private toolbarButtons: any = {};
 
 	/**
 	 * Updates the toolbar to disable/enable the appropriate buttons
@@ -1841,7 +1841,7 @@ export default class EmlEditor {
 	private updateToolBar = (disable?: boolean): void => {
 		let mode = this.inSourceMode() ? '_emlTxtMode' : '_emlWysiwygMode';
 
-		utils.each(this.toolbarButtons, (_, button) => {
+		utils.eachInObject(this.toolbarButtons, (_, button) => {
 			dom.toggleClass(button, 'disabled', disable || !button[mode]);
 		});
 	};
@@ -2052,7 +2052,7 @@ export default class EmlEditor {
 
 		this.wysiwygDocument = this.wysiwygEditor.contentDocument;
 		this.wysiwygDocument.open();
-		this.wysiwygDocument.write(templates('html', {
+		this.wysiwygDocument.write(templates.getTemplateAsString('html', {
 			attrs: ' class="' + className + '"',
 			spellcheck: this.options.spellcheck ? '' : 'spellcheck="false"',
 			charset: this.options.charset,
@@ -2210,12 +2210,12 @@ export default class EmlEditor {
 			thisEditor.icons = new EmlEditor.icons[thisEditor.options.icons]();
 		}
 
-		utils.each(groups, (_, menuItems) => {
+		utils.eachInArray(groups, (_, menuItems) => {
 			group = dom.createElement('div', {
 				className: 'emleditor-group'
 			});
 
-			utils.each(menuItems.split(','), (_, commandName) => {
+			utils.eachInArray(menuItems.split(','), (_, commandName) => {
 				let button: any, shortcut, command = commands[commandName];
 
 				// The commandName must be a valid command and not excluded
@@ -2224,11 +2224,11 @@ export default class EmlEditor {
 				}
 
 				shortcut = command.shortcut;
-				button = templates('toolbarButton', {
+				button = templates.getTemplate('toolbarButton', {
 					name: commandName,
 					dispName: thisEditor.translate(command.name ||
 						command.tooltip || commandName)
-				}, true).firstChild;
+				}).firstChild;
 
 				if (thisEditor.icons && thisEditor.icons.create) {
 					let icon = thisEditor.icons.create(commandName);
@@ -2423,8 +2423,8 @@ export default class EmlEditor {
 			);
 		}
 
-		utils.each(this.allEmoticons, (key, url) => {
-			thisEditor.allEmoticons[key] = templates('emoticon', {
+		utils.eachInObject(this.allEmoticons, (key, url) => {
+			thisEditor.allEmoticons[key] = templates.getTemplateAsString('emoticon', {
 				key: key,
 				// Prefix emoticon root to emoticon urls
 				url: root + (url.url || url),
@@ -2564,11 +2564,11 @@ export default class EmlEditor {
 			// TODO: Refactor into private shared module with plaintext plugin
 			// innerText adds two newlines after <p> tags so convert them to
 			// <div> tags
-			utils.each(dom.find(container, 'p'), (_, elm) => {
+			utils.eachInObject(dom.find(container, 'p'), (_, elm) => {
 				dom.convertElement(elm, 'div');
 			});
 			// Remove collapsed <br> tags as innerText converts them to newlines
-			utils.each(dom.find(container, 'br'), (_, elm) => {
+			utils.eachInObject(dom.find(container, 'br'), (_, elm) => {
 				if (!elm.nextSibling || !dom.isInline(elm.nextSibling, true)) {
 					dom.remove(elm);
 				}
@@ -2951,7 +2951,7 @@ export default class EmlEditor {
 		if (!emoticonsCache) {
 			emoticonsCache = [];
 
-			utils.each(this.allEmoticons, (key, html) => {
+			utils.eachInObject(this.allEmoticons, (key, html) => {
 				emoticonsCache[cachePos++] = [key, html];
 			});
 

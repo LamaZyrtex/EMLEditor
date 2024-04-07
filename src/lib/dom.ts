@@ -62,7 +62,7 @@ export function createElement(tag: string, attributes?: { [s: string]: string; }
 	let htmlElement = (context || document).createElement(tag);
 	let attribs = attributes;
 
-	utils.each(attribs || {}, function (key: keyof HTMLElement, value: any) {
+	utils.eachInObject(attribs || {}, function (key: keyof HTMLElement, value: any) {
 		if (key == 'style') {
 			htmlElement.style.cssText = value as string;
 		}
@@ -325,25 +325,27 @@ export function toggle(node: HTMLElement): void {
  * Rules should be in camelCase format and not
  * hyphenated like CSS properties.
  *
- * @param {any} node
+ * @param {HTMLElement} element
  * @param {any} rule
  * @param {any} [value]
  * @return {string | null}
  */
-export function css(node: any, rule: any, value?: any): string | null {
+export function css(element: any, rule: any, value?: any): string | null {
 	let retVal = null;
 	if (arguments.length < 3) {
 		if (utils.isString(rule)) {
-			return node.nodeType === 1 ? getComputedStyle(node)[rule] : null;
+			return element.nodeType === 1 ? getComputedStyle(element)[rule] : null;
 		}
-		utils.each(rule, function (key, value) {
-			css(node, key, value);
+		utils.eachInObject(rule, function (key, value) {
+			css(element, key, value);
 		});
 	} else {
-		// isNaN returns false for null, false and empty strings
-		// so need to check it's truthy or 0
-		var isNumeric = (value || value === 0) && !isNaN(value);
-		node.style[rule] = isNumeric ? value.toString() + 'px' : value;
+		let isValueNumeric = typeof value === 'number';
+		let isValueOther = (typeof value === 'string' || typeof value === 'boolean');
+		if (isValueNumeric)
+			element.style[rule] = value.toString() + 'px';
+		if (isValueOther)
+			element.style[rule] = value;
 	}
 	return retVal;
 }
@@ -356,18 +358,19 @@ export function css(node: any, rule: any, value?: any): string | null {
  * in the DOM attributes which means only strings
  * can be stored.
  *
- * @param {Node} node
+ * @param {HTMLElement} node
  * @param {string} [key]
  * @param {string} [value]
- * @return {Object|undefined}
+ * @return {string|undefined}
  */
-export function data(node: any, key?: any, value?: any): string | undefined {
+export function data(node: HTMLElement, key?: any, value?: any): string | undefined {
 	var argsLength = arguments.length;
 	var data: any = {};
 
 	if (node.nodeType === ELEMENT_NODE) {
 		if (argsLength === 1) {
-			utils.each(node.attributes, function (_, attr) {
+			let nodeAttributes: NamedNodeMap = node.attributes;
+			utils.eachInObject(nodeAttributes, function (_, attr) {
 				if (/^data-/i.test(attr.name)) {
 					let idx = attr.name.substr(5) as keyof typeof data;
 					data[idx] = attr.value;
@@ -694,7 +697,7 @@ export function hasStyling(node: HTMLElement): boolean {
 export function convertElement(element: HTMLElement, toTagName: string): HTMLElement {
 	var newElement = createElement(toTagName, {}, element.ownerDocument);
 
-	utils.each(element.attributes, function (_, attribute) {
+	utils.eachInObject(element.attributes as NamedNodeMap, function (_, attribute) {
 		// Some browsers parse invalid attributes names like
 		// 'size"2' which throw an exception when set, just
 		// ignore these.

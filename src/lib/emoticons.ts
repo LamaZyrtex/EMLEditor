@@ -99,7 +99,7 @@ export function replace(root: HTMLElement, emoticons: string[], emoticonsCompat:
 		return;
 	}
 
-	utils.each(emoticons, function (key) {
+	utils.eachInArray(emoticons, function (key) {
 		emoticonRegex[key] = new RegExp(space + escape.regex(key) + space);
 		emoticonCodes.push(key);
 	});

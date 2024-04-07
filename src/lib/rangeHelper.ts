@@ -186,7 +186,7 @@ export class RangeHelper {
 			}
 
 			if (range.startContainer !== range.endContainer) {
-				utils.each(parent.childNodes, function (_, node) {
+				utils.eachInObject(parent.childNodes, function (_, node) {
 					if (dom.isEmpty(node)) {
 						emptyNodes.push(node);
 					}

@@ -369,7 +369,7 @@ const defaultOptions = {
 	 *
 	 * @type {Object}
 	 */
-	dropDownCss: { },
+	dropDownCss: {},
 
 	/**
 	 * An array of tags that are allowed in the editor content.

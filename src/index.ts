@@ -76,7 +76,8 @@ window.emlEditor = {
 	},
 
 	utils: {
-		each: utils.each,
+		eachInObject: utils.eachInObject,
+		eachInArray: utils.eachInArray,
 		isEmptyObject: utils.isEmptyObject,
 		extend: utils.extend
 	},

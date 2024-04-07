@@ -119,21 +119,30 @@ export function arrayRemove<T>(arr: Array<T>, item: T) {
 }
 
 /**
- * Iterates over an array or object
+ * Iterates over an array
  *
- * @param {!Object|Array} obj
+ * @param {|Array} obj
  * @param {function(*, *)} fn
  */
-export function each(obj: object | Array<any>, fn: (arg0: any, arg1: any) => any) {
-	if (Array.isArray(obj) && (obj)?.length > 0) {
-		let arrObj = obj as Array<any>;
-		for (var i = 0; i < arrObj.length; i++) {
-			fn(i, arrObj[i]);
+export function eachInArray<T>(arr: Array<T>, fn: (arg0: any, arg1: any) => any) {
+	if (Array.isArray(arr) && (arr)?.length > 0) {
+		for (var i = 0; i < arr.length; i++) {
+			fn(i, arr[i]);
 		}
-	} else {
-		let objObj = obj as object;
+	}
+}
+
+/**
+ * Iterates over an object
+ *
+ * @param {!Object} obj
+ * @param {function(*, *)} fn
+ */
+export function eachInObject(obj: any, fn: (arg0: any, arg1: any) => any) {
+	{
 		Object.keys(obj).forEach(function (key) {
-			fn(key, objObj[key as keyof typeof objObj]);
+			fn(key, obj[key as keyof typeof obj]);
 		});
 	}
 }
+

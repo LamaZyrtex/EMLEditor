@@ -2,7 +2,7 @@
 import * as dom from './dom';
 import * as utils from './utils';
 import * as escape from './escape.js';
-import _tmpl from './templates';
+import * as templates from './templates';
 import EmlEditor from './emlEditor';
 
 /**
@@ -157,9 +157,7 @@ var defaultCmds: any = {
 			});
 
 			editor.editorOptions.fonts.split(',').forEach(function (font: any) {
-				dom.appendChild(content, _tmpl('fontOpt', {
-					font: font
-				}, true));
+				dom.appendChild(content, templates.getTemplate('fontOpt', { font: font }));
 			});
 
 			editor.createDropDown(caller, 'font-picker', content);
@@ -186,9 +184,9 @@ var defaultCmds: any = {
 			});
 
 			for (var i = 1; i <= 7; i++) {
-				dom.appendChild(content, _tmpl('sizeOpt', {
+				dom.appendChild(content, templates.getTemplate('sizeOpt', {
 					size: i
-				}, true));
+				}));
 			}
 
 			editor.createDropDown(caller, 'fontsize-picker', content);
@@ -285,12 +283,12 @@ var defaultCmds: any = {
 				content = dom.createElement('div'),
 				editor = this;
 
-			dom.appendChild(content, _tmpl('pastetext', {
+			dom.appendChild(content, templates.getTemplate('pastetext', {
 				label: editor.translate(
 					'Paste your text inside the following box:'
 				),
 				insert: editor.translate('Insert')
-			}, true));
+			}));
 
 			dom.on(content, 'click', '.button', function (e: Event) {
 				val = (dom.find(content, '#txt')[0] as HTMLTextAreaElement).value;
@@ -400,11 +398,11 @@ var defaultCmds: any = {
 			var editor = this,
 				content = dom.createElement('div');
 
-			dom.appendChild(content, _tmpl('table', {
+			dom.appendChild(content, templates.getTemplate('table', {
 				rows: editor.translate('Rows:'),
 				cols: editor.translate('Cols:'),
 				insert: editor.translate('Insert')
-			}, true));
+			}));
 
 			dom.on(content, 'click', '.button', function (e: Event) {
 				var rows = Number((dom.find(content, '#rows')[0] as HTMLTextAreaElement).value),
@@ -458,12 +456,12 @@ var defaultCmds: any = {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, selected: any, callback: (inputVal: string, widthVal: string, heightVal: string) => void) {
 			var content = dom.createElement('div');
 
-			dom.appendChild(content, _tmpl('image', {
+			dom.appendChild(content, templates.getTemplate('image', {
 				url: editor.translate('URL:'),
 				width: editor.translate('Width (optional):'),
 				height: editor.translate('Height (optional):'),
 				insert: editor.translate('Insert')
-			}, true));
+			}));
 
 
 			var urlInput = dom.find(content, '#image')[0] as HTMLInputElement;
@@ -520,11 +518,11 @@ var defaultCmds: any = {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (email: string, des: string) => void) {
 			var content = dom.createElement('div');
 
-			dom.appendChild(content, _tmpl('email', {
+			dom.appendChild(content, templates.getTemplate('email', {
 				label: editor.translate('E-mail:'),
 				desc: editor.translate('Description (optional):'),
 				insert: editor.translate('Insert')
-			}, true));
+			}));
 
 			dom.on(content, 'click', '.button', function (e: Event) {
 				let email: string = (dom.find(content, '#email')[0] as HTMLInputElement).value;
@@ -568,11 +566,11 @@ var defaultCmds: any = {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (link: string, val: string) => void) {
 			var content = dom.createElement('div');
 
-			dom.appendChild(content, _tmpl('link', {
+			dom.appendChild(content, templates.getTemplate('link', {
 				url: editor.translate('URL:'),
 				desc: editor.translate('Description (optional):'),
 				ins: editor.translate('Insert')
-			}, true));
+			}));
 
 			var linkInput = dom.find(content, '#link')[0] as HTMLInputElement;
 			var desInput = dom.find(content, '#des')[0] as HTMLInputElement;
@@ -696,7 +694,7 @@ var defaultCmds: any = {
 					e.preventDefault();
 				});
 
-				utils.each(emoticons, function (code, emoticon) {
+				utils.eachInObject(emoticons, function (code, emoticon) {
 					dom.appendChild(line, dom.createElement('img', {
 						src: emoticonsRoot + (emoticon.url || emoticon),
 						alt: code,
@@ -745,10 +743,10 @@ var defaultCmds: any = {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (match: any, time: number) => void) {
 			var content = dom.createElement('div');
 
-			dom.appendChild(content, _tmpl('youtubeMenu', {
+			dom.appendChild(content, templates.getTemplate('youtubeMenu', {
 				label: editor.translate('Video URL:'),
 				insert: editor.translate('Insert')
-			}, true));
+			}));
 
 			dom.on(content, 'click', '.button', function (e: Event) {
 				var val = (dom.find(content, '#link')[0] as HTMLInputElement).value;
@@ -757,7 +755,7 @@ var defaultCmds: any = {
 				var time = 0;
 
 				if (timeMatch) {
-					utils.each(timeMatch[1].split(/[hms]/), function (i, val) {
+					utils.eachInArray(timeMatch[1].split(/[hms]/), function (i, val) {
 						if (val !== '') {
 							time = (time * 60) + Number(val);
 						}
@@ -778,7 +776,7 @@ var defaultCmds: any = {
 			var editor = this;
 
 			defaultCmds.youtube._dropDown(editor, btn, function (id: any, time: any) {
-				editor.wysiwygEditorInsertHtml(_tmpl('youtube', {
+				editor.wysiwygEditorInsertHtml(templates.getTemplateAsString('youtube', {
 					id: id,
 					time: time
 				}));
