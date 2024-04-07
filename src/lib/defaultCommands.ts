@@ -2,7 +2,7 @@
 import * as dom from './dom';
 import * as utils from './utils';
 import * as escape from './escape.js';
-import _tmpl from './templates.js';
+import _tmpl from './templates';
 import EmlEditor from './emlEditor';
 
 /**

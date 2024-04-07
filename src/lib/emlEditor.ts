@@ -4,7 +4,7 @@ import defaultOptions from './defaultOptions.js';
 import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
-import templates from './templates.js';
+import templates from './templates';
 import * as escape from './escape.js';
 import * as browser from './browser.js';
 import * as emoticons from './emoticons';
