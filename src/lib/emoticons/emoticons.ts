@@ -1,7 +1,7 @@
-import * as dom from './dom';
-import * as utils from './utils';
-import * as escape from './escape.js';
-import { RangeHelper } from './rangeHelper';
+import * as dom from '../dom';
+import * as utils from '../utils';
+import * as escape from '../escape.js';
+import { RangeHelper } from '../rangeHelper';
 
 /**
  * Checks all emoticons are surrounded by whitespace and

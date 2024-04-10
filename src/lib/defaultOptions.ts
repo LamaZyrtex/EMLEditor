@@ -1,10 +1,58 @@
 import { attr } from './dom';
+import { IEmoticons, IDropdownEmoticons, IHiddenEmoticons, IMoreEmoticons } from './emoticons/iEmoticons';
+
+interface IDefaultOptions {
+	toolbar: string;
+	toolbarExclude: string;
+	style: string;
+	fonts: string;
+	colors: string;
+	locale: string;
+	charset: string;
+	emoticonsCompat: boolean;
+	emoticonsEnabled: boolean;
+	emoticonsRoot: string;
+	emoticons: IEmoticons;
+	height: number | null;
+	width: number | null;
+	resizeEnabled: boolean;
+	resizeMinWidth: number | null;
+	resizeMinHeight: number | null;
+	resizeMaxHeight: number | null;
+	resizeMaxWidth: number | null;
+	resizeHeight: boolean;
+	resizeWidth: boolean;
+	dateFormat: string;
+	toolbarContainer: HTMLElement | null;
+	enablePasteFiltering: boolean;
+	disablePasting: boolean;
+	readOnly: boolean;
+	rtl: boolean;
+	autofocus: boolean;
+	autofocusEnd: boolean;
+	autoExpand: boolean;
+	autoUpdate: boolean;
+	spellcheck: boolean;
+	runWithoutWysiwygSupport: boolean;
+	startInSourceMode: boolean;
+	id: string | null;
+	plugins: string;
+	zIndex: number | null;
+	bbcodeTrim: boolean;
+	disableBlockRemove: boolean;
+	allowedIframeUrls: Array<string>;
+	parserOptions: object;
+	dropDownCss: object;
+	allowedTags: Array<string>;
+	allowedAttributes: Array<string>;
+
+}
 
 /**
  * Default options for EmlEditor
  * @type {Object}
  */
-const defaultOptions = {
+const defaultOptions: IDefaultOptions = {
 	/**
 	 * Toolbar buttons order and groups. Should be comma separated and
 	 * have a bar | to separate groups
@@ -22,7 +70,7 @@ const defaultOptions = {
 	 *
 	 * @type {string}
 	 */
-	toolbarExclude: null,
+	toolbarExclude: '',
 
 	/**
 	 * Stylesheet to include in the WYSIWYG editor. This is what will style
@@ -49,13 +97,13 @@ const defaultOptions = {
 	 * @type {string}
 	 */
 	colors: '#000000,#44B8FF,#1E92F7,#0074D9,#005DC2,#00369B,#b3d5f4|' +
-			'#444444,#C3FFFF,#9DF9FF,#7FDBFF,#68C4E8,#419DC1,#d9f4ff|' +
-			'#666666,#72FF84,#4CEA5E,#2ECC40,#17B529,#008E02,#c0f0c6|' +
-			'#888888,#FFFF44,#FFFA1E,#FFDC00,#E8C500,#C19E00,#fff5b3|' +
-			'#aaaaaa,#FFC95F,#FFA339,#FF851B,#E86E04,#C14700,#ffdbbb|' +
-			'#cccccc,#FF857A,#FF5F54,#FF4136,#E82A1F,#C10300,#ffc6c3|' +
-			'#eeeeee,#FF56FF,#FF30DC,#F012BE,#D900A7,#B20080,#fbb8ec|' +
-			'#ffffff,#F551FF,#CF2BE7,#B10DC9,#9A00B2,#9A00B2,#e8b6ef',
+		'#444444,#C3FFFF,#9DF9FF,#7FDBFF,#68C4E8,#419DC1,#d9f4ff|' +
+		'#666666,#72FF84,#4CEA5E,#2ECC40,#17B529,#008E02,#c0f0c6|' +
+		'#888888,#FFFF44,#FFFA1E,#FFDC00,#E8C500,#C19E00,#fff5b3|' +
+		'#aaaaaa,#FFC95F,#FFA339,#FF851B,#E86E04,#C14700,#ffdbbb|' +
+		'#cccccc,#FF857A,#FF5F54,#FF4136,#E82A1F,#C10300,#ffc6c3|' +
+		'#eeeeee,#FF56FF,#FF30DC,#F012BE,#D900A7,#B20080,#fbb8ec|' +
+		'#ffffff,#F551FF,#CF2BE7,#B10DC9,#9A00B2,#9A00B2,#e8b6ef',
 
 	/**
 	 * The locale to use.
@@ -106,7 +154,6 @@ const defaultOptions = {
 			':angel:': 'emoticons/angel.png',
 			':angry:': 'emoticons/angry.png',
 			'8-)': 'emoticons/cool.png',
-			':\'(': 'emoticons/cwy.png',
 			':ermm:': 'emoticons/ermm.png',
 			':D': 'emoticons/grin.png',
 			'<3': 'emoticons/heart.png',
@@ -362,7 +409,7 @@ const defaultOptions = {
 	 *
 	 * @type {Object}
 	 */
-	parserOptions: { },
+	parserOptions: {},
 
 	/**
 	 * CSS that will be added to the to dropdown menu (eg. z-index)

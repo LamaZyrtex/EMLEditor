@@ -1,13 +1,13 @@
 ﻿import * as dom from './dom';
 import * as utils from './utils';
-import defaultOptions from './defaultOptions.js';
+import defaultOptions from './defaultOptions';
 import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
 import * as templates from './templates';
 import * as escape from './escape.js';
 import * as browser from './browser.js';
-import * as emoticons from './emoticons';
+import * as emoticons from './emoticons/emoticons';
 import DOMPurify from 'dompurify';
 
 var globalWin = window;

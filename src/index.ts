@@ -5,7 +5,7 @@ import * as browser from './lib/browser.js';
 import * as dom from './lib/dom';
 import * as utils from './lib/utils';
 import defaultCommands from './lib/defaultCommands';
-import defaultOptions from './lib/defaultOptions.js';
+import defaultOptions from './lib/defaultOptions';
 import './themes/square.less';
 
 
