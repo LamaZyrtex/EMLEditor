@@ -1,14 +1,15 @@
 ﻿import * as dom from './dom';
 import * as utils from './utils';
-import defaultOptions from './defaultOptions.js';
+import { defaultOptions } from './defaultOptions';
 import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
 import * as templates from './templates';
 import * as escape from './escape.js';
 import * as browser from './browser.js';
-import * as emoticons from './emoticons';
+import * as emoticons from './emoticons/emoticons';
 import DOMPurify from 'dompurify';
+import { IEmoticonGroups, AllEmoticonKeys } from './emoticons/emoticonstypes';
 
 var globalWin = window;
 var globalDoc = document;
@@ -19,7 +20,6 @@ var globalDoc = document;
  * @name EmlEditor
  */
 export default class EmlEditor {
-
 
 	constructor(textarea: any, userOptions: any) {
 		this.textarea = textarea;
@@ -1739,7 +1739,7 @@ export default class EmlEditor {
 	 * @type {!Object<string, string>}
 	 * @private
 	 */
-	private allEmoticons: any = {};
+	private allEmoticons = {} as AllEmoticonKeys;
 
 	/**
 	 * Current icon set if any
@@ -2414,8 +2414,9 @@ export default class EmlEditor {
 	 */
 	private initEmoticons = (): void => {
 		let thisEditor = this;
-		let emoticons = this.options.emoticons;
+		let emoticons: IEmoticonGroups = this.options.emoticons;
 		let root = this.options.emoticonsRoot || '';
+		type keyOfEmoticons = keyof AllEmoticonKeys;
 
 		if (emoticons) {
 			this.allEmoticons = utils.extend(
@@ -2423,7 +2424,7 @@ export default class EmlEditor {
 			);
 		}
 
-		utils.eachInObject(this.allEmoticons, (key, url) => {
+		utils.eachInObject(this.allEmoticons, (key: keyOfEmoticons, url: any) => {
 			thisEditor.allEmoticons[key] = templates.getTemplateAsString('emoticon', {
 				key: key,
 				// Prefix emoticon root to emoticon urls

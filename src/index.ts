@@ -5,7 +5,7 @@ import * as browser from './lib/browser.js';
 import * as dom from './lib/dom';
 import * as utils from './lib/utils';
 import defaultCommands from './lib/defaultCommands';
-import defaultOptions from './lib/defaultOptions.js';
+import { defaultOptions, IDefaultOptions } from './lib/defaultOptions';
 import './themes/square.less';
 
 
@@ -21,7 +21,7 @@ interface IEditor {
 	icons: Object;
 	formats: Object;
 	commands: Object;
-	defaultOptions: Object;
+	defaultOptions: IDefaultOptions;
 	ios: boolean;
 	isWysiwygSupported: boolean;
 	regexEscape(str: string): string;
@@ -98,7 +98,7 @@ window.emlEditor = {
 		}
 	},
 
-	instance: function (textarea: any) {
+	instance: function (textarea: any): IEditor {
 		return textarea._emleditor;
 	}
 };
