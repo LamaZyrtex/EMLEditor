@@ -1,7 +1,7 @@
 import { attr } from './dom';
-import { IEmoticons, IDropdownEmoticons, IHiddenEmoticons, IMoreEmoticons } from './emoticons/iEmoticons';
+import { IEmoticonGroups } from './emoticons/emoticonstypes';
 
-interface IDefaultOptions {
+export interface IDefaultOptions {
 	toolbar: string;
 	toolbarExclude: string;
 	style: string;
@@ -12,7 +12,7 @@ interface IDefaultOptions {
 	emoticonsCompat: boolean;
 	emoticonsEnabled: boolean;
 	emoticonsRoot: string;
-	emoticons: IEmoticons;
+	emoticons: IEmoticonGroups;
 	height: number | null;
 	width: number | null;
 	resizeEnabled: boolean;
@@ -50,9 +50,9 @@ interface IDefaultOptions {
 
 /**
  * Default options for EmlEditor
- * @type {Object}
+ * @type {IDefaultOptions}
  */
-const defaultOptions: IDefaultOptions = {
+export const defaultOptions: IDefaultOptions = {
 	/**
 	 * Toolbar buttons order and groups. Should be comma separated and
 	 * have a bar | to separate groups
@@ -444,4 +444,3 @@ const defaultOptions: IDefaultOptions = {
 	allowedAttributes: []
 };
 
-export default defaultOptions;

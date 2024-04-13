@@ -2,6 +2,7 @@ import * as dom from '../dom';
 import * as utils from '../utils';
 import * as escape from '../escape.js';
 import { RangeHelper } from '../rangeHelper';
+import { AllEmoticonKeys } from './emoticonstypes';
 
 /**
  * Checks all emoticons are surrounded by whitespace and
@@ -84,23 +85,24 @@ export function checkWhitespace(node: HTMLElement, rangeHelper: RangeHelper): vo
  * code and the value is the HTML to replace it with.
  *
  * @param {HTMLElement} root
- * @param {Object<string, string>} emoticons
+ * @param {AllEmoticonKeys} emoticonKeys
  * @param {boolean} emoticonsCompat
  * @return {void}
  */
-export function replace(root: HTMLElement, emoticons: string[], emoticonsCompat: boolean): void {
+export function replace(root: HTMLElement, emoticonKeys: AllEmoticonKeys, emoticonsCompat: boolean): void {
 	let doc = root.ownerDocument;
 	let space = '(^|\\s|\xA0|\u2002|\u2003|\u2009|$)';
-	let emoticonCodes: Array<any> = [];
-	let emoticonRegex: any = {};
+	let emoticonCodes: Array<string> = [];
+	let emoticonRegex = {} as any;
 
 	// TODO: Make this tag configurable.
 	if (dom.parent(root, 'code')) {
 		return;
 	}
 
-	utils.eachInArray(emoticons, function (key) {
-		emoticonRegex[key] = new RegExp(space + escape.regex(key) + space);
+	utils.eachInObject(emoticonKeys, function (key: string) {
+		let regExp = new RegExp(space + escape.regex(key) + space);
+		emoticonRegex[key] = regExp;
 		emoticonCodes.push(key);
 	});
 
@@ -123,7 +125,7 @@ export function replace(root: HTMLElement, emoticons: string[], emoticonsCompat:
 			if (node.nodeType === dom.TEXT_NODE) {
 				for (let i = 0; i < emoticonCodes.length; i++) {
 					let text = node.nodeValue;
-					let emoticonKey = emoticonCodes[i];
+					let emoticonKey = emoticonCodes[i] as string;
 					let index = emoticonsCompat ?
 						text.search(emoticonRegex[emoticonKey]) :
 						text.indexOf(emoticonKey);
@@ -132,7 +134,7 @@ export function replace(root: HTMLElement, emoticons: string[], emoticonsCompat:
 						// When emoticonsCompat is enabled this will be the
 						// position after any white space
 						let startIndex = text.indexOf(emoticonKey, index);
-						let fragment = dom.parseHTML(emoticons[emoticonKey], doc);
+						let fragment = dom.parseHTML(emoticonKeys[emoticonKey as keyof AllEmoticonKeys], doc);
 						let after = text.substr(startIndex + emoticonKey.length);
 
 						fragment.appendChild(doc.createTextNode(after));
