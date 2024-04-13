@@ -5,7 +5,7 @@ import defaultCommands from './defaultCommands';
 import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
 import * as templates from './templates';
-import * as escape from './escape.js';
+import * as escape from './escape';
 import * as browser from './browser';
 import * as emoticons from './emoticons/emoticons';
 import DOMPurify from 'dompurify';

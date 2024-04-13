@@ -1,6 +1,6 @@
 import * as dom from '../dom';
 import * as utils from '../utils';
-import * as escape from '../escape.js';
+import * as escape from '../escape';
 import { RangeHelper } from '../rangeHelper';
 import { AllEmoticonKeys } from './emoticonstypes';
 

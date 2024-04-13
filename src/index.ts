@@ -1,6 +1,6 @@
 import EmlEditor from './lib/emlEditor';
 import { PluginManager } from './lib/pluginManager';
-import * as escape from './lib/escape.js';
+import * as escape from './lib/escape';
 import * as browser from './lib/browser';
 import * as dom from './lib/dom';
 import * as utils from './lib/utils';

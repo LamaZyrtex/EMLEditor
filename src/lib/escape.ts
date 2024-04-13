@@ -6,8 +6,22 @@
 // 		(\\/\\/)|
 // Image data URI's are considered safe
 // 		data:image\\/(png|bmp|gif|p?jpe?g);
-var VALID_SCHEME_REGEX =
+const VALID_SCHEME_REGEX =
 	/^(https?|s?ftp|mailto|spotify|skype|ssh|teamspeak|tel):|(\/\/)|data:image\/(png|bmp|gif|p?jpe?g);/i;
+
+type replacement = string;
+interface IReplacements {
+	'&': replacement,
+	'<': replacement,
+	'>': replacement,
+	'  ': replacement,
+	'\r\n': replacement,
+	'\r': replacement,
+	'\n': replacement,
+	'"': replacement,
+	'\'': replacement,
+	'`': replacement
+}
 
 /**
  * Escapes a string so it's safe to use in regex
@@ -15,7 +29,7 @@ var VALID_SCHEME_REGEX =
  * @param {string} str
  * @return {string}
  */
-export function regex(str) {
+export function regex(str: string): string {
 	return str.replace(/([-.*+?^=!:${}()|[\]/\\])/g, '\\$1');
 }
 
@@ -30,29 +44,32 @@ export function regex(str) {
  * @return {string}
  * @since 1.4.1
  */
-export function entities(str, noQuotes) {
+export function entities(str: string, noQuotes: boolean = true): string {
 	if (!str) {
 		return str;
 	}
 
-	var replacements = {
+	var replacements: IReplacements = {
 		'&': '&amp;',
 		'<': '&lt;',
 		'>': '&gt;',
 		'  ': '&nbsp; ',
 		'\r\n': '<br />',
 		'\r': '<br />',
-		'\n': '<br />'
+		'\n': '<br />',
+		'"': '"',
+		'\'': '\'',
+		'`': '`'
 	};
 
 	if (noQuotes !== false) {
-		replacements['"']  = '&#34;';
+		replacements['"'] = '&#34;';
 		replacements['\''] = '&#39;';
-		replacements['`']  = '&#96;';
+		replacements['`'] = '&#96;';
 	}
 
-	str = str.replace(/ {2}|\r\n|[&<>\r\n'"`]/g, function (match) {
-		return replacements[match] || match;
+	str = str.replace(/ {2}|\r\n|[&<>\r\n'"`]/g, function (match: string) {
+		return replacements[match as keyof IReplacements] || match;
 	});
 
 	return str;
@@ -83,8 +100,8 @@ export function entities(str, noQuotes) {
  * @return {string}
  * @since 1.4.5
  */
-export function uriScheme(url) {
-	var	path,
+export function uriScheme(url: string): string {
+	var path,
 		// If there is a : before a / then it has a scheme
 		hasScheme = /^[^/]*:/i,
 		location = window.location;
