@@ -6,7 +6,7 @@ import { PluginManager } from './pluginManager';
 import { RangeHelper } from './rangeHelper';
 import * as templates from './templates';
 import * as escape from './escape';
-import * as browser from './browser';
+import BrowserCapabilities from './browserCapabilities';
 import * as emoticons from './emoticons/emoticons';
 import DOMPurify from 'dompurify';
 import { IEmoticonGroups, AllEmoticonKeys } from './emoticons/emoticonstypes';
@@ -104,7 +104,7 @@ export default class EmlEditor {
 		let isInSourceMode = this.inSourceMode();
 
 		// don't allow switching to WYSIWYG if doesn't support it
-		if (!browser.isWysiwygSupported && isInSourceMode) {
+		if (!BrowserCapabilities.isWysiwygSupported && isInSourceMode) {
 			return;
 		}
 
@@ -326,7 +326,7 @@ export default class EmlEditor {
 	 * @name dimensions^3
 	 * @return {this}
 	 */
-	public dimensions(width?: any, height?: any, save?: boolean): any {
+	public dimensions(width?: unknown, height?: unknown, save?: boolean): any {
 		// set undefined width/height to boolean false
 		width = (!width && width !== 0) ? false : width;
 		height = (!height && height !== 0) ? false : height;
@@ -340,7 +340,7 @@ export default class EmlEditor {
 				this.options.width = width;
 			}
 
-			dom.width(this.editorContainer, width);
+			dom.width(this.editorContainer, width as number);
 		}
 
 		if (height !== false) {
@@ -348,7 +348,7 @@ export default class EmlEditor {
 				this.options.height = height;
 			}
 
-			dom.height(this.editorContainer, height);
+			dom.height(this.editorContainer, height as number);
 		}
 
 		return this;
@@ -1956,7 +1956,7 @@ export default class EmlEditor {
 
 		// force into source mode if is a browser that can't handle
 		// full editing
-		if (!browser.isWysiwygSupported) {
+		if (!BrowserCapabilities.isWysiwygSupported) {
 			thisEditor.toggleSourceMode();
 		}
 
@@ -2048,7 +2048,7 @@ export default class EmlEditor {
 		);
 
 		// Add ios to HTML so can apply CSS fix to only it
-		let className = browser.ios ? ' ios' : '';
+		let className = BrowserCapabilities.isIos ? ' ios' : '';
 
 		this.wysiwygDocument = this.wysiwygEditor.contentDocument;
 		this.wysiwygDocument.open();
@@ -2066,7 +2066,7 @@ export default class EmlEditor {
 		this.readOnly(!!this.options.readOnly);
 
 		// iframe overflow fix for iOS
-		if (browser.ios) {
+		if (BrowserCapabilities.isIos) {
 			dom.height(this.wysiwygBody, '100%');
 			dom.on(this.wysiwygBody, 'touchend', null, this.focus);
 		}

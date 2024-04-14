@@ -1,7 +1,7 @@
 import EmlEditor from './lib/emlEditor';
 import { PluginManager } from './lib/pluginManager';
 import * as escape from './lib/escape';
-import * as browser from './lib/browser';
+import BrowserCapabilities from './lib/browserCapabilities';
 import * as dom from './lib/dom';
 import * as utils from './lib/utils';
 import defaultCommands from './lib/defaultCommands';
@@ -42,8 +42,8 @@ window.emlEditor = {
 
 	commands: defaultCommands,
 	defaultOptions: defaultOptions,
-	ios: browser.ios,
-	isWysiwygSupported: browser.isWysiwygSupported,
+	ios: BrowserCapabilities.isIos,
+	isWysiwygSupported: BrowserCapabilities.isWysiwygSupported,
 	regexEscape: escape.regex,
 	escapeEntities: escape.entities,
 	escapeUriScheme: escape.uriScheme,
@@ -93,7 +93,7 @@ window.emlEditor = {
 			return;
 		}
 
-		if (options.runWithoutWysiwygSupport || browser.isWysiwygSupported) {
+		if (options.runWithoutWysiwygSupport || BrowserCapabilities.isWysiwygSupported) {
 			(new EmlEditor(textarea, options));
 		}
 	},
