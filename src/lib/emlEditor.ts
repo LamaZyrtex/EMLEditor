@@ -229,24 +229,24 @@ export default class EmlEditor {
 	 * @name val^2
 	 * @memberOf EmlEditor.prototype
 	 */
-	public val(val?: string, filter: boolean = true): any {
-		if (!utils.isString(val)) {
-			return this.inSourceMode() ?
+	public val(val?: string, filter: boolean = true): string {
+		if (val === undefined) {
+			let retVal = this.inSourceMode() ?
 				this.getSourceEditorValue(false) :
 				this.getWysiwygEditorValue(filter);
+			return retVal ?? '';
 		}
 
 		if (!this.inSourceMode()) {
-			if (filter !== false && 'toHtml' in this.format) {
+			if (filter === true && 'toHtml' in this.format) {
 				val = this.format.toHtml(val);
 			}
-
 			this.setWysiwygEditorValue(val);
 		} else {
 			this.setSourceEditorValue(val);
 		}
 
-		return this;
+		return;
 	};
 
 	/**
@@ -259,7 +259,6 @@ export default class EmlEditor {
 	 * @memberOf EmlEditor.prototype
 	 */
 	public setTextareaValue() {
-		//TODO
 		this.textarea.value = this.val();
 	};
 
@@ -747,7 +746,6 @@ export default class EmlEditor {
 			dom.off(form, 'submit', null, this.setTextareaValue, dom.EVENT_CAPTURE);
 		}
 
-		dom.off(window, 'pagehide', null, this.setTextareaValue);
 		dom.off(window, 'pageshow', null, this.handleFormReset);
 		dom.remove(this.sourceEditor);
 		dom.remove(this.toolbar);
@@ -2141,7 +2139,6 @@ export default class EmlEditor {
 			dom.on(form, 'submit', null, thisEditor.setTextareaValue, dom.EVENT_CAPTURE);
 		}
 
-		dom.on(window, 'pagehide', null, thisEditor.setTextareaValue);
 		dom.on(window, 'pageshow', null, thisEditor.handleFormReset);
 		dom.on(thisEditor.wysiwygBody, 'keypress', null, thisEditor.handleKeyPress);
 		dom.on(thisEditor.wysiwygBody, 'keydown', null, thisEditor.handleKeyDown);
