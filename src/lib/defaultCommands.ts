@@ -13,7 +13,7 @@ import EmlEditor from './emlEditor';
 function fixFirefoxListBug(editor: EmlEditor) {
 	// Only apply to Firefox as will break other browsers.
 	if ('mozHidden' in document) {
-		let node = editor.getBody();
+		let node = editor.getBody() as HTMLElement;
 		let next;
 
 		while (node) {
@@ -34,7 +34,7 @@ function fixFirefoxListBug(editor: EmlEditor) {
 
 			if (node.nodeType === 3 && /[\n\r\t]+/.test(node.nodeValue)) {
 				// Only remove if newlines are collapsed
-				if (!/^pre/.test(dom.css(node.parentNode, 'whiteSpace'))) {
+				if (!/^pre/.test(dom.css(node.parentNode as HTMLElement, 'whiteSpace'))) {
 					dom.remove(node);
 				}
 			}

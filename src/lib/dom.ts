@@ -326,26 +326,28 @@ export function toggle(node: HTMLElement): void {
  * hyphenated like CSS properties.
  *
  * @param {HTMLElement} element
- * @param {any} rule
- * @param {any} [value]
+ * @param {string | {}} rule
+ * @param {string | number | boolean} [value]
  * @return {string | null}
  */
-export function css(element: any, rule: any, value?: any): string | null {
+export function css(element: HTMLElement, rule: string | {}, value?: string | number | boolean): string | null {
 	let retVal = null;
-	if (arguments.length < 3) {
+	if (value === undefined) {
 		if (utils.isString(rule)) {
-			return element.nodeType === 1 ? getComputedStyle(element)[rule] : null;
+			return element.nodeType === 1 ? getComputedStyle(element).getPropertyValue(rule as string) : null;
 		}
 		utils.eachInObject(rule, function (key, value) {
-			css(element, key, value);
+			css(element, key);
 		});
 	} else {
-		let isValueNumeric = typeof value === 'number';
-		let isValueOther = (typeof value === 'string' || typeof value === 'boolean');
-		if (isValueNumeric)
-			element.style[rule] = value.toString() + 'px';
-		if (isValueOther)
-			element.style[rule] = value;
+		if (typeof rule === 'string') {
+			let isValueNumeric: boolean = typeof value === 'number';
+			let isValueOther: boolean = (typeof value === 'string' || typeof value === 'boolean');
+			if (isValueNumeric)
+				element.style.setProperty(rule, value.toString() + 'px');
+			if (isValueOther)
+				element.style.setProperty(rule, value.toString());
+		}
 	}
 	return retVal;
 }
@@ -1048,7 +1050,7 @@ export function getStyle(elm: HTMLElement, property: string): string {
 	if ('textAlign' === property) {
 		styleValue = styleValue || css(elm, property);
 
-		if (css(elm.parentNode, property) === styleValue ||
+		if (css(elm.parentNode as HTMLElement, property) === styleValue ||
 			css(elm, 'display') !== 'block' || is(elm, 'hr,th')) {
 			return '';
 		}
