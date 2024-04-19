@@ -352,8 +352,8 @@ export function css(element: HTMLElement, rule: string | {}, value?: string | nu
 		if (utils.isString(rule)) {
 			return element.nodeType === 1 ? getComputedStyle(element).getPropertyValue(rule as string) : null;
 		}
-		utils.eachInObject(rule, function (key, value) {
-			css(element, key);
+		utils.eachInObject(rule, (objKey, objValue) => {
+			css(element, objKey, objValue);
 		});
 	} else {
 		if (typeof rule === 'string') {
