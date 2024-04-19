@@ -4,68 +4,11 @@ import * as escape from './escape';
 import * as utils from './utils';
 
 
-/**
- * Gets the text, start/end node and offset for
- * length chars left or right of the passed node
- * at the specified offset.
- *
- * @param  {Node}  node
- * @param  {number}  offset
- * @param  {boolean} isLeft
- * @param  {number}  length
- * @return {Object}
- * @private
- */
-var outerText = function (range: any, isLeft: boolean, length: number): any {
-	var nodeValue, remaining, start, end, node,
-		text = '',
-		next = range.startContainer,
-		offset = range.startOffset;
-
-	// Handle cases where node is a paragraph and offset
-	// refers to the index of a text node.
-	// 3 = text node
-	if (next && next.nodeType !== 3) {
-		next = next.childNodes[offset];
-		offset = 0;
-	}
-
-	start = end = offset;
-
-	while (length > text.length && next && next.nodeType === 3) {
-		nodeValue = next.nodeValue;
-		remaining = length - text.length;
-
-		// If not the first node, start and end should be at their
-		// max values as will be updated when getting the text
-		if (node) {
-			end = nodeValue.length;
-			start = 0;
-		}
-
-		node = next;
-
-		if (isLeft) {
-			start = Math.max(end - remaining, 0);
-			offset = start;
-
-			text = nodeValue.substr(start, end - start) + text;
-			next = node.previousSibling;
-		} else {
-			end = Math.min(remaining, nodeValue.length);
-			offset = start + end;
-
-			text += nodeValue.substr(start, end);
-			next = node.nextSibling;
-		}
-	}
-
-	return {
-		node: node || next,
-		offset: offset,
-		text: text
-	};
-};
+type OuterText = {
+	node: Node,
+	offset: number,
+	text: string
+}
 
 /**
  * Range helper
@@ -76,33 +19,48 @@ var outerText = function (range: any, isLeft: boolean, length: number): any {
 export class RangeHelper {
 
 	insertHTML: (html: string, endHTML?: string) => boolean;
-	insertNode: (node?: any, endNode?: any) => false | undefined;
+	insertNode: (node?: Node, endNode?: Node) => false | undefined;
 	cloneSelected: () => Range;
 	selectedRange: () => Range;
 	hasSelection: () => boolean;
 	selectedHtml: () => string;
 	parentNode: () => HTMLElement;
-	getFirstBlockParent: (node?: any) => any;
+	getFirstBlockParent: (node?: HTMLElement) => HTMLElement;
 	insertNodeAt: (start: any, node: any) => boolean;
 	insertMarkers: () => void;
-	getMarker: (id: any) => any;
+	getMarker: (id: string) => HTMLElement;
 	removeMarker: (id: any) => void;
 	removeMarkers: () => void;
 	saveRange: () => void;
-	selectRange: (range: any) => void;
+	selectRange: (range: Range) => void;
 	restoreRange: () => boolean;
 	selectOuterText: (left: any, right: any) => boolean;
-	getOuterText: (before: any, length: any) => any;
+	getOuterText: (before: boolean, length: number) => string;
 	replaceKeyword: (keywords: any, includeAfter: any, keywordsSorted: any, longestKeyword: any, requireWhitespace: any, keypressChar: any) => boolean;
 	compare: (rngA?: any, rngB?: any) => boolean;
 	clear: () => void;
+	private doc: Document | null;
+	private startMarker: string;
+	private endMarker: string;
 
-	constructor(win: any, d: null, sanitize: { (html: string): string; (arg0: any): string; }) {
-		let _createMarker: any;
-		let _prepareInput: any;
-		let doc: any = d || win.contentDocument || win.document;
-		let startMarker: string = 'emleditor-start-marker';
-		let endMarker: string = 'emleditor-end-marker';
+	constructor(win: HTMLIFrameElement | Window, element: Document | null, sanitize: { (html: string): string; (arg0: any): string; }) {
+
+		this.doc = element || (win as HTMLIFrameElement).contentDocument || (win as Window).document;
+		this.startMarker = 'emleditor-start-marker';
+		this.endMarker = 'emleditor-end-marker';
+
+
+
+		let winAsIframe: HTMLIFrameElement = undefined;
+		if ((win as HTMLIFrameElement).contentDocument) {
+			winAsIframe = (win as HTMLIFrameElement);
+		}
+
+		let winAsWindow: Window = undefined;
+		if ((win as Window).document) {
+			winAsWindow = (win as Window);
+		}
+
 
 		/**
 		 * Inserts HTML into the current range replacing any selected
@@ -119,8 +77,10 @@ export class RangeHelper {
 		 * @name insertHTML
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.insertHTML = function (html: string, endHTML?: string) {
-			var node, div, range = this.selectedRange();
+		this.insertHTML = (html: string, endHTML?: string) => {
+			let node: DocumentFragment;
+			let div: HTMLElement;
+			let range: Range = this.selectedRange();
 
 			if (!range) {
 				return false;
@@ -130,8 +90,8 @@ export class RangeHelper {
 				html += this.selectedHtml() + endHTML;
 			}
 
-			div = dom.createElement('p', {}, doc);
-			node = doc.createDocumentFragment();
+			div = dom.createElement('p', {}, this.doc);
+			node = this.doc.createDocumentFragment();
 			div.innerHTML = sanitize(html);
 
 			while (div.firstChild) {
@@ -149,9 +109,9 @@ export class RangeHelper {
 		* @name removeMarkers
 		* @memberOf RangeHelper.prototype
 		*/
-		this.removeMarkers = function () {
-			this.removeMarker(startMarker);
-			this.removeMarker(endMarker);
+		this.removeMarkers = () => {
+			this.removeMarker(this.startMarker);
+			this.removeMarker(this.endMarker);
 		};
 
 		/**
@@ -170,8 +130,12 @@ export class RangeHelper {
 		 * @name insertNode
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.insertNode = function (node?: Node, endNode?: Node): false | undefined {
-			let first, last, input = _prepareInput(node, endNode), range = this.selectedRange(), parent = range.commonAncestorContainer;
+		this.insertNode = (node?: HTMLElement, endNode?: HTMLElement): false | undefined => {
+			let first: ChildNode;
+			let last: ChildNode;
+			let input: HTMLElement = this.prepareInput(node, endNode) as HTMLElement;
+			let range: Range = this.selectedRange();
+			let parent: HTMLElement = this.htmlElement(range.commonAncestorContainer);
 			let emptyNodes: any = [];
 
 			if (!input) {
@@ -228,8 +192,8 @@ export class RangeHelper {
 		 * @name cloneSelected
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.cloneSelected = function (): Range {
-			var range = this.selectedRange();
+		this.cloneSelected = (): Range => {
+			let range: Range = this.selectedRange();
 
 			if (range) {
 				return range.cloneRange();
@@ -244,8 +208,10 @@ export class RangeHelper {
 		 * @name selectedRange
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.selectedRange = function (): Range {
-			var range, firstChild, sel = win.getSelection();
+		this.selectedRange = (): Range => {
+			let range: Range;
+			let firstChild: HTMLElement;
+			let sel: Selection = winAsWindow.getSelection();
 
 			if (!sel) {
 				return;
@@ -254,12 +220,12 @@ export class RangeHelper {
 			// When creating a new range, set the start to the first child
 			// element of the body element to avoid errors in FF.
 			if (sel.rangeCount <= 0) {
-				firstChild = doc.body;
+				firstChild = this.doc.body;
 				while (firstChild.firstChild) {
-					firstChild = firstChild.firstChild;
+					firstChild = this.htmlElement(firstChild.firstChild);
 				}
 
-				range = doc.createRange();
+				range = this.doc.createRange();
 				// Must be setStartBefore otherwise it can cause infinite
 				// loops with lists in WebKit. See issue 442
 				range.setStartBefore(firstChild);
@@ -283,9 +249,8 @@ export class RangeHelper {
 		 * @since 1.4.4
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.hasSelection = function (): boolean {
-			var sel = win.getSelection();
-
+		this.hasSelection = (): boolean => {
+			let sel: Selection = winAsWindow.getSelection();
 			return sel && sel.rangeCount > 0;
 		};
 
@@ -297,11 +262,12 @@ export class RangeHelper {
 		 * @name selectedHtml
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.selectedHtml = function (): string {
-			var div, range = this.selectedRange();
+		this.selectedHtml = (): string => {
+			let div: HTMLElement;
+			let range: Range = this.selectedRange();
 
 			if (range) {
-				div = dom.createElement('p', {}, doc);
+				div = dom.createElement('p', {}, this.doc);
 				dom.appendChild(div, range.cloneContents());
 
 				return div.innerHTML;
@@ -318,11 +284,11 @@ export class RangeHelper {
 		 * @name parentNode
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.parentNode = function (): HTMLElement {
-			var range = this.selectedRange();
+		this.parentNode = (): HTMLElement => {
+			let range: Range = this.selectedRange();
 
 			if (range) {
-				return range.commonAncestorContainer;
+				return this.htmlElement(range.commonAncestorContainer);
 			}
 		};
 
@@ -346,13 +312,13 @@ export class RangeHelper {
 		 * @since 1.4.1
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.getFirstBlockParent = function (node?: any): HTMLElement {
-			var func = function (elm: any): any {
+		this.getFirstBlockParent = (node?: HTMLElement): HTMLElement => {
+			let func = (elm: HTMLElement): HTMLElement => {
 				if (!dom.isInline(elm, true)) {
 					return elm;
 				}
 
-				elm = elm ? elm.parentNode : null;
+				elm = elm ? this.htmlElement(elm.parentNode) : null;
 
 				return elm ? func(elm) : elm;
 			};
@@ -369,8 +335,9 @@ export class RangeHelper {
 		 * @name insertNodeAt
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.insertNodeAt = function (start: boolean, node: Node) {
-			var currentRange = this.selectedRange(), range = this.cloneSelected();
+		this.insertNodeAt = (start: boolean, node: Node) => {
+			let currentRange: Range = this.selectedRange();
+			let range: Range = this.cloneSelected();
 
 			if (!range) {
 				return false;
@@ -393,20 +360,20 @@ export class RangeHelper {
 		 * @function
 		 * @name insertMarkers
 		 */
-		this.insertMarkers = function () {
-			var currentRange = this.selectedRange();
-			var startNode = _createMarker(startMarker);
+		this.insertMarkers = () => {
+			let currentRange: Range = this.selectedRange();
+			let startSpanNode: HTMLSpanElement = this.createMarker(this.startMarker);
 
 			this.removeMarkers();
-			this.insertNodeAt(true, startNode);
+			this.insertNodeAt(true, startSpanNode);
 
 			// Fixes issue with end marker sometimes being placed before
 			// the start marker when the range is collapsed.
 			if (currentRange && currentRange.collapsed) {
-				startNode.parentNode.insertBefore(
-					_createMarker(endMarker), startNode.nextSibling);
+				startSpanNode.parentNode.insertBefore(
+					this.createMarker(this.endMarker), startSpanNode.nextSibling);
 			} else {
-				this.insertNodeAt(false, _createMarker(endMarker));
+				this.insertNodeAt(false, this.createMarker(this.endMarker));
 			}
 		};
 
@@ -419,8 +386,8 @@ export class RangeHelper {
 		 * @name getMarker
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.getMarker = function (id) {
-			return doc.getElementById(id);
+		this.getMarker = (id: string): HTMLElement => {
+			return this.doc.getElementById(id);
 		};
 
 		/**
@@ -431,8 +398,8 @@ export class RangeHelper {
 		 * @name removeMarker
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.removeMarker = function (id) {
-			var marker = this.getMarker(id);
+		this.removeMarker = (id: string) => {
+			let marker = this.getMarker(id);
 
 			if (marker) {
 				dom.remove(marker);
@@ -446,7 +413,7 @@ export class RangeHelper {
 		 * @name saveRage
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.saveRange = function () {
+		this.saveRange = (): void => {
 			this.insertMarkers();
 		};
 
@@ -458,10 +425,10 @@ export class RangeHelper {
 		 * @name selectRange
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.selectRange = function (range) {
-			var lastChild;
-			var sel = win.getSelection();
-			var container = range.endContainer;
+		this.selectRange = (range: Range) => {
+			let lastChild: HTMLElement;
+			let sel = winAsWindow.getSelection();
+			let container = range.endContainer;
 
 			// Check if cursor is set after a BR when the BR is the only
 			// child of the parent. In Firefox this causes a line break
@@ -469,13 +436,13 @@ export class RangeHelper {
 			if (range.collapsed && container &&
 				!dom.isInline(container, true)) {
 
-				lastChild = container.lastChild;
+				lastChild = this.htmlElement(container.lastChild);
 				while (lastChild && dom.is(lastChild, '.emleditor-ignore')) {
-					lastChild = lastChild.previousSibling;
+					lastChild = this.htmlElement(lastChild.previousSibling);
 				}
 
 				if (dom.is(lastChild, 'br')) {
-					var rng = doc.createRange();
+					var rng = this.doc.createRange();
 					rng.setEndAfter(lastChild);
 					rng.collapse(false);
 
@@ -499,8 +466,11 @@ export class RangeHelper {
 		 * @name restoreRange
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.restoreRange = function () {
-			var isCollapsed, range = this.selectedRange(), start = this.getMarker(startMarker), end = this.getMarker(endMarker);
+		this.restoreRange = (): boolean | undefined => {
+			let isCollapsed: boolean;
+			let range: Range = this.selectedRange();
+			let start: HTMLElement = this.getMarker(this.startMarker);
+			let end: HTMLElement = this.getMarker(this.endMarker);
 
 			if (!start || !end || !range) {
 				return false;
@@ -508,7 +478,7 @@ export class RangeHelper {
 
 			isCollapsed = start.nextSibling === end;
 
-			range = doc.createRange();
+			range = this.doc.createRange();
 			range.setStartBefore(start);
 			range.setEndAfter(end);
 
@@ -518,6 +488,7 @@ export class RangeHelper {
 
 			this.selectRange(range);
 			this.removeMarkers();
+			return;
 		};
 
 		/**
@@ -530,8 +501,10 @@ export class RangeHelper {
 		 * @name selectOuterText
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.selectOuterText = function (left: number, right: number) {
-			let start: any, end: any, range: any = this.cloneSelected();
+		this.selectOuterText = (left: number, right: number) => {
+			let start: OuterText;
+			let end: OuterText;
+			let range: Range = this.cloneSelected();
 
 			if (!range) {
 				return false;
@@ -539,8 +512,8 @@ export class RangeHelper {
 
 			range.collapse(false);
 
-			start = outerText(range, true, left);
-			end = outerText(range, false, right);
+			start = this.outerText(range, true, left);
+			end = this.outerText(range, false, right);
 
 			range.setStart(start.node, start.offset);
 			range.setEnd(end.node, end.offset);
@@ -556,11 +529,11 @@ export class RangeHelper {
 		 * @return {string}
 		 * @since 1.4.3
 		 * @function
-		 * @name selectOuterText
+		 * @name getOuterText
 		 * @memberOf RangeHelper.prototype
 		 */
-		this.getOuterText = function (before, length) {
-			var range = this.cloneSelected();
+		this.getOuterText = (before: boolean, length: number): string => {
+			let range: Range = this.cloneSelected();
 
 			if (!range) {
 				return '';
@@ -568,13 +541,13 @@ export class RangeHelper {
 
 			range.collapse(!before);
 
-			return outerText(range, before, length).text;
+			return this.outerText(range, before, length).text;
 		};
 
 		/**
 		 * Replaces keywords with values based on the current caret position
 		 *
-		 * @param {Array}   keywords
+		 * @param {Array<string>}   keywords
 		 * @param {boolean} includeAfter      If to include the text after the
 		 *                                    current caret position or just
 		 *                                    text before
@@ -592,21 +565,22 @@ export class RangeHelper {
 		 * @memberOf RangeHelper.prototype
 		 */
 		// eslint-disable-next-line max-params
-		this.replaceKeyword = function (
-			keywords,
-			includeAfter,
-			keywordsSorted,
-			longestKeyword,
-			requireWhitespace,
-			keypressChar
-		) {
+		this.replaceKeyword = (
+			keywords: Array<string>,
+			includeAfter: boolean,
+			keywordsSorted: boolean,
+			longestKeyword: number,
+			requireWhitespace: boolean,
+			keypressChar: string
+		): boolean => {
 			if (!keywordsSorted) {
-				keywords.sort(function (a: any, b: any) {
+				keywords.sort((a: string, b: string) => {
 					return a[0].length - b[0].length;
 				});
 			}
 
-			var outerText, match, matchPos, startIndex, leftLen, charsLeft, keyword, keywordLen, whitespaceRegex = '(^|[\\s\xA0\u2002\u2003\u2009])', keywordIdx = keywords.length, whitespaceLen = requireWhitespace ? 1 : 0, maxKeyLen = longestKeyword ||
+			let outerText: string;
+			let match, matchPos, startIndex, leftLen, charsLeft, keyword, keywordLen, whitespaceRegex = '(^|[\\s\xA0\u2002\u2003\u2009])', keywordIdx = keywords.length, whitespaceLen = requireWhitespace ? 1 : 0, maxKeyLen = longestKeyword ||
 				keywords[keywordIdx - 1][0].length;
 
 			if (requireWhitespace) {
@@ -630,7 +604,7 @@ export class RangeHelper {
 
 				if (requireWhitespace) {
 					match = outerText
-						.substr(startIndex)
+						.substring(startIndex)
 						.match(new RegExp(whitespaceRegex +
 							escape.regex(keyword) + whitespaceRegex));
 
@@ -703,7 +677,7 @@ export class RangeHelper {
 		 * @memberOf RangeHelper.prototype
 		 */
 		this.clear = function () {
-			var sel = win.getSelection();
+			var sel = winAsWindow.getSelection();
 
 			if (sel) {
 				if (sel.removeAllRanges) {
@@ -713,93 +687,166 @@ export class RangeHelper {
 				}
 			}
 		};
+	}
 
-		/**
-		 * Prepares HTML to be inserted by adding a zero width space
-		 * if the last child is empty and adding the range start/end
-		 * markers to the last child.
-		 *
-		 * @param  {Node|string} node
-		 * @param  {Node|string} [endNode]
-		 * @param  {boolean} [returnHtml]
-		 * @return {Node|string}
-		 * @private
-		 */
-		_prepareInput = (node: Node | string, endNode: HTMLElement | string, returnHtml?: boolean): Node | string => {
-			var lastChild, frag = doc.createDocumentFragment();
 
-			if (typeof node === 'string') {
-				if (endNode) {
-					node += this.selectedHtml() + endNode;
-				}
+	/**
+	 * Creates a marker node
+	 *
+	 * @param {string} id
+	 * @return {HTMLSpanElement}
+	 * @private
+	 */
+	private createMarker = (id: string): HTMLSpanElement => {
+		this.removeMarker(id);
 
-				frag = dom.parseHTML(node);
+		let marker = dom.createElement('span', {
+			id: id,
+			className: 'emleditor-selection emleditor-ignore',
+			style: 'display:none;line-height:0'
+		}, this.doc);
+
+		marker.innerHTML = ' ';
+
+		return marker;
+	};
+
+	/**
+	 * Prepares HTML to be inserted by adding a zero width space
+	 * if the last child is empty and adding the range start/end
+	 * markers to the last child.
+	 *
+	 * @param  {Node | string} node
+	 * @param  {HTMLElement | string} [endNode]
+	 * @param  {boolean} [returnHtml]
+	 * @return {Node | string}
+	 * @private
+	 */
+	private prepareInput = (node: Node | string, endNode?: HTMLElement | string, returnHtml?: boolean): Node | string => {
+		let lastChild;
+		let documentFragment = this.doc.createDocumentFragment();
+
+		if (typeof node === 'string') {
+			if (endNode) {
+				node += this.selectedHtml() + endNode;
+			}
+			documentFragment = dom.parseHTML(node);
+		} else {
+			let htmlNode = node as DocumentFragment;
+			dom.appendChild(documentFragment, htmlNode);
+
+			if (typeof endNode !== 'string' && endNode) {
+				let extracted = this.selectedRange().extractContents();
+				dom.appendChild(documentFragment, extracted);
+				dom.appendChild(documentFragment, endNode);
+			}
+		}
+
+		if (!(lastChild = documentFragment.lastChild)) {
+			return;
+		}
+
+		while (!dom.isInline(lastChild.lastChild, true)) {
+			lastChild = lastChild.lastChild;
+		}
+
+		if (dom.canHaveChildren(this.htmlElement(lastChild))) {
+			// Webkit won't allow the cursor to be placed inside an
+			// empty tag, so add a zero width space to it.
+			if (!lastChild.lastChild) {
+				let txtNode = document.createTextNode('\u200B');
+				dom.appendChild(this.htmlElement(lastChild), txtNode);
+			}
+		} else {
+			lastChild = documentFragment;
+		}
+
+		this.removeMarkers();
+
+		// Append marks to last child so when restored cursor will be in
+		// the right place
+		dom.appendChild(this.htmlElement(lastChild), this.createMarker(this.startMarker));
+		dom.appendChild(this.htmlElement(lastChild), this.createMarker(this.endMarker));
+
+		if (returnHtml) {
+			var div = dom.createElement('div');
+			dom.appendChild(div, documentFragment);
+
+			return div.innerHTML;
+		}
+
+		return documentFragment;
+	};
+
+	/**
+	 * Gets the text, start/end node and offset for
+	 * length chars left or right of the passed node
+	 * at the specified offset.
+	 *
+	 * @param  {Node}  node
+	 * @param  {number}  offset
+	 * @param  {boolean} isLeft
+	 * @param  {number}  length
+	 * @return {OuterText}
+	 * @private
+	 */
+
+	private outerText = (range: Range, isLeft: boolean, length: number): OuterText => {
+		let nodeValue: string;
+		let remaining: number;
+		let start: number;
+		let end: number;
+		let node: Node;
+		let text: string = '';
+		let next: Node = range.startContainer;
+		let offset: number = range.startOffset;
+
+		// Handle cases where node is a paragraph and offset
+		// refers to the index of a text node.
+		// 3 = text node
+		if (next && next.nodeType !== 3) {
+			next = next.childNodes[offset];
+			offset = 0;
+		}
+
+		start = end = offset;
+
+		while (length > text.length && next && next.nodeType === 3) {
+			nodeValue = next.nodeValue;
+			remaining = length - text.length;
+
+			// If not the first node, start and end should be at their
+			// max values as will be updated when getting the text
+			if (node) {
+				end = nodeValue.length;
+				start = 0;
+			}
+
+			node = next;
+
+			if (isLeft) {
+				start = Math.max(end - remaining, 0);
+				offset = start;
+
+				text = nodeValue.substr(start, end - start) + text;
+				next = node.previousSibling;
 			} else {
-				let htmlNode = node as HTMLElement;
-				dom.appendChild(frag, htmlNode);
+				end = Math.min(remaining, nodeValue.length);
+				offset = start + end;
 
-				if (typeof endNode !== 'string' && endNode) {
-					let extracted = this.selectedRange().extractContents();
-					dom.appendChild(frag, extracted);
-					dom.appendChild(frag, endNode);
-				}
+				text += nodeValue.substr(start, end);
+				next = node.nextSibling;
 			}
+		}
 
-			if (!(lastChild = frag.lastChild)) {
-				return;
-			}
-
-			while (!dom.isInline(lastChild.lastChild, true)) {
-				lastChild = lastChild.lastChild;
-			}
-
-			if (dom.canHaveChildren(lastChild)) {
-				// Webkit won't allow the cursor to be placed inside an
-				// empty tag, so add a zero width space to it.
-				if (!lastChild.lastChild) {
-					let txtNode = document.createTextNode('\u200B');
-					dom.appendChild(lastChild, txtNode);
-				}
-			} else {
-				lastChild = frag;
-			}
-
-			this.removeMarkers();
-
-			// Append marks to last child so when restored cursor will be in
-			// the right place
-			dom.appendChild(lastChild, _createMarker(startMarker));
-			dom.appendChild(lastChild, _createMarker(endMarker));
-
-			if (returnHtml) {
-				var div = dom.createElement('div');
-				dom.appendChild(div, frag);
-
-				return div.innerHTML;
-			}
-
-			return frag;
+		return {
+			node: node || next,
+			offset: offset,
+			text: text
 		};
+	};
 
-		/**
-		 * Creates a marker node
-		 *
-		 * @param {string} id
-		 * @return {HTMLSpanElement}
-		 * @private
-		 */
-		_createMarker = (id: string): HTMLSpanElement => {
-			this.removeMarker(id);
-
-			var marker = dom.createElement('span', {
-				id: id,
-				className: 'emleditor-selection emleditor-ignore',
-				style: 'display:none;line-height:0'
-			}, doc);
-
-			marker.innerHTML = ' ';
-
-			return marker;
-		};
+	private htmlElement(node: Node | ChildNode | ParentNode | Element): HTMLElement {
+		return node as HTMLElement;
 	}
 }
