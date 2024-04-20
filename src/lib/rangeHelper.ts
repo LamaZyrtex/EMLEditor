@@ -26,18 +26,18 @@ export class RangeHelper {
 	selectedHtml: () => string;
 	parentNode: () => HTMLElement;
 	getFirstBlockParent: (node?: HTMLElement) => HTMLElement;
-	insertNodeAt: (start: any, node: any) => boolean;
+	insertNodeAt: (start: boolean, node: Node) => boolean;
 	insertMarkers: () => void;
 	getMarker: (id: string) => HTMLElement;
-	removeMarker: (id: any) => void;
+	removeMarker: (id: string) => void;
 	removeMarkers: () => void;
 	saveRange: () => void;
 	selectRange: (range: Range) => void;
 	restoreRange: () => boolean;
-	selectOuterText: (left: any, right: any) => boolean;
+	selectOuterText: (left: number, right: number) => boolean;
 	getOuterText: (before: boolean, length: number) => string;
-	replaceKeyword: (keywords: any, includeAfter: any, keywordsSorted: any, longestKeyword: any, requireWhitespace: any, keypressChar: any) => boolean;
-	compare: (rngA?: any, rngB?: any) => boolean;
+	replaceKeyword: (keywords: Array<string>, includeAfter: boolean, keywordsSorted: boolean, longestKeyword: number, requireWhitespace: boolean, keypressChar: string) => boolean;
+	compare: (rngA?: Range, rngB?: Range) => boolean;
 	clear: () => void;
 	private doc: Document | null;
 	private startMarker: string;
@@ -572,16 +572,25 @@ export class RangeHelper {
 			longestKeyword: number,
 			requireWhitespace: boolean,
 			keypressChar: string
-		): boolean => {
-			if (!keywordsSorted) {
-				keywords.sort((a: string, b: string) => {
-					return a[0].length - b[0].length;
-				});
-			}
+			): boolean => {
+				if (!keywordsSorted) {
+					keywords.sort((a: string, b: string) => {
+						return a[0].length - b[0].length;
+					});
+				}
 
 			let outerText: string;
-			let match, matchPos, startIndex, leftLen, charsLeft, keyword, keywordLen, whitespaceRegex = '(^|[\\s\xA0\u2002\u2003\u2009])', keywordIdx = keywords.length, whitespaceLen = requireWhitespace ? 1 : 0, maxKeyLen = longestKeyword ||
-				keywords[keywordIdx - 1][0].length;
+			let match: RegExpMatchArray;
+			let matchPos:number;
+			let startIndex: number;
+			let leftLen: number;
+			let charsLeft: number;
+			let keyword:string;
+			let keywordLen: number;
+			let whitespaceRegex:string = '(^|[\\s\xA0\u2002\u2003\u2009])';
+			let keywordIdx:number = keywords.length;
+			let whitespaceLen:number = requireWhitespace ? 1 : 0;
+			let maxKeyLen:number = longestKeyword ||	keywords[keywordIdx - 1][0].length;
 
 			if (requireWhitespace) {
 				maxKeyLen++;
@@ -677,7 +686,7 @@ export class RangeHelper {
 		 * @memberOf RangeHelper.prototype
 		 */
 		this.clear = function () {
-			var sel = winAsWindow.getSelection();
+			let sel:Selection = winAsWindow.getSelection();
 
 			if (sel) {
 				if (sel.removeAllRanges) {
@@ -784,7 +793,6 @@ export class RangeHelper {
 	 * at the specified offset.
 	 *
 	 * @param  {Node}  node
-	 * @param  {number}  offset
 	 * @param  {boolean} isLeft
 	 * @param  {number}  length
 	 * @return {OuterText}
