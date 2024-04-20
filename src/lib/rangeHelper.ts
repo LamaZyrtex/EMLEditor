@@ -121,7 +121,7 @@ export class RangeHelper {
 			return false;
 		}
 
-		function removeIfEmpty(node: any) {
+		function removeIfEmpty(node: HTMLElement) {
 			// Only remove empty node if it wasn't already empty
 			if (node && dom.isEmpty(node) && emptyNodes.indexOf(node) < 0) {
 				dom.remove(node);
@@ -156,8 +156,10 @@ export class RangeHelper {
 			// When deleteContents could become:
 			// <p></p>|<div></div>
 			// So remove the empty ones
-			removeIfEmpty(first && first.previousSibling);
-			removeIfEmpty(last && last.nextSibling);
+			let firstEl = first && first.previousSibling;
+			let lastEl = last && last.nextSibling
+			removeIfEmpty(firstEl as HTMLElement);
+			removeIfEmpty(lastEl as HTMLElement);
 		}
 
 		this.restoreRange();
