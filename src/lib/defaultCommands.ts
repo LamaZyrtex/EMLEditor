@@ -1,16 +1,19 @@
-/* eslint-disable @typescript-eslint/no-this-alias */
+
 import * as dom from './dom';
 import * as utils from './utils';
 import * as escape from './escape';
 import * as templates from './templates';
 import EmlEditor from './emlEditor';
 
+
 /**
- * Fixes a bug in FF where it sometimes wraps
- * new lines in their own list item.
- * See issue #359
+ * Map of all the commands for EmlEditor
+ * @type {Object}
+ * @name commands
  */
-function fixFirefoxListBug(editor: EmlEditor) {
+let defaultCommands: any = {
+
+	fixFirefoxListBug: (editor: EmlEditor) => {
 	// Only apply to Firefox as will break other browsers.
 	if ('mozHidden' in document) {
 		let node = editor.getBody() as HTMLElement;
@@ -42,15 +45,7 @@ function fixFirefoxListBug(editor: EmlEditor) {
 			node = next as any;
 		}
 	}
-}
-
-
-/**
- * Map of all the commands for EmlEditor
- * @type {Object}
- * @name commands
- */
-var defaultCmds: any = {
+	},
 
 	// START_COMMAND: Bold
 	bold: {
@@ -94,14 +89,14 @@ var defaultCmds: any = {
 
 	// START_COMMAND: Left
 	left: {
-		state: function (node: HTMLElement) {
+		state: (node: HTMLElement) => {
 			if (node && node.nodeType === 3) {
 				node = node.parentNode as HTMLElement;
 			}
 
 			if (node) {
-				var isLtr = dom.css(node, 'direction') === 'ltr';
-				var align = dom.css(node, 'textAlign');
+				let isLtr = dom.css(node, 'direction') === 'ltr';
+				let align = dom.css(node, 'textAlign');
 
 				// Can be -moz-left
 				return /left/.test(align) ||
@@ -120,14 +115,14 @@ var defaultCmds: any = {
 	// END_COMMAND
 	// START_COMMAND: Right
 	right: {
-		state: function (node: HTMLElement) {
+		state: (node: HTMLElement) => {
 			if (node && node.nodeType === 3) {
 				node = node.parentNode as HTMLElement;
 			}
 
 			if (node) {
-				var isLtr = dom.css(node, 'direction') === 'ltr';
-				var align = dom.css(node, 'textAlign');
+				let isLtr = dom.css(node, 'direction') === 'ltr';
+				let align = dom.css(node, 'textAlign');
 
 				// Can be -moz-right
 				return /right/.test(align) ||
@@ -162,10 +157,10 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'font-picker', content);
 		},
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance as EmlEditor;
 
-			defaultCmds.font._dropDown(editor, caller, function (fontName: string) {
+			defaultCommands.font._dropDown(editor, caller,  (fontName: string) => {
 				editor.execCommand('fontname', fontName);
 			});
 		},
@@ -191,10 +186,10 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'fontsize-picker', content);
 		},
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
 
-			defaultCmds.size._dropDown(editor, caller, function (fontSize: string) {
+			defaultCommands.size._dropDown(editor, caller, (fontSize: string) => {
 				editor.execCommand('fontsize', fontSize);
 			});
 		},
@@ -206,7 +201,7 @@ var defaultCmds: any = {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (str: string) => any) {
 			var content = dom.createElement('div');
 			var html = '';
-			var cmd = defaultCmds.color;
+			var cmd = defaultCommands.color;
 
 			if (!cmd._htmlCache) {
 				editor.editorOptions.colors.split('|').forEach(function (column: string) {
@@ -235,10 +230,10 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'color-picker', content);
 		},
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
 
-			defaultCmds.color._dropDown(editor, caller, function (color: string) {
+			defaultCommands.color._dropDown(editor, caller, function (color: string) {
 				editor.execCommand('forecolor', color);
 			});
 		},
@@ -278,10 +273,10 @@ var defaultCmds: any = {
 	// END_COMMAND
 	// START_COMMAND: Paste Text
 	pastetext: {
-		exec: function (caller: HTMLElement) {
-			var val,
-				content = dom.createElement('div'),
-				editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let val:string;
+			let content = dom.createElement('div');
+			let editor = editorInstance;
 
 			dom.appendChild(content, templates.getTemplate('pastetext', {
 				label: editor.translate(
@@ -308,18 +303,18 @@ var defaultCmds: any = {
 	// END_COMMAND
 	// START_COMMAND: Bullet List
 	bulletlist: {
-		exec: function () {
-			fixFirefoxListBug(this);
-			this.execCommand('insertunorderedlist');
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			defaultCommands.fixFirefoxListBug(editorInstance);
+			editorInstance.execCommand('insertunorderedlist');
 		},
 		tooltip: 'Bullet list'
 	},
 	// END_COMMAND
 	// START_COMMAND: Ordered List
 	orderedlist: {
-		exec: function () {
-			fixFirefoxListBug(this);
-			this.execCommand('insertorderedlist');
+		exec: (caller?: HTMLElement, editorInstance?:EmlEditor) => {
+			defaultCommands.fixFirefoxListBug(editorInstance);
+			editorInstance.execCommand('insertorderedlist');
 		},
 		tooltip: 'Numbered list'
 	},
@@ -328,7 +323,7 @@ var defaultCmds: any = {
 	indent: {
 		state: function (parent: any, firstBlock: HTMLElement) {
 			// Only works with lists, for now
-			var range, startParent, endParent;
+			let range, startParent, endParent;
 
 			if (dom.is(firstBlock, 'li')) {
 				return 0;
@@ -360,9 +355,9 @@ var defaultCmds: any = {
 
 			return -1;
 		},
-		exec: function () {
-			var editor = this,
-				block = editor.getRangeHelper().getFirstBlockParent();
+		exec:  (caller?: HTMLElement, editorInstance?:EmlEditor) => {
+			let editor = editorInstance;
+			let block = editor.getRangeHelper().getFirstBlockParent();
 
 			editor.focus();
 
@@ -371,7 +366,7 @@ var defaultCmds: any = {
 			// As default, let's just stay with indenting the lists,
 			// at least, for now.
 			if (dom.closest(block, 'ul,ol,menu')) {
-				editor.execCommand('indent');
+				editor.execCommand('indent', undefined);
 			}
 		},
 		tooltip: 'Add indent'
@@ -382,10 +377,10 @@ var defaultCmds: any = {
 		state: function (parents: any, firstBlock: HTMLElement) {
 			return dom.closest(firstBlock, 'ul,ol,menu') ? 0 : -1;
 		},
-		exec: function () {
-			var block = this.getRangeHelper().getFirstBlockParent();
+		exec:  (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let block = editorInstance.getRangeHelper().getFirstBlockParent();
 			if (dom.closest(block, 'ul,ol,menu')) {
-				this.execCommand('outdent');
+				editorInstance.execCommand('outdent', undefined);
 			}
 		},
 		tooltip: 'Remove one indent'
@@ -394,9 +389,9 @@ var defaultCmds: any = {
 
 	// START_COMMAND: Table
 	table: {
-		exec: function (caller: HTMLElement) {
-			var editor = this,
-				content = dom.createElement('div');
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
+			let content = dom.createElement('div');
 
 			dom.appendChild(content, templates.getTemplate('table', {
 				rows: editor.translate('Rows:'),
@@ -405,7 +400,7 @@ var defaultCmds: any = {
 			}));
 
 			dom.on(content, 'click', '.button', function (e: Event) {
-				var rows = Number((dom.find(content, '#rows')[0] as HTMLTextAreaElement).value),
+				let rows = Number((dom.find(content, '#rows')[0] as HTMLTextAreaElement).value),
 					cols = Number((dom.find(content, '#cols')[0] as HTMLTextAreaElement).value),
 					html = '<table>';
 
@@ -441,8 +436,8 @@ var defaultCmds: any = {
 
 	// START_COMMAND: Code
 	code: {
-		exec: function () {
-			this.wysiwygEditorInsertHtml(
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			editorInstance.wysiwygEditorInsertHtml(
 				'<code>',
 				'<br /></code>'
 			);
@@ -454,7 +449,7 @@ var defaultCmds: any = {
 	// START_COMMAND: Image
 	image: {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, selected: any, callback: (inputVal: string, widthVal: string, heightVal: string) => void) {
-			var content = dom.createElement('div');
+			let content = dom.createElement('div');
 
 			dom.appendChild(content, templates.getTemplate('image', {
 				url: editor.translate('URL:'),
@@ -464,7 +459,7 @@ var defaultCmds: any = {
 			}));
 
 
-			var urlInput = dom.find(content, '#image')[0] as HTMLInputElement;
+			let urlInput = dom.find(content, '#image')[0] as HTMLInputElement;
 
 			urlInput.value = selected;
 
@@ -483,15 +478,15 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'insertimage', content);
 		},
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
 
-			defaultCmds.image._dropDown(
+			defaultCommands.image._dropDown(
 				editor,
 				caller,
 				'',
 				function (url: string, width?: string, height?: string) {
-					var attrs = '';
+					let attrs = '';
 
 					if (width) {
 						attrs += ' width="' + parseInt(width, 10) + '"';
@@ -516,7 +511,7 @@ var defaultCmds: any = {
 	// START_COMMAND: E-mail
 	email: {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (email: string, des: string) => void) {
-			var content = dom.createElement('div');
+			let content = dom.createElement('div');
 
 			dom.appendChild(content, templates.getTemplate('email', {
 				label: editor.translate('E-mail:'),
@@ -537,10 +532,10 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'insertemail', content);
 		},
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
 
-			defaultCmds.email._dropDown(
+			defaultCommands.email._dropDown(
 				editor,
 				caller,
 				function (email: string, text: string) {
@@ -564,7 +559,7 @@ var defaultCmds: any = {
 	// START_COMMAND: Link
 	link: {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (link: string, val: string) => void) {
-			var content = dom.createElement('div');
+			let content = dom.createElement('div');
 
 			dom.appendChild(content, templates.getTemplate('link', {
 				url: editor.translate('URL:'),
@@ -572,8 +567,8 @@ var defaultCmds: any = {
 				ins: editor.translate('Insert')
 			}));
 
-			var linkInput = dom.find(content, '#link')[0] as HTMLInputElement;
-			var desInput = dom.find(content, '#des')[0] as HTMLInputElement;
+			let linkInput = dom.find(content, '#link')[0] as HTMLInputElement;
+			let desInput = dom.find(content, '#des')[0] as HTMLInputElement;
 
 			function insertUrl(e: Event) {
 				if (linkInput.value) {
@@ -594,10 +589,10 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'insertlink', content);
 		},
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
 
-			defaultCmds.link._dropDown(editor, caller, function (url: string, text: string) {
+			defaultCommands.link._dropDown(editor, caller, function (url: string, text: string) {
 				if (text || !editor.getRangeHelper().selectedHtml()) {
 					editor.wysiwygEditorInsertHtml(
 						'<a href="' + escape.entities(url) + '">' +
@@ -618,8 +613,8 @@ var defaultCmds: any = {
 		state: function () {
 			return dom.closest(this.CurrentNode(), 'a') ? 0 : -1;
 		},
-		exec: function () {
-			var anchor = dom.closest(this.CurrentNode(), 'a');
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let anchor = dom.closest(editorInstance.CurrentNode(), 'a');
 
 			if (anchor) {
 				while (anchor.firstChild) {
@@ -636,9 +631,9 @@ var defaultCmds: any = {
 
 	// START_COMMAND: Quote
 	quote: {
-		exec: function (caller: HTMLElement, html: string, author: string) {
-			var before = '<blockquote>',
-				end = '</blockquote>';
+		exec: (caller: HTMLElement, editorInstance?:EmlEditor, html?: string, author?: string) => {
+			let before = '<blockquote>';
+			let end = '</blockquote>';
 
 			// if there is HTML passed set end to null so any selected
 			// text is replaced
@@ -649,11 +644,11 @@ var defaultCmds: any = {
 				before = before + author + html + end;
 				end = null;
 				// if not add a newline to the end of the inserted quote
-			} else if (this.getRangeHelper().selectedHtml() === '') {
+			} else if (editorInstance.getRangeHelper().selectedHtml() === '') {
 				end = '<br />' + end;
 			}
 
-			this.wysiwygEditorInsertHtml(before, end);
+			editorInstance.wysiwygEditorInsertHtml(before, end);
 		},
 		tooltip: 'Insert a Quote'
 	},
@@ -661,11 +656,11 @@ var defaultCmds: any = {
 
 	// START_COMMAND: Emoticons
 	emoticon: {
-		exec: function (caller: HTMLElement) {
-			var editor = this;
+		exec:  (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
 
-			var createContent = function (includeMore: boolean) {
-				var moreLink,
+			let createContent = function (includeMore: boolean) {
+				let moreLink,
 					opts = editor.editorOptions,
 					emoticonsRoot = opts.emoticonsRoot || '',
 					emoticonsCompat = opts.emoticonsCompat,
@@ -688,8 +683,7 @@ var defaultCmds: any = {
 				perLine = Math.sqrt(Object.keys(emoticons).length);
 
 				dom.on(content, 'click', 'img', function (e: Event) {
-					editor.insert(startSpace + dom.attr(this, 'alt') + endSpace,
-						null, false).closeDropDown(true);
+					editor.insert(startSpace + dom.attr(this, 'alt') + endSpace, null, false).closeDropDown(true);
 
 					e.preventDefault();
 				});
@@ -732,7 +726,7 @@ var defaultCmds: any = {
 			editor.createDropDown(caller, 'emoticons', createContent(false));
 		},
 		txtExec: function (caller: HTMLElement) {
-			defaultCmds.emoticon.exec.call(this, caller);
+			defaultCommands.emoticon.exec.call(this, caller);
 		},
 		tooltip: 'Insert an emoticon'
 	},
@@ -741,7 +735,7 @@ var defaultCmds: any = {
 	// START_COMMAND: YouTube
 	youtube: {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (match: any, time: number) => void) {
-			var content = dom.createElement('div');
+			let content = dom.createElement('div');
 
 			dom.appendChild(content, templates.getTemplate('youtubeMenu', {
 				label: editor.translate('Video URL:'),
@@ -749,10 +743,10 @@ var defaultCmds: any = {
 			}));
 
 			dom.on(content, 'click', '.button', function (e: Event) {
-				var val = (dom.find(content, '#link')[0] as HTMLInputElement).value;
-				var idMatch = val.match(/(?:v=|v\/|embed\/|youtu.be\/)?([a-zA-Z0-9_-]{11})/);
-				var timeMatch = val.match(/[&|?](?:star)?t=((\d+[hms]?){1,3})/);
-				var time = 0;
+				let val = (dom.find(content, '#link')[0] as HTMLInputElement).value;
+				let idMatch = val.match(/(?:v=|v\/|embed\/|youtu.be\/)?([a-zA-Z0-9_-]{11})/);
+				let timeMatch = val.match(/[&|?](?:star)?t=((\d+[hms]?){1,3})/);
+				let time = 0;
 
 				if (timeMatch) {
 					utils.eachInArray(timeMatch[1].split(/[hms]/), function (i, val) {
@@ -772,10 +766,10 @@ var defaultCmds: any = {
 
 			editor.createDropDown(caller, 'insertlink', content);
 		},
-		exec: function (btn: any) {
-			var editor = this;
+		exec: function (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) {
+			let editor = editorInstance;
 
-			defaultCmds.youtube._dropDown(editor, btn, function (id: any, time: any) {
+			defaultCommands.youtube._dropDown(editor, caller, function (id: any, time: any) {
 				editor.wysiwygEditorInsertHtml(templates.getTemplateAsString('youtube', {
 					id: id,
 					time: time
@@ -810,11 +804,11 @@ var defaultCmds: any = {
 				.replace(/month/i, monthAsString)
 				.replace(/day/i, dayAsString);
 		},
-		exec: function () {
-			this.insertText(defaultCmds.date._date(this));
+		exec: function (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) {
+			editorInstance.insertText(defaultCommands.date._date(editorInstance));
 		},
 		txtExec: function () {
-			this.insertText(defaultCmds.date._date(this));
+			this.insertText(defaultCommands.date._date(this));
 		},
 		tooltip: 'Insert current date'
 	},
@@ -823,7 +817,7 @@ var defaultCmds: any = {
 	// START_COMMAND: Time
 	time: {
 		_time: function () {
-			var now = new Date(),
+			let now = new Date(),
 				hours = now.getHours(),
 				mins = now.getMinutes(),
 				secs = now.getSeconds();
@@ -845,11 +839,11 @@ var defaultCmds: any = {
 
 			return hoursAsString + ':' + minshAsString + ':' + secsAsString;
 		},
-		exec: function () {
-			this.insertText(defaultCmds.time._time());
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			editorInstance.insertText(defaultCommands.time._time());
 		},
 		txtExec: function () {
-			this.insertText(defaultCmds.time._time());
+			this.insertText(defaultCommands.time._time());
 		},
 		tooltip: 'Insert current time'
 	},
@@ -861,10 +855,10 @@ var defaultCmds: any = {
 		state: function (parents: any, firstBlock: HTMLElement) {
 			return firstBlock && firstBlock.style.direction === 'ltr';
 		},
-		exec: function () {
-			var editor = this,
-				rangeHelper = editor.getRangeHelper(),
-				node = rangeHelper.getFirstBlockParent();
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined)  => {
+			let editor = editorInstance;
+			let rangeHelper = editor.getRangeHelper();
+			let node = rangeHelper.getFirstBlockParent();
 
 			editor.focus();
 
@@ -878,7 +872,7 @@ var defaultCmds: any = {
 				}
 			}
 
-			var toggleValue = dom.css(node, 'direction') === 'ltr' ? '' : 'ltr';
+			let toggleValue = dom.css(node, 'direction') === 'ltr' ? '' : 'ltr';
 			dom.css(node, 'direction', toggleValue);
 		},
 		tooltip: 'Left-to-Right'
@@ -890,10 +884,10 @@ var defaultCmds: any = {
 		state: function (parents: any, firstBlock: HTMLElement) {
 			return firstBlock && firstBlock.style.direction === 'rtl';
 		},
-		exec: function () {
-			var editor = this,
-				rangeHelper = editor.getRangeHelper(),
-				node = rangeHelper.getFirstBlockParent();
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			let editor = editorInstance;
+			let rangeHelper = editor.getRangeHelper();
+			let node = rangeHelper.getFirstBlockParent();
 
 			editor.focus();
 
@@ -907,7 +901,7 @@ var defaultCmds: any = {
 				}
 			}
 
-			var toggleValue = dom.css(node, 'direction') === 'rtl' ? '' : 'rtl';
+			let toggleValue = dom.css(node, 'direction') === 'rtl' ? '' : 'rtl';
 			dom.css(node, 'direction', toggleValue);
 		},
 		tooltip: 'Right-to-Left'
@@ -927,9 +921,9 @@ var defaultCmds: any = {
 		state: function () {
 			return this.maximize();
 		},
-		exec: function () {
-			this.maximize(!this.maximize());
-			this.focus();
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			editorInstance.maximize(!editorInstance.maximize());
+			editorInstance.focus();
 		},
 		txtExec: function () {
 			this.maximize(!this.maximize());
@@ -945,9 +939,9 @@ var defaultCmds: any = {
 		state: function () {
 			return this.sourceMode();
 		},
-		exec: function () {
-			this.toggleSourceMode();
-			this.focus();
+		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+			editorInstance.toggleSourceMode();
+			editorInstance.focus();
 		},
 		txtExec: function () {
 			this.toggleSourceMode();
@@ -964,4 +958,4 @@ var defaultCmds: any = {
 	ignore: {}
 };
 
-export default defaultCmds;
+export default defaultCommands;

@@ -850,7 +850,7 @@ export default class EmlEditor {
 	 * @name wysiwygEditorInsertText
 	 * @memberOf EmlEditor.prototype
 	 */
-	public wysiwygEditorInsertText(text: string, endText: string): void {
+	public wysiwygEditorInsertText(text: string, endText: string = null): void {
 		this.wysiwygEditorInsertHtml(
 			escape.entities(text), escape.entities(endText)
 		);
@@ -871,7 +871,7 @@ export default class EmlEditor {
 	 * @name insertText
 	 * @memberOf EmlEditor.prototype
 	 */
-	public insertText(text: string, endText: string): any {
+	public insertText(text: string, endText: string = null): any {
 		if (this.inSourceMode()) {
 			this.sourceEditorInsertText(text, endText);
 		} else {
@@ -996,7 +996,7 @@ export default class EmlEditor {
 	 * @name insert^2
 	 * @memberOf EmlEditor.prototype
 	 */
-	public insert(start: string, end: string, filter: boolean, convertEmoticons: boolean, allowMixed: boolean
+	public insert(start: string, end: string, filter: boolean, convertEmoticons: boolean=true, allowMixed: boolean=false
 	): any {
 		if (this.inSourceMode()) {
 			this.sourceEditorInsertText(start, end);
@@ -1104,7 +1104,7 @@ export default class EmlEditor {
 	 * @name execCommand
 	 * @memberOf EmlEditor.prototype
 	 */
-	public execCommand(command: string, param: any): void {
+	public execCommand(command: string, param?: any): void {
 		let executed = false, commandObj = this.commands[command];
 
 		this.focus();
@@ -1115,9 +1115,13 @@ export default class EmlEditor {
 			return;
 		}
 
-		try {
+		try
+		{
+			// TODO: EML - This one is marked deprecated, but still being supported
+			// all major browsers
 			executed = this.wysiwygDocument.execCommand(command, false, param);
-		} catch (ex) { /* empty */ }
+		} 
+		catch (ex) { /* empty */ }
 
 		// show error if execution failed and an error message exists
 		if (!executed && commandObj && commandObj.errorMessage) {
@@ -2693,6 +2697,8 @@ export default class EmlEditor {
 	 * @private
 	 */
 	private handleCommand = (caller: any, cmd: any): void => {
+
+		let editorInstance: EmlEditor = this;
 		// check if in text mode and handle text commands
 		if (this.inSourceMode()) {
 			if (cmd.txtExec) {
@@ -2704,7 +2710,7 @@ export default class EmlEditor {
 			}
 		} else if (cmd.exec) {
 			if (utils.isFunction(cmd.exec)) {
-				cmd.exec.call(this, caller);
+				cmd.exec.call(this, caller, editorInstance);
 			} else {
 				this.execCommand(
 					cmd.exec,
