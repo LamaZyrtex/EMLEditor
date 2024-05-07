@@ -14,37 +14,37 @@ import EmlEditor from './emlEditor';
 let defaultCommands: any = {
 
 	fixFirefoxListBug: (editor: EmlEditor) => {
-	// Only apply to Firefox as will break other browsers.
-	if ('mozHidden' in document) {
-		let node = editor.getBody() as HTMLElement;
-		let next;
+		// Only apply to Firefox as will break other browsers.
+		if ('mozHidden' in document) {
+			let node = editor.getBody() as HTMLElement;
+			let next;
 
-		while (node) {
-			next = node;
+			while (node) {
+				next = node;
 
-			if (next.firstChild) {
-				next = next.firstChild;
-			} else {
+				if (next.firstChild) {
+					next = next.firstChild;
+				} else {
 
-				while (next && !next.nextSibling) {
-					next = next.parentNode;
+					while (next && !next.nextSibling) {
+						next = next.parentNode;
+					}
+
+					if (next) {
+						next = next.nextSibling;
+					}
 				}
 
-				if (next) {
-					next = next.nextSibling;
+				if (node.nodeType === 3 && /[\n\r\t]+/.test(node.nodeValue)) {
+					// Only remove if newlines are collapsed
+					if (!/^pre/.test(dom.css(node.parentNode as HTMLElement, 'whiteSpace'))) {
+						dom.remove(node);
+					}
 				}
+
+				node = next as any;
 			}
-
-			if (node.nodeType === 3 && /[\n\r\t]+/.test(node.nodeValue)) {
-				// Only remove if newlines are collapsed
-				if (!/^pre/.test(dom.css(node.parentNode as HTMLElement, 'whiteSpace'))) {
-					dom.remove(node);
-				}
-			}
-
-			node = next as any;
 		}
-	}
 	},
 
 	// START_COMMAND: Bold
@@ -53,39 +53,39 @@ let defaultCommands: any = {
 		tooltip: 'Bold',
 		shortcut: 'Ctrl+B'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Italic
 	italic: {
 		exec: 'italic',
 		tooltip: 'Italic',
 		shortcut: 'Ctrl+I'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Underline
 	underline: {
 		exec: 'underline',
 		tooltip: 'Underline',
 		shortcut: 'Ctrl+U'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Strikethrough
 	strike: {
 		exec: 'strikethrough',
 		tooltip: 'Strikethrough'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Subscript
 	subscript: {
 		exec: 'subscript',
 		tooltip: 'Subscript'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Superscript
 	superscript: {
 		exec: 'superscript',
 		tooltip: 'Superscript'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Left
 	left: {
@@ -106,13 +106,13 @@ let defaultCommands: any = {
 		exec: 'justifyleft',
 		tooltip: 'Align left'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Centre
 	center: {
 		exec: 'justifycenter',
 		tooltip: 'Center'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Right
 	right: {
 		state: (node: HTMLElement) => {
@@ -132,13 +132,13 @@ let defaultCommands: any = {
 		exec: 'justifyright',
 		tooltip: 'Align right'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Justify
 	justify: {
 		exec: 'justifyfull',
 		tooltip: 'Justify'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Font
 	font: {
@@ -157,16 +157,16 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'font-picker', content);
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance as EmlEditor;
 
-			defaultCommands.font._dropDown(editor, caller,  (fontName: string) => {
+			defaultCommands.font._dropDown(editor, caller, (fontName: string) => {
 				editor.execCommand('fontname', fontName);
 			});
 		},
 		tooltip: 'Font Name'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Size
 	size: {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (str: string) => any) {
@@ -186,7 +186,7 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'fontsize-picker', content);
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 
 			defaultCommands.size._dropDown(editor, caller, (fontSize: string) => {
@@ -195,7 +195,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Font Size'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Colour
 	color: {
 		_dropDown: function (editor: EmlEditor, caller: HTMLElement, callback: (str: string) => any) {
@@ -230,7 +230,7 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'color-picker', content);
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 
 			defaultCommands.color._dropDown(editor, caller, function (color: string) {
@@ -239,13 +239,13 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Font Color'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Remove Format
 	removeformat: {
 		exec: 'removeformat',
 		tooltip: 'Remove Formatting'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Cut
 	cut: {
@@ -254,7 +254,7 @@ let defaultCommands: any = {
 		errorMessage: 'Your browser does not allow the cut command. ' +
 			'Please use the keyboard shortcut Ctrl/Cmd-X'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Copy
 	copy: {
 		exec: 'copy',
@@ -262,7 +262,7 @@ let defaultCommands: any = {
 		errorMessage: 'Your browser does not allow the copy command. ' +
 			'Please use the keyboard shortcut Ctrl/Cmd-C'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Paste
 	paste: {
 		exec: 'paste',
@@ -270,11 +270,11 @@ let defaultCommands: any = {
 		errorMessage: 'Your browser does not allow the paste command. ' +
 			'Please use the keyboard shortcut Ctrl/Cmd-V'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Paste Text
 	pastetext: {
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
-			let val:string;
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
+			let val: string;
 			let content = dom.createElement('div');
 			let editor = editorInstance;
 
@@ -300,25 +300,25 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Paste Text'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Bullet List
 	bulletlist: {
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			defaultCommands.fixFirefoxListBug(editorInstance);
 			editorInstance.execCommand('insertunorderedlist');
 		},
 		tooltip: 'Bullet list'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Ordered List
 	orderedlist: {
-		exec: (caller?: HTMLElement, editorInstance?:EmlEditor) => {
+		exec: (caller?: HTMLElement, editorInstance?: EmlEditor) => {
 			defaultCommands.fixFirefoxListBug(editorInstance);
 			editorInstance.execCommand('insertorderedlist');
 		},
 		tooltip: 'Numbered list'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Indent
 	indent: {
 		state: function (parent: any, firstBlock: HTMLElement) {
@@ -355,7 +355,7 @@ let defaultCommands: any = {
 
 			return -1;
 		},
-		exec:  (caller?: HTMLElement, editorInstance?:EmlEditor) => {
+		exec: (caller?: HTMLElement, editorInstance?: EmlEditor) => {
 			let editor = editorInstance;
 			let block = editor.getRangeHelper().getFirstBlockParent();
 
@@ -371,13 +371,13 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Add indent'
 	},
-	// END_COMMAND
+
 	// START_COMMAND: Outdent
 	outdent: {
 		state: function (parents: any, firstBlock: HTMLElement) {
 			return dom.closest(firstBlock, 'ul,ol,menu') ? 0 : -1;
 		},
-		exec:  (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let block = editorInstance.getRangeHelper().getFirstBlockParent();
 			if (dom.closest(block, 'ul,ol,menu')) {
 				editorInstance.execCommand('outdent', undefined);
@@ -385,11 +385,11 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Remove one indent'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Table
 	table: {
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 			let content = dom.createElement('div');
 
@@ -425,18 +425,18 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert a table'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Horizontal Rule
 	horizontalrule: {
 		exec: 'inserthorizontalrule',
 		tooltip: 'Insert a horizontal rule'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Code
 	code: {
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			editorInstance.wysiwygEditorInsertHtml(
 				'<code>',
 				'<br /></code>'
@@ -444,7 +444,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Code'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Image
 	image: {
@@ -478,7 +478,7 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'insertimage', content);
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 
 			defaultCommands.image._dropDown(
@@ -506,7 +506,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert an image'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: E-mail
 	email: {
@@ -532,7 +532,7 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'insertemail', content);
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 
 			defaultCommands.email._dropDown(
@@ -554,7 +554,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert an email'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Link
 	link: {
@@ -589,7 +589,7 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'insertlink', content);
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 
 			defaultCommands.link._dropDown(editor, caller, function (url: string, text: string) {
@@ -606,14 +606,14 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert a link'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Unlink
 	unlink: {
 		state: function () {
 			return dom.closest(this.CurrentNode(), 'a') ? 0 : -1;
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let anchor = dom.closest(editorInstance.CurrentNode(), 'a');
 
 			if (anchor) {
@@ -626,12 +626,12 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Unlink'
 	},
-	// END_COMMAND
+
 
 
 	// START_COMMAND: Quote
 	quote: {
-		exec: (caller: HTMLElement, editorInstance?:EmlEditor, html?: string, author?: string) => {
+		exec: (caller: HTMLElement, editorInstance?: EmlEditor, html?: string, author?: string) => {
 			let before = '<blockquote>';
 			let end = '</blockquote>';
 
@@ -652,11 +652,11 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert a Quote'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Emoticons
 	emoticon: {
-		exec:  (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 
 			let createContent = function (includeMore: boolean) {
@@ -730,7 +730,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert an emoticon'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: YouTube
 	youtube: {
@@ -766,7 +766,7 @@ let defaultCommands: any = {
 
 			editor.createDropDown(caller, 'insertlink', content);
 		},
-		exec: function (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) {
+		exec: function (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) {
 			let editor = editorInstance;
 
 			defaultCommands.youtube._dropDown(editor, caller, function (id: any, time: any) {
@@ -778,7 +778,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert a YouTube video'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Date
 	date: {
@@ -804,7 +804,7 @@ let defaultCommands: any = {
 				.replace(/month/i, monthAsString)
 				.replace(/day/i, dayAsString);
 		},
-		exec: function (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) {
+		exec: function (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) {
 			editorInstance.insertText(defaultCommands.date._date(editorInstance));
 		},
 		txtExec: function () {
@@ -812,7 +812,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert current date'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Time
 	time: {
@@ -839,7 +839,7 @@ let defaultCommands: any = {
 
 			return hoursAsString + ':' + minshAsString + ':' + secsAsString;
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			editorInstance.insertText(defaultCommands.time._time());
 		},
 		txtExec: function () {
@@ -847,7 +847,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Insert current time'
 	},
-	// END_COMMAND
+
 
 
 	// START_COMMAND: Ltr
@@ -855,7 +855,7 @@ let defaultCommands: any = {
 		state: function (parents: any, firstBlock: HTMLElement) {
 			return firstBlock && firstBlock.style.direction === 'ltr';
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined)  => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 			let rangeHelper = editor.getRangeHelper();
 			let node = rangeHelper.getFirstBlockParent();
@@ -877,14 +877,14 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Left-to-Right'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Rtl
 	rtl: {
 		state: function (parents: any, firstBlock: HTMLElement) {
 			return firstBlock && firstBlock.style.direction === 'rtl';
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			let editor = editorInstance;
 			let rangeHelper = editor.getRangeHelper();
 			let node = rangeHelper.getFirstBlockParent();
@@ -906,7 +906,7 @@ let defaultCommands: any = {
 		},
 		tooltip: 'Right-to-Left'
 	},
-	// END_COMMAND
+
 
 
 	// START_COMMAND: Print
@@ -914,14 +914,14 @@ let defaultCommands: any = {
 		exec: 'print',
 		tooltip: 'Print'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Maximize
 	maximize: {
 		state: function () {
 			return this.maximize();
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			editorInstance.maximize(!editorInstance.maximize());
 			editorInstance.focus();
 		},
@@ -932,14 +932,14 @@ let defaultCommands: any = {
 		tooltip: 'Maximize',
 		shortcut: 'Ctrl+Shift+M'
 	},
-	// END_COMMAND
+
 
 	// START_COMMAND: Source
 	source: {
 		state: function () {
 			return this.sourceMode();
 		},
-		exec: (caller: HTMLElement = undefined, editorInstance : EmlEditor = undefined) => {
+		exec: (caller: HTMLElement = undefined, editorInstance: EmlEditor = undefined) => {
 			editorInstance.toggleSourceMode();
 			editorInstance.focus();
 		},
@@ -950,7 +950,7 @@ let defaultCommands: any = {
 		tooltip: 'View source',
 		shortcut: 'Ctrl+Shift+S'
 	},
-	// END_COMMAND
+
 
 	// this is here so that commands above can be removed
 	// without having to remove the , after the last one.
